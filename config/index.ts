@@ -1,24 +1,26 @@
-import { cookieStorage, createStorage } from '@wagmi/core';
-import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import { AppKitNetwork, arbitrum, mainnet } from '@reown/appkit/networks';
+'use client';
 
-// Get projectId from https://cloud.reown.com
-export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID;
+import { ArgentTMA } from '@argent/tma-wallet';
 
-if (!projectId) {
-    throw new Error('Project ID is not defined');
+const appTelegramUrl = process.env.NEXT_PUBLIC_MINI_APP_LINK;
+
+if (!appTelegramUrl) {
+    throw new Error('Missing required environment variable: NEXT_PUBLIC_MINI_APP_LINK');
 }
 
-export const networks: AppKitNetwork[] = [mainnet, arbitrum];
-
-//Set up the Wagmi Adapter (Config)
-export const wagmiAdapter = new WagmiAdapter({
-    storage: createStorage({
-        storage: cookieStorage,
-    }),
-    ssr: true,
-    projectId,
-    networks,
+export const argentTMA = ArgentTMA.init({
+    environment: 'mainnet', // "sepolia" | "mainnet" (Whitelisting required)
+    appName: 'Starknet DEX', // todo Change the app name
+    appTelegramUrl,
+    sessionParams: {
+        allowedMethods: [
+            // todo Placeholder list of contracts/methods allowed to be called by the session key
+            {
+                contract:
+                    '0x036133c88c1954413150db74c26243e2af77170a4032934b275708d84ec5452f', // contract address
+                selector: 'increment', //function selector
+            },
+        ],
+        validityDays: 90, // session validity (in days) - default: 90
+    },
 });
-
-export const config = wagmiAdapter.wagmiConfig;

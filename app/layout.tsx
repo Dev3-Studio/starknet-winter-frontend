@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { headers } from 'next/headers'; // added
 import ContextProvider from '@/context';
 import { ReactNode } from 'react';
 
@@ -12,20 +11,21 @@ const inter = Inter({
 
 // todo: update metadata
 export const metadata: Metadata = {
-    title: 'Reown Next Shadcn Boilerplate',
-    description: 'Template repository for use in new Dev3 Studio projects',
+    title: 'Starknet Winter Hackathon',
+    description: 'Starknet Winter Hackathon Frontend',
     authors: [{ name: 'Dev3 Studio', url: 'https://dev3.studio' }],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-    const headersObj = headers();
-    const cookies = headersObj.get('cookie');
-    
     return (
-        <html lang="en">
-            <body className={`${inter.className} antialiased`}>
-                <ContextProvider cookies={cookies}>{children}</ContextProvider>
-            </body>
-        </html>
+        <>
+            {/* todo Figure out why adding the script breaks the wallet connection flow */}
+            {/*<Script src="https://telegram.org/js/telegram-web-app.js?56" />*/}
+            <html lang="en">
+                <body className={`${inter.className} antialiased`}>
+                    <ContextProvider>{children}</ContextProvider>
+                </body>
+            </html>
+        </>
     );
 }

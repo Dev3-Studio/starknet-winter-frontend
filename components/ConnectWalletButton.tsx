@@ -1,37 +1,31 @@
 'use client';
 
 import { Button } from '@/components/shadcn/button';
-import React, { useEffect, useState } from 'react';
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import React from 'react';
 import { cn } from '@/lib/utils';
+import { argentTMA } from '@/config';
+import { useArgentAccount } from '@/hooks/useArgentAccount';
 
 export const ConnectWalletButton: React.FC<{ className?: string }> = ({ className }) => {
-    const [isClient, setIsClient] = useState(false);
-    const { open } = useAppKit();
-    const { isConnected } = useAppKitAccount();
+    const { account, isConnected } = useArgentAccount();
     
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
+    const handleConnectButton = async () => {
+        await argentTMA.requestConnection({
+            callbackData: 'test',
+        });
+    };
     
-    // Show the custom button if the wallet is not connected, appkit-button otherwise. We use css to prevent hydration errors
     return (
         <div>
-            {isClient && <>
-                <div className={isConnected ? 'block' : 'hidden'}>
-                    <appkit-button/>
-                </div>
-                <Button
-                    className={cn(
-                        isConnected ? 'hidden' : 'block',
-                        'rounded-md w-full',
-                        className,
-                    )}
-                    onClick={() => open()}
-                >
-                    Connect Wallet
-                </Button>
-            </>}
+            {isConnected && <div>
+                Connected as {account?.address}
+            </div>}
+            {!isConnected && <Button
+                className={cn('block rounded-md w-full', className)}
+                onClick={handleConnectButton}
+            >
+                Connect Wallet
+            </Button>}
         </div>
     );
 };
