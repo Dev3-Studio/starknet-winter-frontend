@@ -19,8 +19,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
     return (
         <>
-            {/* todo Figure out why adding the script breaks the wallet connection flow */}
-            {/*<Script src="https://telegram.org/js/telegram-web-app.js?56" />*/}
             <html lang="en">
                 <body className={`${inter.className} antialiased`}>
                     <ContextProvider>{children}</ContextProvider>
