@@ -14,11 +14,18 @@ export const ConnectWalletButton: React.FC<{ className?: string }> = ({ classNam
         });
     };
     
+    const formatAddress = (address: string) => {
+        return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    };
+    
     return (
         <div>
-            {isConnected && <div>
-                Connected as {account?.address}
-            </div>}
+            {isConnected && <Button
+                className={cn('block rounded-md w-full', className)}
+                disabled
+            >
+                Connected: {formatAddress(account?.address)}
+            </Button>}
             {!isConnected && <Button
                 className={cn('block rounded-md w-full', className)}
                 onClick={handleConnectButton}
