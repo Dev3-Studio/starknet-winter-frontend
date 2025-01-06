@@ -22,7 +22,7 @@ export const Navbar: React.FC<{ className?: string }> = ({ className }) => {
   return (
     <div
       className={cn(
-        "static flex justify-evenly w-screen bottom-0 h-16 items-center bg-accent",
+        "flex justify-evenly w-screen bottom-0 h-16 items-center bg-accent",
         className
       )}
     >
