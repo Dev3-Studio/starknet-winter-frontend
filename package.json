@@ -8,9 +8,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@argent/tma-wallet": "^1.19.3",
+    "@argent/tma-wallet": "^1.21.1",
     "@radix-ui/react-slot": "^1.1.1",
     "@tanstack/react-query": "^5.62.10",
+    "@telegram-apps/sdk-react": "^2.0.25",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide": "^0.469.0",
