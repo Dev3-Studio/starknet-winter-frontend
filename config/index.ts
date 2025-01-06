@@ -2,7 +2,7 @@
 
 import { ArgentTMA } from '@argent/tma-wallet';
 
-const appTelegramUrl = process.env.NEXT_PUBLIC_MINI_APP_LINK;
+const appTelegramUrl:string|undefined = process.env.NEXT_PUBLIC_MINI_APP_LINK;
 
 if (!appTelegramUrl) {
     throw new Error('Missing required environment variable: NEXT_PUBLIC_MINI_APP_LINK');
