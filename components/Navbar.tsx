@@ -39,7 +39,7 @@ export const Navbar: React.FC<{ className?: string }> = ({ className }) => {
               transform:
                 activeIndex === index ? "translateY(-22px)" : "translateY(0)", // Slight upward shift
               backgroundColor:
-                activeIndex === index ? "#3b82f6" : "transparent",
+                activeIndex === index ? "#272729" : "transparent",
               transition: "transform 0.5s ease", // Smooth transition
             }}
           >
