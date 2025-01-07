@@ -7,18 +7,23 @@ const SellComp = () => {
       <div className="">
         <span className="opacity-70 text-sm">Sell</span>
       </div>
-      <div className="flex justify-between text-xl text-left">
+      <div className="flex justify-around items-center text-xl text-left">
         <input
           className="w-2/3 bg-transparent text-white placeholder-white placeholder-opacity-70"
           placeholder="0.0"
         />
 
-        <Button className="bg-transparent rounded-full bg-gray-600 flex items-center gap-3 p-2 text-white">
-          <img src="/ethereum.webp" className="py-2" />
+        <Button className="bg-transparent rounded-full bg-gray-600 flex text-white justify-evenly py-2">
+          <img
+            src="/ethereum.webp"
+            className="w-6 h-6 flex justify-self-start"
+          />
+
           <p>ETH</p>
           <ChevronDown />
         </Button>
       </div>
+
       <div className="text-sm">
         <span className="flex opacity-70 items-baseline">
           <p className="text-lg">$ 0</p>
@@ -41,7 +46,7 @@ const BuyComp = () => {
           placeholder="0.0"
         />
         <div>
-          <Button className="bg-transparent rounded-full bg-purple-600 flex items-center gap-3 p-2 text-white">
+          <Button className="bg-transparent rounded-full bg-purple-600 flex items-center gap-3 text-white w-full">
             <img src="/ethereum.webp" className="py-2" />
             <p>ETH</p>
             <ChevronDown />
