@@ -1,5 +1,9 @@
+"use client";
+
 import { Button } from "@/components/shadcn/button";
+import TokenListModal from "@/components/TokenListModal";
 import { ArrowDownUpIcon, ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 const SellComp = () => {
   return (
@@ -13,11 +17,8 @@ const SellComp = () => {
           placeholder="0.0"
         />
 
-        <Button className="bg-transparent rounded-full bg-gray-600 flex text-white justify-evenly py-2">
-          <img
-            src="/ethereum.webp"
-            className="w-6 h-6 flex justify-self-start"
-          />
+        <Button className="rounded-full bg-gray-600 flex text-white gap-4 w-32">
+          <img src="/ethereum.webp" className="w-6 h-6 rounded-full" />
 
           <p>ETH</p>
           <ChevronDown />
@@ -45,13 +46,13 @@ const BuyComp = () => {
           className="w-2/3 bg-transparent text-white placeholder-white placeholder-opacity-80"
           placeholder="0.0"
         />
-        <div>
-          <Button className="bg-transparent rounded-full bg-purple-600 flex items-center gap-3 text-white w-full">
-            <img src="/ethereum.webp" className="py-2" />
-            <p>ETH</p>
-            <ChevronDown />
-          </Button>
-        </div>
+
+        <Button className="rounded-full bg-purple-600 flex text-white gap-4 w-32">
+          <img src="/Sushi.webp" className="w-6 h-6 rounded-full" />
+
+          <p>Sushi</p>
+          <ChevronDown />
+        </Button>
       </div>
       <div className="text-sm text-white">
         <span className="flex opacity-80 items-baseline">
@@ -74,6 +75,8 @@ const SwapComp = () => {
 };
 
 export default function SwapPage() {
+  const [isOpen, setOpen] = useState(false);
+
   return (
     <div className="flex flex-col items-center h-screen bg-transparent p-12">
       <div className="flex flex-col gap-2 w-full">
@@ -85,6 +88,8 @@ export default function SwapPage() {
 
         {/* Buy Comp */}
         <BuyComp />
+
+        {isOpen ? <TokenListModal /> : <TokenListModal />}
       </div>
     </div>
   );

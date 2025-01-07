@@ -28,7 +28,7 @@ export default function RootLayout({
         <body className={`${inter.className} antialiased`}>
           <ContextProvider>
             {children}
-            <div className="fixed bottom-0 left-0 right-0 z-10 flex gap-2 flex-col sm:flex-row bg-white">
+            <div className="fixed bottom-0 left-0 right-0 z-20 flex gap-2 flex-col sm:flex-row bg-white">
               <Navbar />
             </div>
           </ContextProvider>
