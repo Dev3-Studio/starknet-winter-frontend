@@ -1,4 +1,4 @@
-import StakeCard from "@/app/stake/page";
+import StakeCard from "@/components/StakePage";
 
 export default function StakePage () {
     return (
