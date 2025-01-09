@@ -17,12 +17,7 @@ export const Navbar: React.FC<{ className?: string }> = ({ className }) => {
 
   const handleButtonClick = (index: number, route: string) => {
     setActiveIndex(index);
-
-    setTimeout(() => {
-      if (typeof window !== "undefined") {
-        router.push(route);
-      }
-    }, 400);
+    router.push(route);
   };
 
   return (

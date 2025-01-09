@@ -4,6 +4,7 @@ import { Button } from "@/components/shadcn/button";
 import { ArrowDownUpIcon, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import DrawerModal from "@/components/DrawerModal";
+import { cn } from "@/lib/utils";
 
 interface SellCompProps {
   handleToggleModal: (sell: string) => void;
@@ -74,11 +75,21 @@ const BuyComp = ({ handleToggleModal }: BuyCompProps) => {
 };
 
 const SwapComp = () => {
+  const [isSwapped, setSwapped] = useState(false);
+
+  function handleSwap() {
+    setSwapped(!isSwapped);
+    setTimeout(() => {
+      setSwapped(false);
+    }, 150);
+  }
+
   return (
-    <div className="flex justify-center">
-      <Button className="bg-accent rounded-full size-12">
-        <ArrowDownUpIcon color="white" />
-      </Button>
+    <div
+      className="flex flex-col justify-center bg-accent items-center size-12 rounded-full self-center active:bg-foreground"
+      onClick={handleSwap}
+    >
+      <ArrowDownUpIcon color={isSwapped ? "#FFA600" : "white"} size={28} />
     </div>
   );
 };
