@@ -1,44 +1,98 @@
-import { ChatOpenAI } from '@langchain/openai';
+'use server';
 import { z } from 'zod';
 import fs from 'fs';
 import path from 'path';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
+import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
+import tradeAIExamples from "./examples.json"
+import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages';
+import { getUuidV4 } from '@/utils/getUuidV4';
 
-const API_KEY = process.env.AKASHCHAT_KEY;
+const API_KEY = process.env.GOOGLE_API_KEY;
 if (!API_KEY) {
-    throw new Error('AKASHCHAT_KEY is not set');
+    throw new Error('GOOGLE_API_KEY is not set');
 }
 // Options:
-// 'Meta-Llama-3-1-8B-Instruct-FP8'
-// 'Meta-Llama-3-1-405B-Instruct-FP8'
-// 'Meta-Llama-3-2-3B-Instruct'
-//  'nvidia-Llama-3-1-Nemotron-70B-Instruct-HF';
-const LLM_MODEL = 'Meta-Llama-3-1-8B-Instruct-FP8';
+//'gemini-pro'
 
-const llm = new ChatOpenAI(
+const LLM_MODEL = 'gemini-pro';
+
+const llm = new ChatGoogleGenerativeAI(
         {
             apiKey: API_KEY,
             model: LLM_MODEL,
         },
-        { baseURL: 'https://chatapi.akash.network/api/v1' },
+    
 );
 
-export enum Actions {
+enum Actions {
     Buy,
     Sell,
-    Swap,
+    // Swap,
 }
 
 const settingsSchema = z.object({
-    actions: z.nativeEnum(Actions).describe('Actions that the bot can perform'),
+    action: z.nativeEnum(Actions).describe('Actions that the bot can perform'),
+    token: z.string().describe('The token to perform the action on'),
+    amount: z.number().describe('The amount of the token to buy/sell'),
 });
+
+
+type ToolCallExample = {
+    input: string;
+    toolCallName: string;
+    toolCallOutput: Record<string, string>;
+};
+
+/**
+ * This function converts an example into a list of messages that can be fed into an LLM.
+ *
+ * This code serves as an adapter that transforms our example into a list of messages
+ * that can be processed by a chat model.
+ *
+ * The list of messages for each example includes:
+ *
+ * 1) HumanMessage: This contains the content from which information should be extracted.
+ * 2) AIMessage: This contains the information extracted by the model.
+ *
+ * Credit: https://js.langchain.com/docs/how_to/extraction_examples/
+ */
+function toolExampleToMessages(example: ToolCallExample): BaseMessage[] {
+    return [
+        new HumanMessage(example.input),
+        new AIMessage({
+            content: '',
+            tool_calls: [{
+                name: example.toolCallName,
+                type: 'tool_call',
+                id: getUuidV4(),
+                args: example.toolCallOutput,
+            }],
+        }),
+    ];
+}
 
 // create LLM with functions
 const tradeAI = llm.withStructuredOutput(settingsSchema, {name: 'tradeAI'});
-
-const systemPrompt = fs.readFileSync(path.join(__dirname, './system.txt')).toString();
+// in same folder in system.txt
+// const systemPrompt = fs.readFileSync(path.join(__dirname, 'system.txt')).toString();
+const systemPrompt = `You are a crypto trading LLM. Your job is to take a user prompt and convert it into a structured format.
+Choose the most appropriate action based on the user's request. The action can be 'buy' or 'sell'.
+Identify the most appropriate token based on the user's description. The token will be a cryptocurrency specified by the user.
+`
 const chatPromptTemplate = ChatPromptTemplate.fromMessages([
     ['system', systemPrompt],
     new MessagesPlaceholder('examples'),
     ['user', '{input}'],
 ]);
+
+export async function runTradeAI(text: string){
+    
+    const examples = tradeAIExamples.flatMap(toolExampleToMessages);
+    const pipeline = chatPromptTemplate.pipe(tradeAI);
+    const result = await pipeline.invoke({ input: text, examples });
+    console.log(result);
+    return result;
+}
+
+// runTradeAI('I want to buy 10 BTC').then(console.log).catch(console.error);
