@@ -39,7 +39,7 @@ export default function DrawerModal({
   handleToggleModal,
   typeAction,
   isOpen,
-  cryptos = [],
+  cryptos = assetList,
 }: TokenListModalProps) {
   return (
     <Drawer open={isOpen} onOpenChange={handleToggleModal}>

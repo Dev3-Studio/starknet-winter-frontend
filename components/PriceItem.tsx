@@ -12,13 +12,13 @@ export function PriceItem({ Ticker, PairID, Decimals }: PriceItemProps) {
 
   useEffect(() => {
     async function fetchPrice() {
-      const fetchedPrice = await get_asset_price_median(PairID, Decimals);
-      setPrice(fetchedPrice);
+      // const fetchedPrice = await get_asset_price_median(PairID, Decimals);
+      // setPrice(fetchedPrice);
     }
     fetchPrice();
   }, [PairID, Decimals]);
   return (
-    <div>
+    <div className='flex flex-row justify-between'>
       <div>{Ticker}</div>
       {price ? (
         <div>
