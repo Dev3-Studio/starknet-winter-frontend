@@ -1,8 +1,7 @@
-import { SearchIcon, XIcon } from 'lucide-react';
-import { Button } from './shadcn/button';
+'use client';
+import { SearchIcon } from 'lucide-react';
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
@@ -10,32 +9,27 @@ import {
   DrawerTitle,
 } from '@/components/shadcn/drawer';
 
+import { PriceItemProps } from '@/objects/PriceItem';
+import { PriceItem } from '@/components/PriceItem';
+import { assetList } from '@/hooks/findPrice';
+
 interface TokenListModalProps {
   handleToggleModal: () => void;
   typeAction: string;
   isOpen: boolean;
-  cryptos?: Array<string>;
+  cryptos: Array<PriceItemProps>;
 }
 
-const Cryptos = [
-  'ETH',
-  'BTC',
-  'ADA',
-  'SOL',
-  'XRP',
-  'DOGE',
-  'BNB',
-  'LTC',
-  'DOT',
-  'SHIB',
-  'AVAX',
-];
-
-function CryptoList({ cryptos }: { cryptos: string[] }) {
+function CryptoList({ cryptos }: { cryptos: Array<PriceItemProps> }) {
   return (
     <div className='list-none pl-5 flex flex-col gap-4 pb-3 w-full text-left'>
       {cryptos.map((crypto, index) => (
-        <div key={index}>{crypto}</div>
+        <PriceItem
+          key={index}
+          Ticker={crypto.Ticker}
+          PairID={crypto.PairID}
+          Decimals={crypto.Decimals}
+        />
       ))}
     </div>
   );
@@ -64,7 +58,7 @@ export default function DrawerModal({
             />
           </div>
           <div className='max-h-[250px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pb-4'>
-            <CryptoList cryptos={Cryptos} />
+            <CryptoList cryptos={cryptos} />
           </div>
         </DrawerHeader>
         <DrawerFooter></DrawerFooter>

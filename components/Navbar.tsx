@@ -49,7 +49,7 @@ export const Navbar: React.FC<{ className?: string }> = ({ className }) => {
               activeIndex === index ? 'active:bg-accent' : 'bg-accent'
             )}
           />
-          <p className='text-muted-foreground'>{obj.name}</p>
+          <p className='text-muted-foreground font-semibold'>{obj.name}</p>
         </div>
       ))}
     </div>
