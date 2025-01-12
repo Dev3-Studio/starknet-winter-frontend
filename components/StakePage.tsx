@@ -1,4 +1,7 @@
+"use client";
+
 import { BellRing, Check } from "lucide-react"
+import { useState } from "react";
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/shadcn/button"
@@ -10,7 +13,11 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/shadcn/card"
-//import { Switch } from "@/components/ui/switch"
+import { ConnectWalletButton } from '@/components/ConnectWalletButton';
+//import { Switch } from "@/components/ui/switch";
+
+
+
 
 const notifications = [
     {
@@ -24,32 +31,47 @@ const notifications = [
     },
 ]
 
+
+
 type CardProps = React.ComponentProps<typeof Card>
 
 export default function StakeCard ({ className, ...props }: CardProps) {
+    const conversionRate = 10;
+    const [starkcoinAmount, setStarkcoinAmount] = useState<string>("");
+
+    const dollarAmount = setStarkcoinAmount
+        ? (parseFloat(starkcoinAmount) * conversionRate).toFixed(2)
+        : "0.00";
+
     return (
         <Card className={cn("w-[380px]", className)} {...props}>
             <CardHeader>
                 <CardTitle>Stake</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
-                <div className=" flex items-center space-x-4 rounded-md border p-4">
+                <div className="flex items-center space-x-4 rounded-md border p-4">
                     <BellRing />
-                    <div className="flex-1 space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                            Place holder
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                            Place holder
+                    {/* Input Section */}
+                    <div className="flex flex-col items-end space-y-2">
+                        <input
+                            type="number"
+                            placeholder="Enter StarkCoin amount"
+                            value={starkcoinAmount}
+                            onChange={(e) => setStarkcoinAmount(e.target.value)}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                        <p className="text-sm text-gray-500">
+                            ≈ ${dollarAmount}
                         </p>
                     </div>
                     {/*<Switch />*/}
                 </div>
 
-                <div>
-                    <Button className="w-full p-4 border">
+                <div className="w-full">
+                    {/*<ConnectWalletButton/>*/}
+                    <button className="w-full bg-purple-500 px-8 py-2 rounded-[8px]">
                         Connect Wallet
-                    </Button>
+                    </button>
                 </div>
 
                 <div>
