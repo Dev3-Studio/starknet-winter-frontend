@@ -2,18 +2,19 @@
 
 import { Button } from '@/components/shadcn/button';
 import { ArrowDownUpIcon, ChevronDown } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
 import { Price } from '@/objects/Price';
-import { PriceItemProps } from '@/objects/PriceItem';
 import { get_asset_price_median } from '@/hooks/findPrice';
 import { assetList } from '@/objects/AssetList';
+import { PriceItemProps } from '@/objects/PriceItem';
 
 interface SellCompProps {
   handleToggleModal: (sell: string) => void;
+  isSell: Price | any;
 }
 
-const SellComp = ({ handleToggleModal }: SellCompProps) => {
+const SellComp = ({ handleToggleModal, isSell }: SellCompProps) => {
   return (
     <div className='bg-gray-500 shadow-md rounded-[10px] p-2 flex flex-row justify-between'>
       <div className='flex flex-col gap-2'>
@@ -30,11 +31,11 @@ const SellComp = ({ handleToggleModal }: SellCompProps) => {
       </div>
       <div className='flex items-center text-xl text-left h-full '>
         <Button
-          className='rounded-full bg-accent flex text-primary-foreground gap-4 w-32'
+          className='rounded-full bg-accent flex text-primary-foreground gap-4 w-max-40'
           onClick={() => handleToggleModal('Sell')}
         >
           <img src='/Sushi.webp' className='w-6 h-6 rounded-full' />
-          <p>SUSHI</p>
+          <p>{isSell ? isSell.Name : ''}</p>
           <ChevronDown />
         </Button>
       </div>
@@ -44,9 +45,10 @@ const SellComp = ({ handleToggleModal }: SellCompProps) => {
 
 interface BuyCompProps {
   handleToggleModal: (buy: string) => void;
+  isBuy: Price | any;
 }
 
-const BuyComp = ({ handleToggleModal }: BuyCompProps) => {
+const BuyComp = ({ handleToggleModal, isBuy }: BuyCompProps) => {
   return (
     <div className='bg-primary shadow-md rounded-[10px] p-2 flex flex-row justify-between'>
       <div className='flex flex-col gap-2'>
@@ -63,11 +65,11 @@ const BuyComp = ({ handleToggleModal }: BuyCompProps) => {
       </div>
       <div className='flex items-center text-xl text-left h-full '>
         <Button
-          className='rounded-full bg-accent flex text-primary-foreground gap-4 w-32'
+          className='rounded-full bg-accent flex text-primary-foreground gap-4 w-max-40'
           onClick={() => handleToggleModal('Buy')}
         >
           <img src='/ethereum.webp' className='w-6 h-6 rounded-full' />
-          <p>ETH</p>
+          <p>{isBuy ? isBuy.Name : ''}</p>
           <ChevronDown />
         </Button>
       </div>
@@ -82,7 +84,7 @@ const SwapComp = () => {
     setSwapped(!isSwapped);
     setTimeout(() => {
       setSwapped(false);
-    }, 150);
+    }, 80);
   }
 
   return (
@@ -95,13 +97,24 @@ const SwapComp = () => {
   );
 };
 
-const SwapPage = () => {
-  const [price, setPrice] = useState<Price[]>([]);
+const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
   const [typeAction, setAction] = useState('');
+  const [price, setPrice] = useState<Price[]>([]);
+  const [isBuy, setBuy] = useState<PriceItemProps>();
+  const [isSell, setSell] = useState<PriceItemProps>();
 
   useEffect(() => {
-    async function fetchPrice() {
+    const randomBuy: PriceItemProps =
+      assetList[Math.floor(Math.random() * assetList.length)];
+    const randomSell: PriceItemProps =
+      assetList[Math.floor(Math.random() * assetList.length)];
+
+    setBuy(randomBuy);
+    setSell(randomSell);
+    console.log('Buy:', randomBuy);
+    console.log('Sell:', randomSell);
+    const fetchPrice = async () => {
       if (price.length === assetList.length) {
         return;
       }
@@ -113,15 +126,16 @@ const SwapPage = () => {
           asset.Decimals
         );
         prices.push({
+          Name: asset.Name,
           Ticker: asset.Ticker,
           priceInCrypto: fetchedPrice.priceInCrypto,
           priceInUSD: fetchedPrice.priceInUSD,
         });
       }
       setPrice(prices);
-    }
+    };
     fetchPrice();
-  }, [price, assetList]);
+  }, []);
 
   const handleToggleModal = (action: string) => {
     setAction(action);
@@ -132,13 +146,13 @@ const SwapPage = () => {
     <div className='flex flex-col items-center h-screen bg-transparent p-12'>
       <div className='flex flex-col gap-2 w-full'>
         {/* Sell Comp */}
-        <SellComp handleToggleModal={handleToggleModal} />
+        <SellComp handleToggleModal={handleToggleModal} isSell={isSell} />
 
         {/* Swap Feature */}
         <SwapComp />
 
         {/* Buy Comp */}
-        <BuyComp handleToggleModal={handleToggleModal} />
+        <BuyComp handleToggleModal={handleToggleModal} isBuy={isBuy} />
 
         <DrawerModal
           handleToggleModal={handleToggleModal}

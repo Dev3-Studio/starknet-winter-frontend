@@ -14,7 +14,7 @@ import { PriceItem } from '@/components/PriceItem';
 
 import { Price } from '@/objects/Price';
 
-interface TokenListModalProps {
+interface DrawerModalProps {
   handleToggleModal: () => void;
   typeAction: string;
   isOpen: boolean;
@@ -32,6 +32,7 @@ function CryptoList({ cryptos }: CryptoListProps) {
         cryptos.map((crypto, index) => (
           <PriceItem
             key={index}
+            Name={crypto.Name}
             Ticker={crypto.Ticker}
             priceInCrypto={crypto.priceInCrypto}
             priceInUSD={crypto.priceInUSD}
@@ -49,7 +50,7 @@ export default function DrawerModal({
   typeAction,
   isOpen,
   cryptos = [],
-}: TokenListModalProps) {
+}: DrawerModalProps) {
   return (
     <Drawer open={isOpen} onOpenChange={handleToggleModal}>
       <DrawerContent>
