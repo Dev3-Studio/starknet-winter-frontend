@@ -16,6 +16,8 @@ import { Price } from '@/objects/Price';
 
 interface DrawerModalProps {
   handleToggleModal: () => void;
+  handleChooseCrypto: (arg: string, action: string) => void;
+
   typeAction: string;
   isOpen: boolean;
   cryptos: Array<Price>;
@@ -23,19 +25,24 @@ interface DrawerModalProps {
 
 interface CryptoListProps {
   cryptos: Array<Price>;
+  typeAction: string;
+  handleChooseCrypto: (arg: string) => void;
 }
 
-function CryptoList({ cryptos }: CryptoListProps) {
+function CryptoList({
+  cryptos,
+  typeAction,
+  handleChooseCrypto,
+}: CryptoListProps) {
   return (
     <div className='list-none pl-5 flex flex-col gap-4 pb-3 w-full text-left'>
       {cryptos ? (
         cryptos.map((crypto, index) => (
           <PriceItem
             key={index}
-            Name={crypto.Name}
-            Ticker={crypto.Ticker}
-            priceInCrypto={crypto.priceInCrypto}
-            priceInUSD={crypto.priceInUSD}
+            price={crypto}
+            typeAction={typeAction}
+            handleChooseCrypto={handleChooseCrypto}
           />
         ))
       ) : (
@@ -47,6 +54,7 @@ function CryptoList({ cryptos }: CryptoListProps) {
 
 export default function DrawerModal({
   handleToggleModal,
+  handleChooseCrypto,
   typeAction,
   isOpen,
   cryptos = [],
@@ -68,7 +76,11 @@ export default function DrawerModal({
             />
           </div>
           <div className='max-h-[250px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pb-4'>
-            <CryptoList cryptos={cryptos} />
+            <CryptoList
+              cryptos={cryptos}
+              typeAction={typeAction}
+              handleChooseCrypto={handleChooseCrypto}
+            />
           </div>
         </DrawerHeader>
         <DrawerFooter></DrawerFooter>
