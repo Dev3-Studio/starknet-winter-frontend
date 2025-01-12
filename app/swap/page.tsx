@@ -2,8 +2,12 @@
 
 import { Button } from '@/components/shadcn/button';
 import { ArrowDownUpIcon, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
+import { Price } from '@/objects/Price';
+import { PriceItemProps } from '@/objects/PriceItem';
+import { get_asset_price_median } from '@/hooks/findPrice';
+import { assetList } from '@/objects/AssetList';
 
 interface SellCompProps {
   handleToggleModal: (sell: string) => void;
@@ -92,8 +96,32 @@ const SwapComp = () => {
 };
 
 const SwapPage = () => {
+  const [price, setPrice] = useState<Price[]>([]);
   const [isOpen, setOpen] = useState(false);
   const [typeAction, setAction] = useState('');
+
+  useEffect(() => {
+    async function fetchPrice() {
+      if (price.length === assetList.length) {
+        return;
+      }
+
+      const prices = [];
+      for (const asset of assetList) {
+        const fetchedPrice = await get_asset_price_median(
+          asset.PairID,
+          asset.Decimals
+        );
+        prices.push({
+          Ticker: asset.Ticker,
+          priceInCrypto: fetchedPrice.priceInCrypto,
+          priceInUSD: fetchedPrice.priceInUSD,
+        });
+      }
+      setPrice(prices);
+    }
+    fetchPrice();
+  }, [price, assetList]);
 
   const handleToggleModal = (action: string) => {
     setAction(action);
@@ -116,6 +144,7 @@ const SwapPage = () => {
           handleToggleModal={handleToggleModal}
           typeAction={typeAction}
           isOpen={isOpen}
+          cryptos={price}
         />
       </div>
     </div>

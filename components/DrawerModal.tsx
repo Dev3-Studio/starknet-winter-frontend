@@ -1,4 +1,5 @@
 'use client';
+
 import { SearchIcon } from 'lucide-react';
 import {
   Drawer,
@@ -9,28 +10,36 @@ import {
   DrawerTitle,
 } from '@/components/shadcn/drawer';
 
-import { PriceItemProps } from '@/objects/PriceItem';
 import { PriceItem } from '@/components/PriceItem';
-import { assetList } from '@/hooks/findPrice';
+
+import { Price } from '@/objects/Price';
 
 interface TokenListModalProps {
   handleToggleModal: () => void;
   typeAction: string;
   isOpen: boolean;
-  cryptos: Array<PriceItemProps>;
+  cryptos: Array<Price>;
 }
 
-function CryptoList({ cryptos }: { cryptos: Array<PriceItemProps> }) {
+interface CryptoListProps {
+  cryptos: Array<Price>;
+}
+
+function CryptoList({ cryptos }: CryptoListProps) {
   return (
     <div className='list-none pl-5 flex flex-col gap-4 pb-3 w-full text-left'>
-      {cryptos.map((crypto, index) => (
-        <PriceItem
-          key={index}
-          Ticker={crypto.Ticker}
-          PairID={crypto.PairID}
-          Decimals={crypto.Decimals}
-        />
-      ))}
+      {cryptos ? (
+        cryptos.map((crypto, index) => (
+          <PriceItem
+            key={index}
+            Ticker={crypto.Ticker}
+            priceInCrypto={crypto.priceInCrypto}
+            priceInUSD={crypto.priceInUSD}
+          />
+        ))
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   );
 }
@@ -39,7 +48,7 @@ export default function DrawerModal({
   handleToggleModal,
   typeAction,
   isOpen,
-  cryptos = assetList,
+  cryptos = [],
 }: TokenListModalProps) {
   return (
     <Drawer open={isOpen} onOpenChange={handleToggleModal}>

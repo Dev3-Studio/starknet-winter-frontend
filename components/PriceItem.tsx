@@ -1,28 +1,12 @@
-import { useEffect, useState } from 'react';
-import { get_asset_price_median } from '../hooks/findPrice';
-import { PriceItemProps } from '@/objects/PriceItem';
+import { Price } from '@/objects/Price';
 
-interface Price {
-  priceInCrypto: number;
-  priceInUSD: number;
-}
-
-export function PriceItem({ Ticker, PairID, Decimals }: PriceItemProps) {
-  const [price, setPrice] = useState<Price | null>(null);
-
-  useEffect(() => {
-    async function fetchPrice() {
-      // const fetchedPrice = await get_asset_price_median(PairID, Decimals);
-      // setPrice(fetchedPrice);
-    }
-    fetchPrice();
-  }, [PairID, Decimals]);
+export function PriceItem({ Ticker, priceInCrypto, priceInUSD }: Price) {
   return (
     <div className='flex flex-row justify-between'>
       <div>{Ticker}</div>
-      {price ? (
+      {priceInCrypto ? (
         <div>
-          <div> {price.priceInCrypto}</div>
+          <div> {priceInCrypto}</div>
         </div>
       ) : (
         <div>Loading...</div>
