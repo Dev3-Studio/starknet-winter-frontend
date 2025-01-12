@@ -12,6 +12,7 @@
     "@langchain/core": "^0.3.27",
     "@langchain/google-genai": "^0.1.6",
     "@langchain/openai": "^0.3.16",
+    "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-slot": "^1.1.1",
     "@tanstack/react-query": "^5.62.10",
     "class-variance-authority": "^0.7.1",

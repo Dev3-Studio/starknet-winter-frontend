@@ -1,21 +1,24 @@
 'use server';
 import { z } from 'zod';
-import fs from 'fs';
-import path from 'path';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import tradeAIExamples from "./examples.json"
 import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages';
 import { getUuidV4 } from '@/utils/getUuidV4';
+// import fs from 'fs';
+// import path from 'path';
 
 const API_KEY = process.env.GOOGLE_API_KEY;
 if (!API_KEY) {
     throw new Error('GOOGLE_API_KEY is not set');
 }
 // Options:
-//'gemini-pro'
+// gemini-2.0-flash-exp
+// gemini-1.5-flash
+// gemini-1.5-flash-8b
+// gemini-1.5-pro
 
-const LLM_MODEL = 'gemini-pro';
+const LLM_MODEL = 'gemini-2.0-flash-exp';
 
 const llm = new ChatGoogleGenerativeAI(
         {
@@ -41,7 +44,11 @@ const settingsSchema = z.object({
 type ToolCallExample = {
     input: string;
     toolCallName: string;
-    toolCallOutput: Record<string, string>;
+    toolCallOutput: {
+        action: string;
+        token: string;
+        amount: number;
+    }
 };
 
 /**
@@ -90,9 +97,15 @@ export async function runTradeAI(text: string){
     
     const examples = tradeAIExamples.flatMap(toolExampleToMessages);
     const pipeline = chatPromptTemplate.pipe(tradeAI);
-    const result = await pipeline.invoke({ input: text, examples });
+    // const result = await pipeline.invoke({ input: text, examples });
+    const result = await llm.invoke([[
+        "system",
+        systemPrompt,
+    ],
+        ["human", text],]
+        );
     console.log(result);
-    return result;
+    return result.content as string;
 }
 
-// runTradeAI('I want to buy 10 BTC').then(console.log).catch(console.error);
+runTradeAI('I want to buy 10 BTC').then(console.log).catch(console.error);
