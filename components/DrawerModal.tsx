@@ -1,70 +1,86 @@
-import { SearchIcon, XIcon } from "lucide-react";
-import { Button } from "./shadcn/button";
+'use client';
+
+import { SearchIcon } from 'lucide-react';
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-} from "@/components/shadcn/drawer";
+} from '@/components/shadcn/drawer';
 
-interface TokenListModalProps {
+import { PriceItem } from '@/components/PriceItem';
+
+import { Price } from '@/objects/Price';
+
+interface DrawerModalProps {
   handleToggleModal: () => void;
+  handleChooseCrypto: (arg: string, action: string) => void;
+
   typeAction: string;
   isOpen: boolean;
-  cryptos?: Array<string>;
+  cryptos: Array<Price>;
 }
 
-const Cryptos = [
-  "ETH",
-  "BTC",
-  "ADA",
-  "SOL",
-  "XRP",
-  "DOGE",
-  "BNB",
-  "LTC",
-  "DOT",
-  "SHIB",
-  "AVAX",
-];
+interface CryptoListProps {
+  cryptos: Array<Price>;
+  typeAction: string;
+  handleChooseCrypto: (arg: string, action: string) => void;
+}
 
-function CryptoList({ cryptos }: { cryptos: string[] }) {
+function CryptoList({
+  cryptos,
+  typeAction,
+  handleChooseCrypto,
+}: CryptoListProps) {
   return (
-    <div className="list-none pl-5 flex flex-col gap-4 pb-3 w-full text-left">
-      {cryptos.map((crypto, index) => (
-        <div key={index}>{crypto}</div>
-      ))}
+    <div className='list-none pl-5 flex flex-col gap-4 pb-3 w-full text-left'>
+      {cryptos ? (
+        cryptos.map((crypto, index) => (
+          <PriceItem
+            key={index}
+            price={crypto}
+            typeAction={typeAction}
+            onClick={() => handleChooseCrypto(crypto.Ticker, typeAction)}
+          />
+        ))
+      ) : (
+        <div>Loading...</div>
+      )}
     </div>
   );
 }
 
 export default function DrawerModal({
   handleToggleModal,
+  handleChooseCrypto,
   typeAction,
   isOpen,
   cryptos = [],
-}: TokenListModalProps) {
+}: DrawerModalProps) {
   return (
     <Drawer open={isOpen} onOpenChange={handleToggleModal}>
       <DrawerContent>
-        <DrawerHeader className="space-y-4">
+        <DrawerHeader className='space-y-4'>
           <DrawerTitle>{typeAction}</DrawerTitle>
           <DrawerDescription>
             Select a token from our default list or search for a token by symbol
             or address.
           </DrawerDescription>
-          <div className="flex gap-2 border-b-2 border-muted pb-2">
+          <div className='flex gap-2 border-b-2 border-muted pb-2'>
             <SearchIcon />
             <input
-              placeholder="Search Tokens"
-              className="bg-transparent outline-none placeholder-white"
+              placeholder='Search Tokens'
+              className='bg-transparent outline-none placeholder-white'
             />
           </div>
-          <div className="max-h-[250px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pb-4">
-            <CryptoList cryptos={Cryptos} />
+          <div className='max-h-[250px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 pb-4'>
+            <CryptoList
+              cryptos={cryptos}
+              typeAction={typeAction}
+              handleChooseCrypto={handleChooseCrypto}
+            />
           </div>
         </DrawerHeader>
         <DrawerFooter></DrawerFooter>
