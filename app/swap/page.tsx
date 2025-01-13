@@ -1,7 +1,5 @@
 'use client';
 
-import { Button } from '@/components/shadcn/button';
-import { ArrowDownUpIcon, ChevronDown } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
 import { Price } from '@/objects/Price';
@@ -10,26 +8,7 @@ import { assetList } from '@/objects/AssetList';
 import { AssetProps } from '@/objects/Asset';
 import { SellComp } from '@/components/SellComp';
 import { BuyComp } from '@/components/BuyComp';
-
-const SwapComp = () => {
-  const [isSwapped, setSwapped] = useState(false);
-
-  function handleSwap() {
-    setSwapped(!isSwapped);
-    setTimeout(() => {
-      setSwapped(false);
-    }, 80);
-  }
-
-  return (
-    <div
-      className='flex flex-col justify-center bg-accent items-center size-12 rounded-full self-center active:bg-foreground'
-      onClick={handleSwap}
-    >
-      <ArrowDownUpIcon color={isSwapped ? '#FFA600' : 'white'} size={28} />
-    </div>
-  );
-};
+import { SwapComp } from '@/components/SwapComp';
 
 const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
@@ -87,7 +66,6 @@ const SwapPage: React.FC = () => {
           return;
         }
         setBuy(buy);
-        console.log('Set Buy', buy);
       } else {
         const sell = assetList.find((p) => p.Ticker === ticker);
         if (sell === isBuy) {
@@ -95,7 +73,6 @@ const SwapPage: React.FC = () => {
           return;
         }
         setSell(sell);
-        console.log('Set Sell', sell);
       }
       setOpen(false);
     },
@@ -106,13 +83,26 @@ const SwapPage: React.FC = () => {
     <div className='flex flex-col items-center h-screen bg-transparent p-12'>
       <div className='flex flex-col gap-2 w-full'>
         {/* Sell Comp */}
-        <SellComp handleToggleModal={handleToggleModal} isSell={isSell} />
+        <SellComp
+          handleToggleModal={handleToggleModal}
+          isSell={isSell}
+          isBuy={isBuy}
+        />
 
         {/* Swap Feature */}
-        <SwapComp />
+        <SwapComp
+          isBuy={isBuy}
+          isSell={isSell}
+          setBuy={setBuy}
+          setSell={setSell}
+        />
 
         {/* Buy Comp */}
-        <BuyComp handleToggleModal={handleToggleModal} isBuy={isBuy} />
+        <BuyComp
+          handleToggleModal={handleToggleModal}
+          isBuy={isBuy}
+          isSell={isSell}
+        />
 
         <DrawerModal
           handleToggleModal={handleToggleModal}
