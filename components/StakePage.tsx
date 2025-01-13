@@ -1,20 +1,16 @@
 "use client";
 
-import { BellRing, Check } from "lucide-react"
 import { useState } from "react";
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/shadcn/button"
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/shadcn/card"
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
-//import { Switch } from "@/components/ui/switch";
 
 
 
@@ -49,23 +45,42 @@ export default function StakeCard ({ className, ...props }: CardProps) {
                 <CardTitle>Stake</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
-                <div className="flex items-center space-x-4 rounded-md border p-4">
-                    <BellRing />
-                    {/* Input Section */}
-                    <div className="flex flex-col items-end space-y-2">
-                        <input
-                            type="number"
-                            placeholder="Enter StarkCoin amount"
-                            value={starkcoinAmount}
-                            onChange={(e) => setStarkcoinAmount(e.target.value)}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-                        />
-                        <p className="text-sm text-gray-500">
-                            ≈ ${dollarAmount}
-                        </p>
+
+                {/* to do add to components.*/}
+
+                <div className="flex flex-row items-center justify-between bg-contrast-0a p-2 rounded-lg mb-2 border border-solid border-contrast-0 focus-within:border-contrast-4 hover:bg-contrast-0">
+                    {/* Icon Section */}
+                    <div className="flex flex-col">
+                        <div className="flex flex-row items-center gap-x-3">
+                            <p className="text-sm font-bold text-contrast-5">StarkCoin</p>
+                        </div>
                     </div>
-                    {/*<Switch />*/}
+                    {/* Input Section */}
+                    <div className="flex flex-col items-end">
+                        <div className="tooltip_inputWrap___XCbD">
+                            <input
+                                className="numericInput_input__Wo6Z3 !bg-transparent !p-0 !h-fit !m-0 !text-right !text-xl !text-contrast-5 !font-bold"
+                                tabIndex="1"
+                                type="text"
+                                inputMode="decimal"
+                                pattern="[0-9]*"
+                                step="any"
+                                title=""
+                                min="0"
+                                max="1000000"
+                                placeholder="0.00"
+                                value={starkcoinAmount}
+                                onChange={(e) => setStarkcoinAmount(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex justify-end">
+                            <p className="text-sm font-normal text-right text-contrast-3">
+                                ${starkcoinAmount ? dollarAmount : "0.00"}
+                            </p>
+                        </div>
+                    </div>
                 </div>
+
 
                 <div className="w-full">
                     {/*<ConnectWalletButton/>*/}
@@ -80,7 +95,7 @@ export default function StakeCard ({ className, ...props }: CardProps) {
                             key={index}
                             className="mb-4 grid grid-cols-[25px_1fr] items-start pt-4 pb-4 last:mb-0 last:pb-0"
                         >
-                            <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                            <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500"/>
                             <div className="space-y-1">
                                 <p className="text-sm font-medium leading-none">
                                     {notification.title}
