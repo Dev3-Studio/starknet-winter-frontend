@@ -3,19 +3,19 @@ import { Price } from '@/objects/Price';
 interface PriceItemProps {
   price: Price;
   typeAction: string;
-  handleChooseCrypto: (arg: string, action: string) => void;
+  onClick: () => void;
 }
 
 const PriceItem: React.FC<PriceItemProps> = ({
   price,
   typeAction,
-  handleChooseCrypto,
+  onClick,
 }: PriceItemProps) => {
   console.log('Action', typeAction);
   return (
     <div
       className='flex flex-row justify-between pr-5'
-      onClick={() => handleChooseCrypto(price.Name, typeAction)}
+      onClick={() => onClick()}
     >
       <div>{price.Name}</div>
       {price.priceInCrypto ? (

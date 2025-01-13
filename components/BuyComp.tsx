@@ -1,6 +1,7 @@
 import { Price } from '@/objects/Price';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
+import { cn } from '@/lib/utils';
 interface BuyCompProps {
   handleToggleModal: (buy: string) => void;
   isBuy: Price | any;
@@ -13,7 +14,9 @@ const BuyComp = ({ handleToggleModal, isBuy }: BuyCompProps) => {
         <span className='opacity-80 text-sm'>Buy</span>
         <input
           placeholder='0.00'
-          className='w-2/3 bg-transparent placeholder-inherit'
+          className={cn(
+            'w-2/3 bg-transparent placeholder-inherit focus-within:border-none focus:outline-none'
+          )}
         />
 
         <span className='flex opacity-80 items-baseline'>

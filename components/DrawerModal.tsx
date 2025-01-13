@@ -26,7 +26,7 @@ interface DrawerModalProps {
 interface CryptoListProps {
   cryptos: Array<Price>;
   typeAction: string;
-  handleChooseCrypto: (arg: string) => void;
+  handleChooseCrypto: (arg: string, action: string) => void;
 }
 
 function CryptoList({
@@ -42,7 +42,7 @@ function CryptoList({
             key={index}
             price={crypto}
             typeAction={typeAction}
-            handleChooseCrypto={handleChooseCrypto}
+            onClick={() => handleChooseCrypto(crypto.Ticker, typeAction)}
           />
         ))
       ) : (

@@ -1,4 +1,4 @@
-export interface PriceItemProps {
+export interface AssetProps {
   Name: string;
   Ticker: string;
   PairID: string;

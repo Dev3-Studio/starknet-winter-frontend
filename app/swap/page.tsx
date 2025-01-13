@@ -5,9 +5,9 @@ import { ArrowDownUpIcon, ChevronDown } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
 import { Price } from '@/objects/Price';
-import { get_asset_price_median } from '@/hooks/findPrice';
+import { get_asset_price_median } from '@/actions/findPrice';
 import { assetList } from '@/objects/AssetList';
-import { PriceItemProps } from '@/objects/PriceItem';
+import { AssetProps } from '@/objects/Asset';
 import { SellComp } from '@/components/SellComp';
 import { BuyComp } from '@/components/BuyComp';
 
@@ -35,13 +35,13 @@ const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
   const [typeAction, setAction] = useState('');
   const [price, setPrice] = useState<Price[]>([]);
-  const [isBuy, setBuy] = useState<PriceItemProps>();
-  const [isSell, setSell] = useState<PriceItemProps>();
+  const [isBuy, setBuy] = useState<AssetProps>();
+  const [isSell, setSell] = useState<AssetProps>();
 
   useEffect(() => {
-    const randomBuy: PriceItemProps =
+    const randomBuy: AssetProps =
       assetList[Math.floor(Math.random() * assetList.length)];
-    const randomSell: PriceItemProps =
+    const randomSell: AssetProps =
       assetList[Math.floor(Math.random() * assetList.length)];
 
     randomBuy != randomSell;
@@ -82,10 +82,18 @@ const SwapPage: React.FC = () => {
     (ticker: string, action: string) => {
       if (action === 'Buy') {
         const buy = assetList.find((p) => p.Ticker === ticker);
+        if (buy === isSell) {
+          console.error('Cannot buy the same asset');
+          return;
+        }
         setBuy(buy);
         console.log('Set Buy', buy);
       } else {
         const sell = assetList.find((p) => p.Ticker === ticker);
+        if (sell === isBuy) {
+          console.error('Cannot buy the same asset');
+          return;
+        }
         setSell(sell);
         console.log('Set Sell', sell);
       }
