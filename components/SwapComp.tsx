@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { ArrowDownUpIcon } from 'lucide-react';
 import { AssetProps } from '@/objects/Asset';
+import { PriceProps } from '@/objects/Price';
 
 interface SwapCompProps {
-  isBuy: AssetProps | undefined;
-  isSell: AssetProps | undefined;
-  setBuy: (asset: AssetProps) => void;
-  setSell: (asset: AssetProps) => void;
+  isBuy: PriceProps | undefined;
+  isSell: PriceProps | undefined;
+  setBuy: (asset: PriceProps) => void;
+  setSell: (asset: PriceProps) => void;
 }
 
 const SwapComp: React.FC<SwapCompProps> = ({

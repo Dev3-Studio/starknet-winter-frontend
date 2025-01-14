@@ -1,36 +1,29 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import { cn } from '@/lib/utils';
-import { get_asset_price_median } from '@/actions/findPrice';
-import { AssetProps } from '@/objects/Asset';
+import { PriceProps } from '@/objects/Price';
 
 interface BuyCompProps {
   handleToggleModal: (buy: string) => void;
-  isSell: AssetProps | undefined;
-  isBuy: AssetProps | undefined;
+  isSell: PriceProps | undefined;
+  isBuy: PriceProps | undefined;
 }
 
 const BuyComp = ({ handleToggleModal, isBuy, isSell }: BuyCompProps) => {
-  const [price, setPrice] = useState<{
-    priceInCrypto: number;
-    priceInUSD: number;
-  }>({ priceInCrypto: 0, priceInUSD: 0 });
   const [amount, setAmount] = useState(0);
 
-  useEffect(() => {
-    async function fetchPrice() {
-      if (isBuy) {
-        const fetchedPrice = await get_asset_price_median(
-          isBuy.PairID,
-          isBuy.Decimals
-        );
-        setPrice(fetchedPrice);
-      }
+  const handleAmountChange = (value: string) => {
+    if (!isBuy) {
+      console.error('isBuy is undefined');
+      setAmount(0);
+      return;
     }
-    fetchPrice();
-  }, [isBuy, isSell]);
+
+    const newAmount = value ? Number(value) * (isBuy.priceInCrypto || 0) : 0;
+    setAmount(newAmount);
+  };
 
   return (
     <div className='bg-primary shadow-md rounded-[10px] p-2 flex flex-row justify-between'>
@@ -42,13 +35,7 @@ const BuyComp = ({ handleToggleModal, isBuy, isSell }: BuyCompProps) => {
           className={cn(
             'w-2/3 bg-transparent placeholder-inherit focus-within:border-none focus:outline-none'
           )}
-          onChange={(e) =>
-            setAmount(
-              e.target.value
-                ? Number(e.target.value) * (price.priceInCrypto || 0)
-                : 0
-            )
-          }
+          onChange={(e) => handleAmountChange(e.target.value)}
         />
 
         <span className='flex opacity-80 items-baseline'>
