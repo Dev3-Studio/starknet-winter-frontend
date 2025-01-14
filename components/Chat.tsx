@@ -4,16 +4,15 @@ import { Button } from '@/components/shadcn/button';
 import { SendHorizontal } from 'lucide-react';
 import ChatBubble from '@/components/ChatBubble';
 import { useRef, useState } from 'react';
-import { runTradeAI } from '@/langchain';
+import { LLMMessage, runTradeAI } from '@/langchain';
+import { AIMessage, HumanMessage } from '@langchain/core/messages';
 
-type Message = {
-    text: string;
-    side: 'left' | 'right';
-    sender: string;
+type ChatBubbleProps = {
+    contents: JSX.Element;
+    message: LLMMessage;
 }
-
 export default function Chat(){
-    const [messages, setMessages] = useState<Message[]>([]);
+    const [messages, setMessages] = useState<LLMMessage[]>([]);
     
     const inputRef = useRef<HTMLInputElement>(null)
     
@@ -21,12 +20,35 @@ export default function Chat(){
         const message = inputRef.current?.value
         if (message) {
             // clear message
-            setMessages((prev) => [...prev, { text: message, side: 'right', sender: 'You' }])
+            const newMessage = new HumanMessage(message);
+            
+            // send message to AI for response
+            const response = await runTradeAI([...messages, newMessage]);
+            setMessages((prev) => [...prev, newMessage])
             inputRef.current.value = '';
 
-            // send message to AI for response
-            const response = await runTradeAI(message);
-            setMessages((prev) => [...prev, { text: response, side: 'left', sender: 'AI' }])
+            
+            const tempMessage = new AIMessage('');
+            tempMessage.content = response.content;
+            tempMessage.tool_calls = response.tool_calls;
+            
+            for (const toolCall of tempMessage.tool_calls ?? []) {
+                switch (toolCall.name) {
+                    case 'stakeConfirm':
+                        console.log('stakeConfirm', toolCall);
+                        
+                        
+                        break;
+                    case 'swapConfirm':
+                        console.log('swapConfirm', toolCall);
+                        break;
+                    default:
+                        console.log('Unknown tool call', toolCall);
+                        break;
+                }
+            }
+            
+            setMessages((prev) => [...prev, tempMessage])
         }
     }
     
@@ -35,15 +57,19 @@ export default function Chat(){
             sendMessage().catch();
         }
     }
-    
+    function isAIMessage(message: LLMMessage){
+        return message instanceof AIMessage;
+    }
     return(
         <div>
             <h1 className="pb-2 text-center">Chat</h1>
             
             <div className="min-h-full overflow-y-scroll px-2 grid gap-2 w-full">
-                {messages.map((message, index) => <ChatBubble text={message.text} key={index} side={message.side} sender={message.sender}/>)}
+                {messages.map((message, index) => <ChatBubble contents={<p>{message.text}</p>} key={index}
+                                                              side={isAIMessage(message) ? 'left' : 'right'}
+                                                              sender={isAIMessage(message) ? "AI": "You"}/>
+                )}
             </div>
-            
             
             <div className="flex w-full absolute bottom-0">
                 <Input type="text" placeholder="Ask a Question..." ref={inputRef} onKeyDown={handleKeyDown} />

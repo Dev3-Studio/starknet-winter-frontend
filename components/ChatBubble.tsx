@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-export default function ChatBubble(props: {text: string, side: 'left' | 'right', sender: string}){
+export default function ChatBubble(props: {contents: JSX.Element, side: 'left' | 'right', sender: string}){
     
     return(
         <div className="">
@@ -14,7 +14,7 @@ export default function ChatBubble(props: {text: string, side: 'left' | 'right',
                 
                 <div className="flex flex-col">
                     <div className={cn('bg-secondary rounded-xl w-fit px-4 inline-block')}>
-                        <p>{props.text}</p>
+                        {props.contents}
                     </div>
                     <p className={cn('text-gray-500 px-2', props.side === 'left' ? 'text-left' : 'text-right')}>{props.sender}</p>
                 </div>

@@ -1,12 +1,9 @@
 'use server';
 import { z } from 'zod';
-import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import tradeAIExamples from "./examples.json"
-import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages';
+import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { getUuidV4 } from '@/utils/getUuidV4';
-// import fs from 'fs';
-// import path from 'path';
+import { tool } from '@langchain/core/tools';
 
 const API_KEY = process.env.GOOGLE_API_KEY;
 if (!API_KEY) {
@@ -25,20 +22,38 @@ const llm = new ChatGoogleGenerativeAI(
             apiKey: API_KEY,
             model: LLM_MODEL,
         },
-    
 );
 
-enum Actions {
-    Buy,
-    Sell,
-    // Swap,
-}
 
-const settingsSchema = z.object({
-    action: z.nativeEnum(Actions).describe('Actions that the bot can perform'),
-    token: z.string().describe('The token to perform the action on'),
-    amount: z.number().describe('The amount of the token to buy/sell'),
-});
+const stakeSchema = z.object({
+    token: z.string().describe('The token to stake'),
+    amount: z.number().describe('The amount of the token to stake'),
+})
+
+const swapSchema = z.object({
+    token1: z.string().describe('The token to swap from'),
+    token2: z.string().describe('The token to swap to'),
+    amountIn: z.number().optional().describe('The amount of token1 to swap'),
+    amountOut: z.number().optional().describe('The amount of token2 to receive'),
+})
+
+const stakeTool = tool(
+    () => undefined,
+    {
+        name: 'stakeConfirm',
+        description: 'A tool that generates a stake confirmation',
+        schema: stakeSchema,
+    }
+)
+
+const swapTool = tool(
+    () => undefined,
+    {
+        name: 'swapConfirm',
+        description: 'A tool that generates a swap confirmation',
+        schema: swapSchema,
+    }
+)
 
 
 type ToolCallExample = {
@@ -79,33 +94,22 @@ function toolExampleToMessages(example: ToolCallExample): BaseMessage[] {
     ];
 }
 
-// create LLM with functions
-const tradeAI = llm.withStructuredOutput(settingsSchema, {name: 'tradeAI'});
 // in same folder in system.txt
 // const systemPrompt = fs.readFileSync(path.join(__dirname, 'system.txt')).toString();
-const systemPrompt = `You are a crypto trading LLM. Your job is to take a user prompt and convert it into a structured format.
-Choose the most appropriate action based on the user's request. The action can be 'buy' or 'sell'.
+const systemPrompt = new SystemMessage(`You are Tele. Your job is to take a user prompt and convert it into a structured format.
+Choose the most appropriate action based on the user's request.
 Identify the most appropriate token based on the user's description. The token will be a cryptocurrency specified by the user.
-`
-const chatPromptTemplate = ChatPromptTemplate.fromMessages([
-    ['system', systemPrompt],
-    new MessagesPlaceholder('examples'),
-    ['user', '{input}'],
-]);
+If the user says to "buy" or "sell" tokens, create a swap with the stark token as the other token (this is the native token for starknet).
+`)
+const tools = [stakeTool, swapTool];
+const modelWithTools = llm.bind({
+    tools: tools,
+})
 
-export async function runTradeAI(text: string){
-    
-    const examples = tradeAIExamples.flatMap(toolExampleToMessages);
-    const pipeline = chatPromptTemplate.pipe(tradeAI);
-    // const result = await pipeline.invoke({ input: text, examples });
-    const result = await llm.invoke([[
-        "system",
-        systemPrompt,
-    ],
-        ["human", text],]
-        );
-    console.log(result);
-    return result.content as string;
+export type LLMMessage = (AIMessage | HumanMessage );
+
+export async function runTradeAI(messages: LLMMessage[]){
+    console.log(messages);
+    const result = await modelWithTools.invoke([systemPrompt, ...messages]);
+    return { content: result.content, tool_calls: result.tool_calls };
 }
-
-runTradeAI('I want to buy 10 BTC').then(console.log).catch(console.error);
