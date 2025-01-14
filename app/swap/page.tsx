@@ -1,66 +1,59 @@
 'use client';
 
-import { Button } from '@/components/shadcn/button';
-import { ArrowDownUpIcon, ChevronDown } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
-import { Price } from '@/objects/Price';
+import { PriceProps } from '@/types/Price';
 import { get_asset_price_median } from '@/actions/findPrice';
-import { assetList } from '@/objects/AssetList';
-import { AssetProps } from '@/objects/Asset';
+import assetList from '@/public/AssetList.json';
+import { AssetProps } from '@/types/Asset';
 import { SellComp } from '@/components/SellComp';
 import { BuyComp } from '@/components/BuyComp';
-
-const SwapComp = () => {
-  const [isSwapped, setSwapped] = useState(false);
-
-  function handleSwap() {
-    setSwapped(!isSwapped);
-    setTimeout(() => {
-      setSwapped(false);
-    }, 80);
-  }
-
-  return (
-    <div
-      className='flex flex-col justify-center bg-accent items-center size-12 rounded-full self-center active:bg-foreground'
-      onClick={handleSwap}
-    >
-      <ArrowDownUpIcon color={isSwapped ? '#FFA600' : 'white'} size={28} />
-    </div>
-  );
-};
+import { SwapComp } from '@/components/SwapComp';
 
 const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
   const [typeAction, setAction] = useState('');
-  const [price, setPrice] = useState<Price[]>([]);
-  const [isBuy, setBuy] = useState<AssetProps>();
-  const [isSell, setSell] = useState<AssetProps>();
+  const [price, setPrice] = useState<PriceProps[]>([]);
+  const [isBuy, setBuy] = useState<PriceProps>();
+  const [isSell, setSell] = useState<PriceProps>();
 
   useEffect(() => {
-    const randomBuy: AssetProps =
-      assetList[Math.floor(Math.random() * assetList.length)];
-    const randomSell: AssetProps =
-      assetList[Math.floor(Math.random() * assetList.length)];
+    const randomBuy: AssetProps = assetList[0];
+    const randomSell: AssetProps = assetList[1];
 
-    randomBuy != randomSell;
-
-    setBuy(randomBuy);
-    setSell(randomSell);
-    console.log('Buy:', randomBuy);
-    console.log('Sell:', randomSell);
     const fetchPrice = async () => {
       if (price.length === assetList.length) {
         return;
       }
 
       const prices = [];
+      let fetchedBuy: PriceProps | null = null;
+      let fetchedSell: PriceProps | null = null;
+
       for (const asset of assetList) {
         const fetchedPrice = await get_asset_price_median(
           asset.PairID,
           asset.Decimals
         );
+
+        // current asset matches the random buy or sell
+        if (asset.Name === randomBuy.Name) {
+          fetchedBuy = {
+            Name: asset.Name,
+            Ticker: asset.Ticker,
+            priceInCrypto: fetchedPrice.priceInCrypto,
+            priceInUSD: fetchedPrice.priceInUSD,
+          };
+        }
+        if (asset.Name === randomSell.Name) {
+          fetchedSell = {
+            Name: asset.Name,
+            Ticker: asset.Ticker,
+            priceInCrypto: fetchedPrice.priceInCrypto,
+            priceInUSD: fetchedPrice.priceInUSD,
+          };
+        }
+
         prices.push({
           Name: asset.Name,
           Ticker: asset.Ticker,
@@ -68,10 +61,20 @@ const SwapPage: React.FC = () => {
           priceInUSD: fetchedPrice.priceInUSD,
         });
       }
+
+      // Update the buy and sell state after all prices are fetched
+      if (fetchedBuy) {
+        setBuy(fetchedBuy);
+      }
+      if (fetchedSell) {
+        setSell(fetchedSell);
+      }
+
       setPrice(prices);
     };
+
     fetchPrice();
-  }, []);
+  }, [assetList, setBuy, setSell, setPrice]);
 
   const handleToggleModal = (action: string) => {
     setAction(action);
@@ -80,39 +83,72 @@ const SwapPage: React.FC = () => {
 
   const handleChooseCrypto = useCallback(
     (ticker: string, action: string) => {
-      if (action === 'Buy') {
-        const buy = assetList.find((p) => p.Ticker === ticker);
-        if (buy === isSell) {
-          console.error('Cannot buy the same asset');
-          return;
-        }
-        setBuy(buy);
-        console.log('Set Buy', buy);
-      } else {
-        const sell = assetList.find((p) => p.Ticker === ticker);
-        if (sell === isBuy) {
-          console.error('Cannot buy the same asset');
-          return;
-        }
-        setSell(sell);
-        console.log('Set Sell', sell);
+      const selectedAsset = price.find((p) => p.Ticker === ticker);
+
+      if (!selectedAsset) {
+        console.error('Asset not found');
+        return;
       }
+
+      if (action === 'Buy') {
+        if (selectedAsset.Ticker === isSell?.Ticker) {
+          console.error('Cannot buy the same asset being sold');
+          return;
+        }
+
+        const buyAsset: PriceProps = {
+          Name: selectedAsset.Name,
+          Ticker: selectedAsset.Ticker,
+          priceInCrypto: selectedAsset.priceInCrypto || 0, // Default or fetched value
+          priceInUSD: selectedAsset.priceInUSD || 0, // Default or fetched value
+        };
+
+        setBuy(buyAsset);
+      } else {
+        if (selectedAsset.Ticker === isBuy?.Ticker) {
+          console.error('Cannot sell the same asset being bought');
+          return;
+        }
+
+        const sellAsset: PriceProps = {
+          Name: selectedAsset.Name,
+          Ticker: selectedAsset.Ticker,
+          priceInCrypto: selectedAsset.priceInCrypto || 0, // Default or fetched value
+          priceInUSD: selectedAsset.priceInUSD || 0, // Default or fetched value
+        };
+
+        setSell(sellAsset);
+      }
+
       setOpen(false);
     },
-    [assetList, setBuy, setSell, setOpen] // Dependencies
+    [assetList, isBuy, isSell, setBuy, setSell, setOpen] // Dependencies
   );
 
   return (
     <div className='flex flex-col items-center h-screen bg-transparent p-12'>
       <div className='flex flex-col gap-2 w-full'>
         {/* Sell Comp */}
-        <SellComp handleToggleModal={handleToggleModal} isSell={isSell} />
+        <SellComp
+          handleToggleModal={handleToggleModal}
+          isSell={isSell}
+          isBuy={isBuy}
+        />
 
         {/* Swap Feature */}
-        <SwapComp />
+        <SwapComp
+          isBuy={isBuy}
+          isSell={isSell}
+          setBuy={setBuy}
+          setSell={setSell}
+        />
 
         {/* Buy Comp */}
-        <BuyComp handleToggleModal={handleToggleModal} isBuy={isBuy} />
+        <BuyComp
+          handleToggleModal={handleToggleModal}
+          isBuy={isBuy}
+          isSell={isSell}
+        />
 
         <DrawerModal
           handleToggleModal={handleToggleModal}

@@ -28,7 +28,7 @@ export const Navbar: React.FC<{ className?: string }> = ({ className }) => {
       )}
     >
       {[
-        { name: 'Staking', icon: Wallet, route: '/' },
+        { name: 'Staking', icon: Wallet, route: '/stake' },
         { name: 'Swap', icon: ArrowDownUp, route: '/swap' },
         { name: 'AI', icon: BrainCircuit, route: '/ai' },
         { name: 'Market', icon: ChartCandlestick, route: '/market' },
@@ -36,14 +36,14 @@ export const Navbar: React.FC<{ className?: string }> = ({ className }) => {
       ].map((obj, index) => (
         <div
           className={cn(
-            `w-full h-full flex flex-col text-center text-sm pb-4`,
+            `w-full h-full flex flex-col text-center text-sm pb-4 cursor-pointer`,
             activeIndex === index ? 'border-t-2 border-primary' : ''
           )}
           key={index}
+          onClick={() => handleButtonClick(index, obj.route)}
         >
           <obj.icon
             key={index}
-            onClick={() => handleButtonClick(index, obj.route)}
             className={cn(
               'size-5 text-primary-foreground m-auto shadow-none font-bold bg-accent rounded-none ',
               activeIndex === index ? 'active:bg-accent' : 'bg-accent'
