@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { ArrowDownUpIcon } from 'lucide-react';
-import { AssetProps } from '@/types/Asset';
 import { PriceProps } from '@/types/Price';
 
 interface SwapCompProps {

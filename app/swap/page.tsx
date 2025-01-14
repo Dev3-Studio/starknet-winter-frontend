@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
 import { PriceProps } from '@/types/Price';
-import { get_asset_price_median } from '@/actions/findPrice';
 import assetList from '@/public/AssetList.json';
-import { AssetProps } from '@/types/Asset';
 import { SellComp } from '@/components/SellComp';
 import { BuyComp } from '@/components/BuyComp';
 import { SwapComp } from '@/components/SwapComp';
+import { getAllPricesFormatted } from '@/actions/getAllPrices';
 
 const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
@@ -16,72 +15,26 @@ const SwapPage: React.FC = () => {
   const [price, setPrice] = useState<PriceProps[]>([]);
   const [isBuy, setBuy] = useState<PriceProps>();
   const [isSell, setSell] = useState<PriceProps>();
-
+  
+  const fetchPrice = async () => {
+    if (price.length === assetList.length) {
+      return;
+    }
+    
+    const prices = await getAllPricesFormatted();
+    setPrice(prices);
+  };
+  
   useEffect(() => {
-    const randomBuy: AssetProps = assetList[0];
-    const randomSell: AssetProps = assetList[1];
-
-    const fetchPrice = async () => {
-      if (price.length === assetList.length) {
-        return;
-      }
-
-      const prices = [];
-      let fetchedBuy: PriceProps | null = null;
-      let fetchedSell: PriceProps | null = null;
-
-      for (const asset of assetList) {
-        const fetchedPrice = await get_asset_price_median(
-          asset.PairID,
-          asset.Decimals
-        );
-
-        // current asset matches the random buy or sell
-        if (asset.Name === randomBuy.Name) {
-          fetchedBuy = {
-            Name: asset.Name,
-            Ticker: asset.Ticker,
-            priceInCrypto: fetchedPrice.priceInCrypto,
-            priceInUSD: fetchedPrice.priceInUSD,
-          };
-        }
-        if (asset.Name === randomSell.Name) {
-          fetchedSell = {
-            Name: asset.Name,
-            Ticker: asset.Ticker,
-            priceInCrypto: fetchedPrice.priceInCrypto,
-            priceInUSD: fetchedPrice.priceInUSD,
-          };
-        }
-
-        prices.push({
-          Name: asset.Name,
-          Ticker: asset.Ticker,
-          priceInCrypto: fetchedPrice.priceInCrypto,
-          priceInUSD: fetchedPrice.priceInUSD,
-        });
-      }
-
-      // Update the buy and sell state after all prices are fetched
-      if (fetchedBuy) {
-        setBuy(fetchedBuy);
-      }
-      if (fetchedSell) {
-        setSell(fetchedSell);
-      }
-
-      setPrice(prices);
-    };
-
-    fetchPrice();
-  }, [assetList, setBuy, setSell, setPrice]);
+    fetchPrice().catch();
+  }, []);
 
   const handleToggleModal = (action: string) => {
     setAction(action);
     setOpen(!isOpen);
   };
 
-  const handleChooseCrypto = useCallback(
+  const handleChooseCrypto =
     (ticker: string, action: string) => {
       const selectedAsset = price.find((p) => p.Ticker === ticker);
 
@@ -121,9 +74,7 @@ const SwapPage: React.FC = () => {
       }
 
       setOpen(false);
-    },
-    [assetList, isBuy, isSell, setBuy, setSell, setOpen] // Dependencies
-  );
+    };
 
   return (
     <div className='flex flex-col items-center h-screen bg-transparent p-12'>
