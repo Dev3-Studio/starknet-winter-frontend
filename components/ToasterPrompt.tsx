@@ -10,7 +10,7 @@ import {
   ToastViewport,
 } from "@/components/shadcn/toast"
 
-export const Toaster = () => {
+export const ToasterPrompt = () => {
   const { toasts } = useToast()
 
   return (

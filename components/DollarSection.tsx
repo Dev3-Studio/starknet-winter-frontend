@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
+import StarknetIcon from "../src/Images/StarknetIcon.png";
 
 export const DollarSection = () => {
     const conversionRate = 10;
@@ -16,6 +18,13 @@ export const DollarSection = () => {
             {/* Icon Section */}
             <div className="flex flex-col">
                 <div className="flex flex-row items-center gap-x-3">
+                    <Image
+                        src={StarknetIcon}
+                        alt="Starknet Icon"
+                        width={6}
+                        height={6}
+                        className="w-6 h-6"
+                    />
                     <p className="text-sm font-bold text-contrast-5">STRK</p>
                 </div>
             </div>
