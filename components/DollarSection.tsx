@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import StarknetIcon from "../src/Images/StarknetIcon.png";
+import StarknetIcon from "../src/Images/StarknetIcon.svg";
 
 export const DollarSection = () => {
     const conversionRate = 10;
@@ -21,9 +21,9 @@ export const DollarSection = () => {
                     <Image
                         src={StarknetIcon}
                         alt="Starknet Icon"
-                        width={6}
-                        height={6}
-                        className="w-6 h-6"
+                        width={24}
+                        height={24}
+                        className="w-10 h-10"
                     />
                     <p className="text-sm font-bold text-contrast-5">STRK</p>
                 </div>
