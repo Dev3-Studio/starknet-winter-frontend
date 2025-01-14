@@ -20,13 +20,12 @@ export default function Chat(){
         const message = inputRef.current?.value
         if (message) {
             // clear message
-            const newMessage = new HumanMessage(message);
+            inputRef.current.value = '';
             
             // send message to AI for response
-            const response = await runTradeAI([...messages, newMessage]);
+            const newMessage = new HumanMessage(message);
             setMessages((prev) => [...prev, newMessage])
-            inputRef.current.value = '';
-
+            const response = await runTradeAI([...messages, newMessage]);
             
             const tempMessage = new AIMessage('');
             tempMessage.content = response.content;
@@ -71,7 +70,7 @@ export default function Chat(){
                 )}
             </div>
             
-            <div className="flex w-full absolute bottom-0">
+            <div className="flex w-full absolute bottom-20">
                 <Input type="text" placeholder="Ask a Question..." ref={inputRef} onKeyDown={handleKeyDown} />
                 <Button onClick={sendMessage}>
                     <SendHorizontal />

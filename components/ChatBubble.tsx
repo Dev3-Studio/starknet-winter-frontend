@@ -8,7 +8,7 @@ export default function ChatBubble(props: {contents: JSX.Element, side: 'left' |
             
             <div className={cn("max-w-[50%]", props.side === 'left' ? 'float-left' : 'float-right')}>
                 <Avatar className={cn("mx-3", props.side === 'left' ? 'float-left' : 'float-right')}>
-                    <AvatarImage src="https://github.com/shadcn.png" alt="Avatar Image" />
+                    <AvatarImage src="https://github.com/shadcn.png" alt="Avatar Image"/>
                     <AvatarFallback>{props.sender}</AvatarFallback>
                 </Avatar>
                 
