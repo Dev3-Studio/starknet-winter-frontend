@@ -8,10 +8,10 @@ import { init } from "@telegram-apps/sdk-react";
 const queryClient = new QueryClient();
 
 function ContextProvider({ children }: { children: ReactNode }) {
-  // init();
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
+       init();
+      return (
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      );
 }
 
 export default ContextProvider;
