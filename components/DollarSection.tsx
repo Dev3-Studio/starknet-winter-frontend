@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import Image from "next/image";
-import StarknetIcon from "../src/Images/StarknetIcon.svg";
+import React, { useState } from 'react';
+import Image from 'next/image';
+import StarknetIcon from '../public/StarknetIcon.svg';
 
 export const DollarSection = () => {
     const conversionRate = 10;
