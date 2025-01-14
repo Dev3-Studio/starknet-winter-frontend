@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowDownUpIcon } from 'lucide-react';
-import { AssetProps } from '@/objects/Asset';
-import { PriceProps } from '@/objects/Price';
+import { AssetProps } from '@/types/Asset';
+import { PriceProps } from '@/types/Price';
 
 interface SwapCompProps {
   isBuy: PriceProps | undefined;
@@ -19,8 +19,6 @@ const SwapComp: React.FC<SwapCompProps> = ({
   const [isSwapped, setSwapped] = useState(false);
 
   function handleSwap() {
-    console.log('Swapping');
-
     if (isBuy && isSell) {
       console.log('Swapping..:', isBuy, isSell);
       if (!isSwapped) {

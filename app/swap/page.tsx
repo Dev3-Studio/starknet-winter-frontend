@@ -2,10 +2,10 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
-import { PriceProps } from '@/objects/Price';
+import { PriceProps } from '@/types/Price';
 import { get_asset_price_median } from '@/actions/findPrice';
-import { assetList } from '@/objects/AssetList';
-import { AssetProps } from '@/objects/Asset';
+import assetList from '@/public/AssetList.json';
+import { AssetProps } from '@/types/Asset';
 import { SellComp } from '@/components/SellComp';
 import { BuyComp } from '@/components/BuyComp';
 import { SwapComp } from '@/components/SwapComp';
@@ -18,10 +18,8 @@ const SwapPage: React.FC = () => {
   const [isSell, setSell] = useState<PriceProps>();
 
   useEffect(() => {
-    const randomBuy: AssetProps =
-      assetList[Math.floor(Math.random() * assetList.length)];
-    const randomSell: AssetProps =
-      assetList[Math.floor(Math.random() * assetList.length)];
+    const randomBuy: AssetProps = assetList[0];
+    const randomSell: AssetProps = assetList[1];
 
     const fetchPrice = async () => {
       if (price.length === assetList.length) {

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import { cn } from '@/lib/utils';
-import { PriceProps } from '@/objects/Price';
+import { PriceProps } from '@/types/Price';
 
 interface SellCompProps {
   handleToggleModal: (sell: string) => void;

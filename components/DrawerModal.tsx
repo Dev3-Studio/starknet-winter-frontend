@@ -10,7 +10,7 @@ import {
   DrawerTitle,
 } from '@/components/shadcn/drawer';
 
-import { PriceProps } from '@/objects/Price';
+import { PriceProps } from '@/types/Price';
 import { PriceItem } from './PriceItem';
 
 interface DrawerModalProps {

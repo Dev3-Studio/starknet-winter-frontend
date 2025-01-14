@@ -1,4 +1,4 @@
-import { PriceProps } from '@/objects/Price';
+import { PriceProps } from '@/types/Price';
 
 interface PriceItemProps {
   price: PriceProps;
@@ -11,7 +11,6 @@ const PriceItem: React.FC<PriceItemProps> = ({
   typeAction,
   onClick,
 }: PriceItemProps) => {
-  console.log('Action', typeAction);
   return (
     <div
       className='flex flex-row justify-between pr-5'
