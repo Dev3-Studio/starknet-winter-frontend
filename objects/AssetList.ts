@@ -1,6 +1,16 @@
 const assetList = [
-  { Name: 'BTC', Ticker: 'BTC/USD', PairID: '18669995996566340', Decimals: 8 },
-  { Name: 'ETH', Ticker: 'ETH/USD', PairID: '19514442401534788', Decimals: 8 },
+  {
+    Name: 'BTC',
+    Ticker: 'BTC/USD',
+    PairID: '18669995996566340',
+    Decimals: 8,
+  },
+  {
+    Name: 'ETH',
+    Ticker: 'ETH/USD',
+    PairID: '19514442401534788',
+    Decimals: 8,
+  },
   {
     Name: 'WBTC',
     Ticker: 'WBTC/USD',

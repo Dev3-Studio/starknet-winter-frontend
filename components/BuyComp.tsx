@@ -47,7 +47,10 @@ const BuyComp = ({ handleToggleModal, isBuy, isSell }: BuyCompProps) => {
           className='rounded-full bg-accent flex text-primary-foreground gap-4 w-max-40'
           onClick={() => handleToggleModal('Buy')}
         >
-          <img src='/ethereum.webp' className='w-6 h-6 rounded-full' />
+          <img
+            src={isBuy ? `./${isBuy.Name}.webp` : undefined}
+            className='w-6 h-6 rounded-full'
+          />
           <p>{isBuy ? isBuy.Name : ''}</p>
           <ChevronDown />
         </Button>

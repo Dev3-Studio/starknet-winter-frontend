@@ -10,9 +10,8 @@ import {
   DrawerTitle,
 } from '@/components/shadcn/drawer';
 
-import { PriceItem } from '@/components/PriceItem';
-
 import { PriceProps } from '@/objects/Price';
+import { PriceItem } from './PriceItem';
 
 interface DrawerModalProps {
   handleToggleModal: (arg: string) => void;

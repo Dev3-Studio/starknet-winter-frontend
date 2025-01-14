@@ -1,7 +1,7 @@
-import { Price } from '@/objects/Price';
+import { PriceProps } from '@/objects/Price';
 
 interface PriceItemProps {
-  price: Price;
+  price: PriceProps;
   typeAction: string;
   onClick: () => void;
 }
@@ -17,7 +17,13 @@ const PriceItem: React.FC<PriceItemProps> = ({
       className='flex flex-row justify-between pr-5'
       onClick={() => onClick()}
     >
-      <div>{price.Name}</div>
+      <div className='flex gap-2'>
+        {price ? (
+          <img src={`./${price.Name}.webp`} className='w-6 h-6 rounded-full' />
+        ) : undefined}
+
+        <div>{price.Name}</div>
+      </div>
       {price.priceInCrypto ? (
         <div>
           <div> {price.priceInCrypto}</div>

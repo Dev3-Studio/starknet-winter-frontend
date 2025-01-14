@@ -47,7 +47,10 @@ const SellComp = ({ handleToggleModal, isSell, isBuy }: SellCompProps) => {
           className='rounded-full bg-accent flex text-primary-foreground gap-4 w-max-40'
           onClick={() => handleToggleModal('Sell')}
         >
-          <img src='/Sushi.webp' className='w-6 h-6 rounded-full' />
+          <img
+            src={isSell ? `./${isSell.Name}.webp` : undefined}
+            className='w-6 h-6 rounded-full'
+          />
           <p>{isSell ? isSell.Name : ''}</p>
           <ChevronDown />
         </Button>
