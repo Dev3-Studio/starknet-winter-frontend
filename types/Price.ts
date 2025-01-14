@@ -1,4 +1,4 @@
-export interface Price {
+export interface PriceProps {
   Name: string;
   Ticker: string;
   priceInCrypto: number;
