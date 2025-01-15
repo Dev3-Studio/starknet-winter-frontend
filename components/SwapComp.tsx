@@ -3,29 +3,29 @@ import { ArrowDownUpIcon } from 'lucide-react';
 import { PriceProps } from '@/types/Price';
 
 interface SwapCompProps {
-  isBuy: PriceProps | undefined;
-  isSell: PriceProps | undefined;
-  setBuy: (asset: PriceProps) => void;
-  setSell: (asset: PriceProps) => void;
+  TokenA: PriceProps | undefined;
+  TokenB: PriceProps | undefined;
+  setTokenB: (asset: PriceProps) => void;
+  setTokenA: (asset: PriceProps) => void;
 }
 
 const SwapComp: React.FC<SwapCompProps> = ({
-  isBuy,
-  isSell,
-  setBuy,
-  setSell,
+  TokenA,
+  TokenB,
+  setTokenB,
+  setTokenA,
 }: SwapCompProps) => {
   const [isSwapped, setSwapped] = useState(false);
 
   function handleSwap() {
-    if (isBuy && isSell) {
-      console.log('Swapping..:', isBuy, isSell);
+    if (TokenA && TokenB) {
+      console.log('Swapping..:', TokenA, TokenB);
       if (!isSwapped) {
-        setSell(isBuy);
-        setBuy(isSell);
+        setTokenB(TokenA);
+        setTokenA(TokenB);
       } else {
-        setBuy(isBuy);
-        setSell(isSell);
+        setTokenB(TokenA);
+        setTokenA(TokenB);
       }
       setSwapped(!isSwapped);
     } else {
