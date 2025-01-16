@@ -1,28 +1,25 @@
 'use client';
-import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import { cn } from '@/lib/utils';
 import { PriceProps } from '@/types/Price';
 
 interface SellCompProps {
-  handleToggleModal: (sell: string) => void;
-  isSell: PriceProps | undefined;
-  isBuy: PriceProps | undefined;
+  handleToggleModal: (buy: string) => void;
+  Token: PriceProps | undefined;
+  amount: number;
+  setAmount: (amount: number) => void;
 }
 
-const SellComp = ({ handleToggleModal, isSell, isBuy }: SellCompProps) => {
-  const [amount, setAmount] = useState(0);
-
-  const handleAmountChange = (value: string) => {
-    if (!isBuy) {
-      console.error('isSell is undefined');
-      setAmount(0);
-      return;
-    }
-
-    const newAmount = value ? Number(value) * (isBuy.priceInCrypto || 0) : 0;
-    setAmount(newAmount);
+const SellComp: React.FC<SellCompProps> = ({
+  handleToggleModal,
+  Token,
+  amount = 0,
+  setAmount,
+}) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value) || 0;
+    setAmount(value);
   };
 
   return (
@@ -30,16 +27,18 @@ const SellComp = ({ handleToggleModal, isSell, isBuy }: SellCompProps) => {
       <div className='flex flex-col gap-2'>
         <span className='opacity-80 text-sm'>Sell</span>
         <input
-          placeholder='0.00'
+          placeholder={amount.toString() || '0'}
           type='number'
           className={cn(
             'w-2/3 bg-transparent placeholder-inherit focus-within:border-none focus:outline-none'
           )}
-          onChange={(e) => handleAmountChange(e.target.value)}
+          onChange={handleInputChange}
         />
 
         <span className='flex opacity-80 items-baseline'>
-          <p className='text-lg'>$ {amount.toFixed(4)}</p>
+          <p className='text-lg'>
+            $ {(amount * (Token?.priceInCrypto ?? 0)).toFixed(4)}
+          </p>
         </span>
       </div>
       <div className='flex items-center text-xl text-left h-full '>
@@ -48,10 +47,10 @@ const SellComp = ({ handleToggleModal, isSell, isBuy }: SellCompProps) => {
           onClick={() => handleToggleModal('Sell')}
         >
           <img
-            src={isSell ? `./${isSell.Name}.webp` : undefined}
+            src={Token ? `./${Token.Name}.webp` : undefined}
             className='w-6 h-6 rounded-full'
           />
-          <p>{isSell ? isSell.Name : ''}</p>
+          <p>{Token ? Token.Name : ''}</p>
           <ChevronDown />
         </Button>
       </div>

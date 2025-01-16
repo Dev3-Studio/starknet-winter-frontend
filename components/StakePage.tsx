@@ -1,12 +1,8 @@
 'use client';
-
-import { useState } from 'react';
-
 import { cn } from '@/lib/utils';
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/shadcn/card';
@@ -19,7 +15,7 @@ type CardProps = React.ComponentProps<typeof Card>;
 export default function StakeCard({ className, ...props }: CardProps) {
   return (
     <Card
-      className={cn('w-[380px] flex flex-col items-center', className)}
+      className={cn('flex flex-col items-center h-auto', className)}
       {...props}
     >
       <CardHeader>
@@ -41,7 +37,6 @@ export default function StakeCard({ className, ...props }: CardProps) {
           <p className='text-sm text-contrast-5 font-bold'>$0.00</p>
         </div>
       </CardContent>
-      <CardFooter></CardFooter>
     </Card>
   );
 }

@@ -9,19 +9,31 @@
     "Name": "ETH",
     "Ticker": "ETH/USD",
     "PairID": "19514442401534788",
-    "Decimals": 8
+    "Decimals": 8,
+    "l1_token_address": "0x0000000000000000000000000000000000455448",
+    "l1_bridge_address": "0xae0Ee0A63A2cE6BaeEFFE56e7714FB4EFE48D419",
+    "l2_bridge_address": "0x073314940630fd6dcda0d772d4c972c4e0a9946bef9dabf4ef84eda8ef542b82",
+    "l2_token_address": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
   },
   {
     "Name": "WBTC",
     "Ticker": "WBTC/USD",
     "PairID": "6287680677296296772",
-    "Decimals": 8
+    "Decimals": 8,
+    "l1_token_address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
+    "l1_bridge_address": "0x283751A21eafBFcD52297820D27C1f1963D9b5b4",
+    "l2_bridge_address": "0x07aeec4870975311a7396069033796b61cd66ed49d22a786cba12a8d76717302",
+    "l2_token_address": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac"
   },
   {
     "Name": "WSTETH",
     "Ticker": "WSTETH/USD",
     "PairID": "412383036120118613857092",
-    "Decimals": 8
+    "Decimals": 8,
+    "l1_token_address": "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
+    "l1_bridge_address": "0xBf67F59D2988A46FBFF7ed79A621778a3Cd3985B",
+    "l2_bridge_address": "0x0088eedbe2fe3918b69ccb411713b7fa72079d4eddf291103ccbe41e78a9615c",
+    "l2_token_address": "0x042b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2"
   },
   {
     "Name": "LORDS",
@@ -33,31 +45,51 @@
     "Name": "UNI",
     "Ticker": "UNI/USD",
     "PairID": "24011449254105924",
-    "Decimals": 8
+    "Decimals": 8,
+    "l1_token_address": "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+    "l1_bridge_address": "0xf76e6bF9e2df09D0f854F045A3B724074dA1236B",
+    "l2_bridge_address": "0x04fe90c0c4594b4a5ce3031a4bbdfbc7c046b4b9d7cf31b79647540c85b8ec79",
+    "l2_token_address": "0x049210ffc442172463f3177147c1aeaa36c51d152c1b0630f2364c300d4f48ee"
   },
   {
     "Name": "STRK",
     "Ticker": "STRK/USD",
     "PairID": "6004514686061859652",
-    "Decimals": 8
+    "Decimals": 8,
+    "l1_token_address": "0xCa14007Eff0dB1f8135f4C25B34De49AB0d42766",
+    "l1_bridge_address": "0xcE5485Cfb26914C5dcE00B9BAF0580364daFC7a4",
+    "l2_bridge_address": "0x0594c1582459ea03f77deaf9eb7e3917d6994a03c13405ba42867f83d85f085d",
+    "l2_token_address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"
   },
   {
     "Name": "ZEND",
     "Ticker": "ZEND/USD",
     "PairID": "6504691291565413188",
-    "Decimals": 8
+    "Decimals": 8,
+    "l1_token_address": "0xb2606492712D311be8f41d940AFE8CE742A52D44",
+    "l1_bridge_address": "0xF5b6Ee2CAEb6769659f6C091D209DfdCaF3F69Eb",
+    "l2_bridge_address": "0x0616757a151c21f9be8775098d591c2807316d992bbc3bb1a5c1821630589256",
+    "l2_token_address": "0x00585c32b625999e6e5e78645ff8df7a9001cf5cf3eb6b80ccdd16cb64bd3a34"
   },
   {
     "Name": "NSTR",
     "Ticker": "NSTR/USD",
     "PairID": "5643947469983535940",
-    "Decimals": 8
+    "Decimals": 8,
+    "l1_token_address": "0x610dBd98A28EbbA525e9926b6aaF88f9159edbfd",
+    "l1_bridge_address": "0xF5b6Ee2CAEb6769659f6C091D209DfdCaF3F69Eb",
+    "l2_bridge_address": "0x0616757a151c21f9be8775098d591c2807316d992bbc3bb1a5c1821630589256",
+    "l2_token_address": "0x00c530f2c0aa4c16a0806365b0898499fba372e5df7a7172dc6fe9ba777e8007"
   },
   {
     "Name": "EKUBO",
     "Ticker": "EKUBO/USD",
     "PairID": "1278253658919688033092",
-    "Decimals": 8
+    "Decimals": 8,
+    "l1_token_address": "0x04C46E830Bb56ce22735d5d8Fc9CB90309317d0f",
+    "l1_bridge_address": "0xF5b6Ee2CAEb6769659f6C091D209DfdCaF3F69Eb",
+    "l2_bridge_address": "0x0616757a151c21f9be8775098d591c2807316d992bbc3bb1a5c1821630589256",
+    "l2_token_address": "0x075afe6402ad5a5c20dd25e10ec3b3986acaa647b77e4ae24b0cbc9a54a27a87"
   },
   {
     "Name": "XSTRK",
