@@ -19,7 +19,6 @@ setTimeout(() => {
 async function getAllPricesFormatted() {
     
     if (stale) {
-        console.log('Fetching prices');
         prices = await Promise.all(
             assetList.map(async (asset) => {
                 const price = await getAssetPriceMedian(asset.PairID, asset.Decimals);

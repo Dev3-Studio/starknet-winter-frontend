@@ -25,11 +25,13 @@ export default function RootLayout({
       {/* todo Figure out why adding the script breaks the wallet connection flow */}
       {/*<Script src="https://telegram.org/js/telegram-web-app.js?56" />*/}
       <html lang="en">
-        <body className={`${inter.className} antialiased`}>
+        <body className={`${inter.className} antialiased h-dvh`}>
           <ContextProvider>
-            {children}
-            <div className="fixed bottom-0 left-0 right-0 z-20 flex gap-2 flex-col sm:flex-row bg-white">
-              <Navbar />
+            <div className="grid grid-rows-[auto,5rem] h-full">
+              {children}
+              <div>
+                <Navbar />
+              </div>
             </div>
           </ContextProvider>
         </body>

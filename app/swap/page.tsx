@@ -77,7 +77,7 @@ const SwapPage: React.FC = () => {
     };
 
   return (
-    <div className='flex flex-col items-center h-screen bg-transparent p-12'>
+    <div className='flex flex-col items-center h-full bg-transparent p-12'>
       <div className='flex flex-col gap-2 w-full'>
         {/* Sell Comp */}
         <SellComp
