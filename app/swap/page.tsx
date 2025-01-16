@@ -12,19 +12,24 @@ import { getAllPricesFormatted } from '@/actions/getAllPrices';
 const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
   const [typeAction, setAction] = useState('');
-  const [price, setPrice] = useState<PriceProps[]>([]);
-  const [isBuy, setBuy] = useState<PriceProps>();
-  const [isSell, setSell] = useState<PriceProps>();
-  
+  const [prices, setPrices] = useState<PriceProps[]>([]);
+  const [tokenA, setTokenA] = useState<PriceProps>();
+  const [tokenB, setTokenB] = useState<PriceProps>();
+  const [amountA, setAmountA] = useState<number>(0);
+  const [amountB, setAmountB] = useState<number>(0);
+  const [isSwapped, setSwapped] = useState(false);
+
   const fetchPrice = async () => {
-    if (price.length === assetList.length) {
+    if (prices.length === assetList.length) {
       return;
     }
-    
-    const prices = await getAllPricesFormatted();
-    setPrice(prices);
+
+    const priceList = await getAllPricesFormatted();
+    setTokenA(priceList[0]);
+    setTokenB(priceList[1]);
+    setPrices(priceList);
   };
-  
+
   useEffect(() => {
     fetchPrice().catch();
   }, []);
@@ -34,47 +39,90 @@ const SwapPage: React.FC = () => {
     setOpen(!isOpen);
   };
 
-  const handleChooseCrypto =
-    (ticker: string, action: string) => {
-      const selectedAsset = price.find((p) => p.Ticker === ticker);
+  const handleChooseCrypto = (ticker: string, action: string) => {
+    const selectedAsset = prices.find((p) => p.Ticker === ticker);
 
-      if (!selectedAsset) {
-        console.error('Asset not found');
+    if (!selectedAsset) {
+      console.error('Asset not found');
+      return;
+    }
+
+    if (action === 'Buy') {
+      if (selectedAsset.Ticker === tokenB?.Ticker) {
+        console.error('Cannot buy the same asset being sold');
         return;
       }
 
-      if (action === 'Buy') {
-        if (selectedAsset.Ticker === isSell?.Ticker) {
-          console.error('Cannot buy the same asset being sold');
-          return;
-        }
+      const buyAsset: PriceProps = {
+        Name: selectedAsset.Name,
+        Ticker: selectedAsset.Ticker,
+        PairID: selectedAsset.PairID,
+        Decimals: selectedAsset.Decimals,
+        priceInCrypto: selectedAsset.priceInCrypto || 0, // Default or fetched value
+        priceInUSD: selectedAsset.priceInUSD || 0, // Default or fetched value
+      };
 
-        const buyAsset: PriceProps = {
-          Name: selectedAsset.Name,
-          Ticker: selectedAsset.Ticker,
-          priceInCrypto: selectedAsset.priceInCrypto || 0, // Default or fetched value
-          priceInUSD: selectedAsset.priceInUSD || 0, // Default or fetched value
-        };
-
-        setBuy(buyAsset);
-      } else {
-        if (selectedAsset.Ticker === isBuy?.Ticker) {
-          console.error('Cannot sell the same asset being bought');
-          return;
-        }
-
-        const sellAsset: PriceProps = {
-          Name: selectedAsset.Name,
-          Ticker: selectedAsset.Ticker,
-          priceInCrypto: selectedAsset.priceInCrypto || 0, // Default or fetched value
-          priceInUSD: selectedAsset.priceInUSD || 0, // Default or fetched value
-        };
-
-        setSell(sellAsset);
+      setTokenA(buyAsset);
+    } else {
+      if (selectedAsset.Ticker === tokenA?.Ticker) {
+        console.error('Cannot sell the same asset being bought');
+        return;
       }
 
-      setOpen(false);
-    };
+      const sellAsset: PriceProps = {
+        Name: selectedAsset.Name,
+        Ticker: selectedAsset.Ticker,
+        PairID: selectedAsset.PairID,
+        Decimals: selectedAsset.Decimals,
+        priceInCrypto: selectedAsset.priceInCrypto || 0, // Default or fetched value
+        priceInUSD: selectedAsset.priceInUSD || 0, // Default or fetched value
+      };
+
+      setTokenB(sellAsset);
+    }
+
+    setOpen(false);
+  };
+
+  function handleSwap() {
+    if (tokenA && tokenB) {
+      console.log('Swapping..:', tokenA, tokenB);
+      if (!isSwapped) {
+        setTokenB(tokenA);
+        setTokenA(tokenB);
+        setAmountA(amountB);
+      } else {
+        setTokenB(tokenA);
+        setTokenA(tokenB);
+        setAmountB(amountA);
+      }
+      setSwapped(!isSwapped);
+    } else {
+      console.error('Cannot swap: one of the assets is undefined');
+    }
+
+    setTimeout(() => {
+      setSwapped(false);
+    }, 80);
+  }
+
+  const handleAmountAChange = (amount: number) => {
+    setAmountA(amount);
+    if (tokenA && tokenB) {
+      const tokenBamount =
+        (amount * tokenA.priceInCrypto) / tokenB.priceInCrypto;
+      setAmountB(parseFloat(tokenBamount.toFixed(6)));
+    }
+  };
+
+  const handleAmountBChange = (amount: number) => {
+    setAmountB(amount);
+    if (tokenA && tokenB) {
+      const tokenAamount =
+        (amount * tokenB.priceInCrypto) / tokenA.priceInCrypto;
+      setAmountA(parseFloat(tokenAamount.toFixed(6)));
+    }
+  };
 
   return (
     <div className='flex flex-col items-center h-full bg-transparent p-12'>
@@ -82,23 +130,20 @@ const SwapPage: React.FC = () => {
         {/* Sell Comp */}
         <SellComp
           handleToggleModal={handleToggleModal}
-          isSell={isSell}
-          isBuy={isBuy}
+          Token={tokenB}
+          amount={amountB}
+          setAmount={handleAmountBChange}
         />
 
         {/* Swap Feature */}
-        <SwapComp
-          isBuy={isBuy}
-          isSell={isSell}
-          setBuy={setBuy}
-          setSell={setSell}
-        />
+        <SwapComp isSwapped={isSwapped} handleSwap={handleSwap} />
 
         {/* Buy Comp */}
         <BuyComp
           handleToggleModal={handleToggleModal}
-          isBuy={isBuy}
-          isSell={isSell}
+          Token={tokenA}
+          amount={amountA}
+          setAmount={handleAmountAChange}
         />
 
         <DrawerModal
@@ -106,7 +151,7 @@ const SwapPage: React.FC = () => {
           handleChooseCrypto={handleChooseCrypto}
           typeAction={typeAction}
           isOpen={isOpen}
-          cryptos={price}
+          cryptos={prices}
         />
       </div>
     </div>
