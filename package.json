@@ -8,11 +8,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@argent/tma-wallet": "^1.22.0",
+    "@avnu/avnu-sdk": "^3.0.0",
     "@langchain/core": "^0.3.27",
     "@langchain/google-genai": "^0.1.6",
     "@langchain/openai": "^0.3.16",
     "@radix-ui/react-avatar": "^1.1.2",
-    "@argent/tma-wallet": "^1.22.0",
     "@radix-ui/react-slot": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.4",
     "@tanstack/react-query": "^5.64.1",
