@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import {
   ChartCandlestick,
@@ -9,17 +9,30 @@ import {
   Wallet,
   Info,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
-export const Navbar: React.FC<{ className?: string }> = ({ className }) => {
-  const [activeIndex, setActiveIndex] = React.useState<number | null>(0);
+const routes = [
+  { name: 'Staking', icon: Wallet, route: '/stake' },
+  { name: 'Swap', icon: ArrowDownUp, route: '/swap' },
+  { name: 'AI', icon: BrainCircuit, route: '/ai' },
+  { name: 'Market', icon: ChartCandlestick, route: '/market' },
+  { name: 'Help', icon: Info, route: '/info' },
+]
+
+export const Navbar: React.FC<{ className?: string }> = ({ className }
+) => {
+  // set active index based on route
+  const path = usePathname();
+  // find the index of the route
+  const [activeIndex, setActiveIndex] = React.useState<number | null>( routes.findIndex((obj) => obj.route === path));
+  
   const router = useRouter();
 
   const handleButtonClick = (index: number, route: string) => {
     setActiveIndex(index);
     router.push(route);
   };
-
+  
   return (
     <div
       className={cn(
@@ -27,13 +40,7 @@ export const Navbar: React.FC<{ className?: string }> = ({ className }) => {
         className
       )}
     >
-      {[
-        { name: 'Staking', icon: Wallet, route: '/stake' },
-        { name: 'Swap', icon: ArrowDownUp, route: '/swap' },
-        { name: 'AI', icon: BrainCircuit, route: '/ai' },
-        { name: 'Market', icon: ChartCandlestick, route: '/market' },
-        { name: 'Help', icon: Info, route: '/info' },
-      ].map((obj, index) => (
+      {routes.map((obj, index) => (
         <div
           className={cn(
             `w-full h-full flex flex-col text-center text-sm pb-4 cursor-pointer`,

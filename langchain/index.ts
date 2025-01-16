@@ -1,8 +1,7 @@
 'use server';
 import { z } from 'zod';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { getUuidV4 } from '@/utils/getUuidV4';
+import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { tool } from '@langchain/core/tools';
 
 const API_KEY = process.env.GOOGLE_API_KEY;
@@ -31,8 +30,8 @@ const stakeSchema = z.object({
 })
 
 const swapSchema = z.object({
-    token1: z.string().describe('The token to swap from'),
-    token2: z.string().describe('The token to swap to'),
+    token1: z.string().describe('The token that will be sent'),
+    token2: z.string().describe('The token that will be received'),
     amountIn: z.number().optional().describe('The amount of token1 to swap'),
     amountOut: z.number().optional().describe('The amount of token2 to receive'),
 })
@@ -55,51 +54,14 @@ const swapTool = tool(
     }
 )
 
-
-type ToolCallExample = {
-    input: string;
-    toolCallName: string;
-    toolCallOutput: {
-        action: string;
-        token: string;
-        amount: number;
-    }
-};
-
-/**
- * This function converts an example into a list of messages that can be fed into an LLM.
- *
- * This code serves as an adapter that transforms our example into a list of messages
- * that can be processed by a chat model.
- *
- * The list of messages for each example includes:
- *
- * 1) HumanMessage: This contains the content from which information should be extracted.
- * 2) AIMessage: This contains the information extracted by the model.
- *
- * Credit: https://js.langchain.com/docs/how_to/extraction_examples/
- */
-function toolExampleToMessages(example: ToolCallExample): BaseMessage[] {
-    return [
-        new HumanMessage(example.input),
-        new AIMessage({
-            content: '',
-            tool_calls: [{
-                name: example.toolCallName,
-                type: 'tool_call',
-                id: getUuidV4(),
-                args: example.toolCallOutput,
-            }],
-        }),
-    ];
-}
-
 // in same folder in system.txt
 // const systemPrompt = fs.readFileSync(path.join(__dirname, 'system.txt')).toString();
 const systemPrompt = new SystemMessage(`You are Tele. Your job is to take a user prompt and convert it into a structured format.
 Choose the most appropriate action based on the user's request.
 Identify the most appropriate token based on the user's description. The token will be a cryptocurrency specified by the user.
-If the user says to "buy" or "sell" tokens, create a swap with the stark token as the other token (this is the native token for starknet).
+If the user says to "buy" or "sell" tokens, swap with the stark token as the other token (this is the native token for starknet).
+The only token that can be staked is the stark token. If the user says to "stake" tokens, stake with the stark token.
+If they mention staking another token, reply that only the stark token can be staked.
 `)
 const tools = [stakeTool, swapTool];
 const modelWithTools = llm.bind({
@@ -109,7 +71,6 @@ const modelWithTools = llm.bind({
 export type LLMMessage = (AIMessage | HumanMessage );
 
 export async function runTradeAI(messages: LLMMessage[]){
-    console.log(messages);
     const result = await modelWithTools.invoke([systemPrompt, ...messages]);
     return { content: result.content, tool_calls: result.tool_calls };
 }
