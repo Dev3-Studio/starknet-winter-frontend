@@ -28,7 +28,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${inter.className} antialiased h-dvh`}>
           <ContextProvider>
-            <div className="grid grid-rows-[auto,5rem] h-full">
+            <div className="grid grid-rows-[auto,5rem,0] h-full">
               {children}
               <div>
                 <Navbar />
