@@ -17,6 +17,7 @@ const SwapPage: React.FC = () => {
   const [tokenB, setTokenB] = useState<PriceProps>();
   const [amountA, setAmountA] = useState<number>(0);
   const [amountB, setAmountB] = useState<number>(0);
+  const [isSwapped, setSwapped] = useState(false);
 
   const fetchPrice = async () => {
     if (prices.length === assetList.length) {
@@ -83,6 +84,28 @@ const SwapPage: React.FC = () => {
     setOpen(false);
   };
 
+  function handleSwap() {
+    if (tokenA && tokenB) {
+      console.log('Swapping..:', tokenA, tokenB);
+      if (!isSwapped) {
+        setTokenB(tokenA);
+        setTokenA(tokenB);
+        setAmountA(amountB);
+      } else {
+        setTokenB(tokenA);
+        setTokenA(tokenB);
+        setAmountB(amountA);
+      }
+      setSwapped(!isSwapped);
+    } else {
+      console.error('Cannot swap: one of the assets is undefined');
+    }
+
+    setTimeout(() => {
+      setSwapped(false);
+    }, 80);
+  }
+
   const handleAmountAChange = (amount: number) => {
     setAmountA(amount);
     if (tokenA && tokenB) {
@@ -113,12 +136,7 @@ const SwapPage: React.FC = () => {
         />
 
         {/* Swap Feature */}
-        <SwapComp
-          TokenA={tokenA}
-          TokenB={tokenB}
-          setTokenA={setTokenA}
-          setTokenB={setTokenB}
-        />
+        <SwapComp isSwapped={isSwapped} handleSwap={handleSwap} />
 
         {/* Buy Comp */}
         <BuyComp
