@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
 import { PriceProps } from '@/types/Price';
-import assetList from '@/public/AssetList.json';
+import assetList from '@/public/assetList.json';
 import { SellComp } from '@/components/SellComp';
 import { BuyComp } from '@/components/BuyComp';
 import { SwapComp } from '@/components/SwapComp';
