@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import ChatInput from './ChatInput';
 import { useArgent } from '@/hooks/useArgent';
 import { getTokenAddressFromName } from '@/lib/utils';
+import { stake } from '@/lib/stake';
 
 
 type ChatBubbleProps = {
@@ -80,14 +81,13 @@ export default function Chat() {
         
         switch (action) {
             case 'stake':
-                // todo callback function
                 if (!toolCall.args.token) return <ChatBubble text="Only the stark token can be staked" side="left"
                                                              sender="AI"/>;
-                const stakeAmount = toolCall.args.amount ?? 1;
+                const stakeAmount = toolCall.args.amount ?? 1n;
                 
                 const stakeFunction = async () => {
                     try {
-                        // stake
+                        await stake(stakeAmount, account.address)
                     } catch {
                         toast({
                             title: 'Error',
@@ -104,7 +104,7 @@ export default function Chat() {
                 
                 return <ActionBubble text={
                     `Confirm Stake ${stakeAmount} ${toolCall.args.token}`}
-                                     actionName={'Stake'} side="left" sender="AI" callback={() => stakeFunction()}/>;
+                                     actionName={'Stake'} side="left" sender="AI" callback={() => stakeFunction}/>;
             
             case 'swap':
                 const tokenIn = toolCall.args.tokenIn;

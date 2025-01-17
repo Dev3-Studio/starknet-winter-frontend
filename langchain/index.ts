@@ -71,6 +71,7 @@ If the user says to "swap" x tokens for y tokens, swap amountIN tokenIn for amou
 If the user only specifies amountIn or amountOut, leave the other field blank. If neither field is specified, leave both fields blank.
 The only token that can be staked is the stark token. If the user says to "stake" tokens, stake with the stark token.
 If they mention staking another token, reply that only the stark token can be staked.
+
 `)
 const tools = [stakeTool, swapTool];
 const modelWithTools = llm.bind({
