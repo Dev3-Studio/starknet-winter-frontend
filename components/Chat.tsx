@@ -1,16 +1,15 @@
 'use client';
-import { Input } from '@/components/shadcn/input';
-import { Button } from '@/components/shadcn/button';
-import { SendHorizontal } from 'lucide-react';
-import { Fragment, useRef, useState } from 'react';
+
+import React, { Fragment, useRef, useState } from 'react';
 import { LLMMessage, runTradeAI } from '@/langchain';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import ActionBubble from '@/components/ActionBubble';
 import ChatBubble from '@/components/ChatBubble';
 import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
-import { useArgent } from '@/hooks/useArgent';
 import { useToast } from '@/hooks/use-toast';
-import { ConnectWalletButton } from '@/components/ConnectWalletButton';
+import ChatInput from './ChatInput';
+import { useArgent } from '@/hooks/useArgent';
+
 
 type ChatBubbleProps = {
     chatBubble: JSX.Element;
@@ -19,10 +18,9 @@ type ChatBubbleProps = {
 
 export default function Chat() {
     const [messages, setMessages] = useState<ChatBubbleProps[]>([]);
-    
     const inputRef = useRef<HTMLInputElement>(null);
-    const {account} = useArgent();
     const { toast } = useToast();
+    const { account } = useArgent();
     
     async function sendMessage() {
         const message = inputRef.current?.value;
@@ -68,11 +66,6 @@ export default function Chat() {
         }
     }
     
-    function handleKeyDown(event: React.KeyboardEvent) {
-        if (event.key === 'Enter') {
-            sendMessage().catch();
-        }
-    }
     
     
     async function createActionBubble(message: LLMMessage, action: 'stake' | 'swap') {
@@ -171,15 +164,7 @@ export default function Chat() {
                 })}
             </div>
             
-            {!account && <ConnectWalletButton />}
-            
-            {account && <div className="flex w-4/5 mx-auto mb-1">
-                <Input className="mr-1" type="text" placeholder="Ask a Question..." ref={inputRef}
-                       onKeyDown={handleKeyDown}/>
-                <Button onClick={sendMessage}>
-                    <SendHorizontal/>
-                </Button>
-            </div>}
+            <ChatInput onSend={sendMessage} inputRef={inputRef}/>
         
         </div>
         
