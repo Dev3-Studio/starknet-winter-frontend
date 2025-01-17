@@ -7,7 +7,7 @@ export const useArgent = () => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [account, setAccount] = useState<SessionAccountInterface | null>(null);
 
-  const appTelegramUrl = 'https://t.me/test_xqef_bot/twMiniAppFirst';
+  const appTelegramUrl = process.env.NEXT_PUBLIC_MINI_APP_LINK;
 
   if (!appTelegramUrl) {
     throw new Error(

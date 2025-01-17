@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
 import { PriceProps } from '@/types/AllTypes';
-import assetList from '@/public/AssetList.json';
+import swapList from '@/public/swapList.json';
 import { SellComp } from '@/components/SellComp';
 import { BuyComp } from '@/components/BuyComp';
 import { SwapComp } from '@/components/SwapComp';
@@ -10,6 +10,7 @@ import { getAllPricesFormatted } from '@/actions/getAllPrices';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { SwapButton } from '@/components/SwapButton';
 import FeesComp from '@/components/FeesComp';
+import { useArgent } from '@/hooks/useArgent';
 
 const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
@@ -20,14 +21,15 @@ const SwapPage: React.FC = () => {
   const [amountA, setAmountA] = useState<number>(0);
   const [amountB, setAmountB] = useState<number>(0);
   const [isSwapped, setSwapped] = useState(false);
-  const [isConnected, setConnected] = useState(false);
+
+  const argent = useArgent();
 
   const fetchPrice = async () => {
-    if (prices.length === assetList.length) {
+    if (prices.length === swapList.length) {
       return;
     }
 
-    const priceList = await getAllPricesFormatted();
+    const priceList = await getAllPricesFormatted(swapList);
     setTokenA(priceList[0]);
     setTokenB(priceList[1]);
     setPrices(priceList);
@@ -87,25 +89,22 @@ const SwapPage: React.FC = () => {
     setOpen(false);
   };
 
-  function handleSwap() {
+  async function handleSwap() {
     if (tokenA && tokenB) {
       console.log('Swapping..:', tokenA, tokenB);
       if (!isSwapped) {
+        const tempT: PriceProps = tokenB;
         setTokenB(tokenA);
-        setTokenA(tokenB);
-        setAmountA(amountB);
-      } else {
-        setTokenB(tokenA);
-        setTokenA(tokenB);
-        setAmountB(amountA);
+        setTokenA(tempT);
+        setAmountA(amountA);
+        setAmountB(amountB);
       }
-      setSwapped(!isSwapped);
     } else {
       console.error('Cannot swap: one of the assets is undefined');
     }
 
     setTimeout(() => {
-      setSwapped(false);
+      setSwapped(!isSwapped);
     }, 80);
   }
 
@@ -159,7 +158,7 @@ const SwapPage: React.FC = () => {
           cryptos={prices}
         />
 
-        {isConnected ? (
+        {argent.isConnected ? (
           <SwapButton tokenA={tokenA} tokenB={tokenB} />
         ) : (
           <ConnectWalletButton />
