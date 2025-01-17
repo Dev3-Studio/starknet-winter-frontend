@@ -1,3 +1,5 @@
+'use server';
+
 import { fetchBuildExecuteTransaction, fetchQuotes } from '@avnu/avnu-sdk';
 import { SessionAccountInterface } from '@argent/tma-wallet';
 import { num, RPC } from 'starknet';
@@ -30,26 +32,28 @@ export async function swap(account: SessionAccountInterface, quoteId: string) {
     true
   );
 
-  const transactionHashes = [];
+  const transactionHashes: string[] = [];
 
-  for (const call of txBuild.calls) {
-    const { transaction_hash } = await account.execute(call, {
-      version: 3,
-      maxFee: 10 ** 15,
-      feeDataAvailabilityMode: RPC.EDataAvailabilityMode.L1,
-      resourceBounds: {
-        l1_gas: {
-          max_amount: num.toHex(maxQtyGasAuthorized),
-          max_price_per_unit: num.toHex(maxPriceAuthorizeForOneGas),
+  Promise.all(
+    txBuild.calls.map(async (call) => {
+      const { transaction_hash } = await account.execute(call, {
+        version: 3,
+        maxFee: 10 ** 15,
+        feeDataAvailabilityMode: RPC.EDataAvailabilityMode.L1,
+        resourceBounds: {
+          l1_gas: {
+            max_amount: num.toHex(maxQtyGasAuthorized),
+            max_price_per_unit: num.toHex(maxPriceAuthorizeForOneGas),
+          },
+          l2_gas: {
+            max_amount: num.toHex(0),
+            max_price_per_unit: num.toHex(0),
+          },
         },
-        l2_gas: {
-          max_amount: num.toHex(0),
-          max_price_per_unit: num.toHex(0),
-        },
-      },
-    });
-    transactionHashes.push(transaction_hash);
-  }
+      });
+      transactionHashes.push(transaction_hash);
+    })
+  );
 
   return transactionHashes;
 }

@@ -1,20 +1,42 @@
 'use server';
+
 import assetList from '@/public/AssetList.json';
 import { getAssetPriceMedian } from './findPrice';
 
-async function getAllPricesFormatted() {
-  return await Promise.all(
-    assetList.map(async (asset) => {
-      const price = await getAssetPriceMedian(asset.PairID, asset.Decimals);
-      return {
-        Name: asset.Name,
-        Ticker: asset.Ticker,
-        PairID: asset.PairID,
-        Decimals: asset.Decimals,
-        priceInCrypto: price.priceInCrypto,
-        priceInUSD: price.priceInUSD,
-      };
-    })
-  );
+type Price = {
+  PairID: string;
+  Decimals: number;
+  Name: string;
+  Ticker: string;
+  priceInCrypto: number;
+  priceInUSD: number;
+};
+
+let prices: Price[] = [];
+let stale = true;
+setTimeout(() => {
+  stale = true;
+}, 1000 * 60 * 5); // 5 minutes
+
+async function getAllPricesFormatted(): Promise<Price[]> {
+  if (stale) {
+    console.log('Fetching prices');
+    prices = await Promise.all(
+      assetList.map(async (asset) => {
+        const price = await getAssetPriceMedian(asset.PairID, asset.Decimals);
+        return {
+          PairID: asset.PairID,
+          Decimals: asset.Decimals,
+          Name: asset.Name,
+          Ticker: asset.Ticker,
+          priceInCrypto: price.priceInCrypto,
+          priceInUSD: price.priceInUSD,
+        };
+      })
+    );
+    stale = false;
+  }
+  return prices;
 }
+
 export { getAllPricesFormatted };

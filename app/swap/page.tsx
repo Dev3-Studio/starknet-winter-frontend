@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
 import { PriceProps } from '@/types/Price';
@@ -8,6 +7,8 @@ import { SellComp } from '@/components/SellComp';
 import { BuyComp } from '@/components/BuyComp';
 import { SwapComp } from '@/components/SwapComp';
 import { getAllPricesFormatted } from '@/actions/getAllPrices';
+import { ConnectWalletButton } from '@/components/ConnectWalletButton';
+import { SwapButton } from '@/components/SwapButton';
 
 const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
@@ -18,6 +19,7 @@ const SwapPage: React.FC = () => {
   const [amountA, setAmountA] = useState<number>(0);
   const [amountB, setAmountB] = useState<number>(0);
   const [isSwapped, setSwapped] = useState(false);
+  const [isConnected, setConnected] = useState(false);
 
   const fetchPrice = async () => {
     if (prices.length === assetList.length) {
@@ -126,7 +128,7 @@ const SwapPage: React.FC = () => {
 
   return (
     <div className='flex flex-col items-center bg-transparent p-12'>
-      <div className='flex flex-col gap-2 w-full'>
+      <div className='flex flex-col gap-4 w-full'>
         {/* Sell Comp */}
         <SellComp
           handleToggleModal={handleToggleModal}
@@ -153,6 +155,12 @@ const SwapPage: React.FC = () => {
           isOpen={isOpen}
           cryptos={prices}
         />
+
+        {!isConnected ? (
+          <SwapButton tokenA={tokenA} tokenB={tokenB} />
+        ) : (
+          <ConnectWalletButton />
+        )}
       </div>
     </div>
   );
