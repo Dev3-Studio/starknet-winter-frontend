@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 
 export type Side = 'left' | 'right';
 export default function AbstractChatBubble(props: {contents: JSX.Element, side: Side, sender: string, className?: string}) {
