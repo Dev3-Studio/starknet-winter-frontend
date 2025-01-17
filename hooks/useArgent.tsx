@@ -33,6 +33,12 @@ export const useArgent = () => {
         },
     });
     
+    const disconnect = async () => {
+        await argentTMA.clearSession();
+        setAccount(null);
+        setIsConnected(false);
+    };
+    
     useEffect(() => {
         // Call connect() as soon as the app is loaded
         argentTMA
@@ -70,5 +76,5 @@ export const useArgent = () => {
             });
     }, []);
     
-    return { argentTMA, account, isConnected };
+    return { argentTMA, account, disconnect, isConnected };
 };
