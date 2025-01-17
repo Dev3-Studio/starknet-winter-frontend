@@ -2,8 +2,9 @@ import { fetchBuildExecuteTransaction, fetchQuotes } from '@avnu/avnu-sdk';
 import { SessionAccountInterface } from '@argent/tma-wallet';
 import { num, RPC } from 'starknet';
 
-
-const QUOTE_URL = 'https://api.avnu.fi';
+// Mainnet: https://starknet.api.avnu.fi/
+// Testnet: https://sepolia.abi.avnu.fi/
+const QUOTE_URL = 'https://starknet.api.avnu.fi/';
 export async function getAmountOut(
   tokenIn: string,
   tokenOut: string,
