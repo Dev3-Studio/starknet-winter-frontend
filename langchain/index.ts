@@ -3,13 +3,13 @@ import { z } from 'zod';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { tool } from '@langchain/core/tools';
-import assetList from '../public/pragmaTokens.json';
+import assetList from '../public/supportedTokens.json';
 
 const API_KEY = process.env.GOOGLE_API_KEY;
 if (!API_KEY) {
     throw new Error('GOOGLE_API_KEY is not set');
 }
-const availableTokens = assetList.map((asset) => asset.Name) as [string];
+const availableTokens = assetList.map((asset) => asset.name) as [string];
 
 // Options:
 // gemini-2.0-flash-exp
