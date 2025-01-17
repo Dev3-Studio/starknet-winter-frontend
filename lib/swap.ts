@@ -1,7 +1,6 @@
-'use server';
 import { fetchBuildExecuteTransaction, fetchQuotes } from '@avnu/avnu-sdk';
 import { SessionAccountInterface } from '@argent/tma-wallet';
-import { num, RPC } from 'starknet';
+import { sendTransaction } from '@/lib/transaction';
 
 // Mainnet: https://starknet.api.avnu.fi
 // Testnet: https://sepolia.api.avnu.fi
@@ -42,9 +41,6 @@ export async function getAmountIn(
 }
 
 export async function swap(account: SessionAccountInterface, quoteId: string) {
-    const maxQtyGasAuthorized = 1800n; // max quantity of gas authorized
-    const maxPriceAuthorizeForOneGas = 20n * 10n ** 12n; // max FRI authorized to pay 1 gas (1 FRI=10**-18 STRK)
-    
     const txBuild = await fetchBuildExecuteTransaction(
         quoteId,
         account.address,
@@ -52,21 +48,5 @@ export async function swap(account: SessionAccountInterface, quoteId: string) {
         true,
     );
     
-    const { transaction_hash } = await account.execute(txBuild.calls, {
-        version: 3,
-        maxFee: 10 ** 15,
-        feeDataAvailabilityMode: RPC.EDataAvailabilityMode.L1,
-        resourceBounds: {
-            l1_gas: {
-                max_amount: num.toHex(maxQtyGasAuthorized),
-                max_price_per_unit: num.toHex(maxPriceAuthorizeForOneGas),
-            },
-            l2_gas: {
-                max_amount: num.toHex(0),
-                max_price_per_unit: num.toHex(0),
-            },
-        },
-    });
-    
-    return transaction_hash;
+    return await sendTransaction(account, txBuild.calls);
 }

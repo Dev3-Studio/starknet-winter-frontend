@@ -5,7 +5,7 @@ import abi from '@/public/pragma_abi.json';
 import { ContractAddress } from '@starknet-io/types-js';
 
 const provider = new RpcProvider({
-  nodeUrl: 'https://free-rpc.nethermind.io/mainnet-juno/v0_7',
+  nodeUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_7',
 });
 
 type GetDataMedianResponse = {
