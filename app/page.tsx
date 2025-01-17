@@ -1,5 +1,6 @@
 'use client';
 
+import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
