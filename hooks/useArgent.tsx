@@ -28,10 +28,28 @@ export const useArgent = () => {
                     contract: '0x07134aad6969880f11b2d50e57c6e8d38ceef3a6b02bd9ea44837bd257023f6b',
                     selector: 'enter_delegation_pool',
                 },
+                {
+                    contract: '0x07134aad6969880f11b2d50e57c6e8d38ceef3a6b02bd9ea44837bd257023f6b',
+                    selector: 'claim_rewards',
+                },
+                {
+                    contract: '0x07134aad6969880f11b2d50e57c6e8d38ceef3a6b02bd9ea44837bd257023f6b',
+                    selector: 'exit_delegation_pool_intent',
+                },
+                {
+                    contract: '0x07134aad6969880f11b2d50e57c6e8d38ceef3a6b02bd9ea44837bd257023f6b',
+                    selector: 'exit_delegation_pool_action',
+                },
             ],
             validityDays: 90, // session validity (in days) - default: 90
         },
     });
+    
+    const disconnect = async () => {
+        await argentTMA.clearSession();
+        setAccount(null);
+        setIsConnected(false);
+    };
     
     useEffect(() => {
         // Call connect() as soon as the app is loaded
@@ -70,5 +88,5 @@ export const useArgent = () => {
             });
     }, []);
     
-    return { argentTMA, account, isConnected };
+    return { argentTMA, account, disconnect, isConnected };
 };
