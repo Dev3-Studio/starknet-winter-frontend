@@ -4,7 +4,7 @@ import './globals.css';
 import ContextProvider from '@/context';
 import { ReactNode } from 'react';
 import { Navbar } from '@/components/Navbar';
-import { ToasterPrompt } from '@/components/ToasterPrompt';
+import { Toaster } from '@/components/shadcn/toaster';
 
 const inter = Inter({
     variable: '--font-inter',
@@ -31,8 +31,8 @@ export default function RootLayout({
                             <div>
                                 <Navbar/>
                             </div>
-                            <ToasterPrompt/>
                         </div>
+                        <Toaster/>
                     </ContextProvider>
                 </body>
             </html>
