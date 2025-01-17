@@ -25,6 +25,7 @@
     "l2_bridge_address": "0x07aeec4870975311a7396069033796b61cd66ed49d22a786cba12a8d76717302",
     "l2_token_address": "0x03fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac"
   },
+
   {
     "Name": "WSTETH",
     "Ticker": "WSTETH/USD",

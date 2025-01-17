@@ -5,6 +5,7 @@ import ContextProvider from "@/context";
 import { ReactNode } from "react";
 import { Navbar } from "@/components/Navbar";
 import { ToasterPrompt } from '@/components/ToasterPrompt';
+import Script from 'next/script';
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,7 +25,7 @@ export default function RootLayout({
   return (
     <>
       {/* todo Figure out why adding the script breaks the wallet connection flow */}
-      {/*<Script src="https://telegram.org/js/telegram-web-app.js?56" />*/}
+      {/*<Script src="https://telegram.org/js/telegram-web-app.js?56"/>*/}
       <html lang="en">
         <body className={`${inter.className} antialiased h-dvh`}>
           <ContextProvider>

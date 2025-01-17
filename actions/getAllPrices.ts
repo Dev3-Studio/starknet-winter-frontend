@@ -1,5 +1,5 @@
 'use server';
-import assetList from '@/public/AssetList.json';
+import assetList from '@/public/pragmaTokens.json';
 import { getAssetPriceMedian } from './findPrice';
 
 type Price = {

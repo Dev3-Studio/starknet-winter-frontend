@@ -7,6 +7,10 @@ import { LLMMessage, runTradeAI } from '@/langchain';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import ActionBubble from '@/components/ActionBubble';
 import ChatBubble from '@/components/ChatBubble';
+import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
+import { useArgent } from '@/hooks/useArgent';
+import { useToast } from '@/hooks/use-toast';
+import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 
 type ChatBubbleProps = {
     chatBubble: JSX.Element;
@@ -17,6 +21,8 @@ export default function Chat() {
     const [messages, setMessages] = useState<ChatBubbleProps[]>([]);
     
     const inputRef = useRef<HTMLInputElement>(null);
+    const {account} = useArgent();
+    const { toast } = useToast();
     
     async function sendMessage() {
         const message = inputRef.current?.value;
@@ -26,7 +32,12 @@ export default function Chat() {
             
             // send message to AI for response
             const newMessage = new HumanMessage(message);
-            setMessages((prev) => [...prev, { message: newMessage, chatBubble: <ChatBubble text={message} side='right' sender="You"/> }]);
+            // append new message to messages
+            setMessages((prev) => [
+                ...prev,
+                { message: newMessage, chatBubble: <ChatBubble text={message} side='right' sender="You"/> }
+            ]);
+            
             const response = await runTradeAI([...messages.map(message => message.message), newMessage]);
             
             const tempMessage = new AIMessage('');
@@ -37,17 +48,23 @@ export default function Chat() {
                 switch (toolCall.name) {
                     case 'stakeConfirm':
                         console.log('stakeConfirm', toolCall);
-                        return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: createActionBubble(tempMessage, "stake")! }]);
+                        const stakeBubble = await createActionBubble(tempMessage, "stake") ?? <ChatBubble text="An error occured. Please try again" side='left' sender="AI"/>;
+                        return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: stakeBubble }]);
                     case 'swapConfirm':
                         console.log('swapConfirm', toolCall);
-                        return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: createActionBubble(tempMessage, "swap")! }]);
+                        const swapBubble = await createActionBubble(tempMessage, "swap") ?? <ChatBubble text="An error occured. Please try again" side='left' sender="AI"/>;
+                        return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: swapBubble }]);
                     default:
                         console.log('Unknown tool call', toolCall);
                         break;
                 }
             }
             
-            setMessages((prev) => [...prev, { message: tempMessage, chatBubble: <ChatBubble text={response.content as string} side='left' sender="AI"/> }]);
+            // append new message to messages
+            setMessages((prev) => [
+                ...prev,
+                { message: tempMessage, chatBubble: <ChatBubble text={response.content as string} side='left' sender="AI"/> }
+            ]);
         }
     }
     
@@ -57,33 +74,94 @@ export default function Chat() {
         }
     }
     
-    // function isConfirmMessage(message: LLMMessage) {
-    //     return !(message instanceof HumanMessage) ? message.tool_calls?.some((toolCall) => toolCall.name.endsWith('Confirm')) : false;
-    // }
     
-    function createActionBubble(message: LLMMessage, action: 'stake' | 'swap') {
+    async function createActionBubble(message: LLMMessage, action: 'stake' | 'swap') {
         if (message instanceof HumanMessage) return;
         const toolCall = message.tool_calls?.find((toolCall) => toolCall.name.endsWith('Confirm'));
         if (!toolCall) return;
-        return <ActionBubble text={action === 'stake' ?
-            `Confirm Stake ${toolCall.args.amount} ${toolCall.args.token}` :
-            `Confirm Swap ${toolCall.args.amountIn ?? ''} ${toolCall.args.token1} for ${toolCall.args.amountOut ?? ''} ${toolCall.args.token2}`}
-            
-            actionName={action === 'stake' ? 'Stake' : 'Swap'
-                             }
-        side='left' sender="AI" callback={() => {}}/>;
+        
+        if (!account) return <ChatBubble text="Please connect your wallet before performing this action" side='left' sender="AI"/>;
+        
+        switch (action) {
+            case 'stake':
+                // todo callback function
+                if (!toolCall.args.token) return <ChatBubble text="Only the stark token can be staked" side='left' sender="AI"/>;
+                const stakeAmount = toolCall.args.amount ?? 1;
+                return <ActionBubble text={
+                    `Confirm Stake ${stakeAmount} ${toolCall.args.token}`}
+                                     actionName={'Stake'} side='left' sender="AI" callback={() => {}}/>;
+                
+            case 'swap':
+                // todo: callback function
+                const tokenIn = toolCall.args.tokenIn;
+                const tokenOut = toolCall.args.tokenOut;
+                if (!tokenIn || !tokenOut) return <ChatBubble text="Invalid swap request" side='left' sender="AI"/>;
+                let amountIn = toolCall.args.amountIn;
+                let amountOut = toolCall.args.amountOut;
+                if (!amountIn && !amountOut) amountOut = 1n;
+                
+                let swapFunction;
+                // quote swap
+                if (amountIn) {
+                    // get amountOut
+                    const quoteOut = await getAmountOut(tokenIn, tokenOut, account.address, amountIn);
+                    if (!quoteOut) return <ChatBubble text="An error occured. Please try again" side='left' sender="AI"/>;
+                    amountOut = quoteOut[0].buyAmount;
+                    swapFunction = async () => {
+                        try {
+                            await swap(account, quoteOut[0].quoteId);
+                        } catch {
+                            toast({
+                                title: "Error",
+                                variant: 'destructive',
+                                description: 'An error occurred executing the swap'
+                            })
+                        }
+                        
+                        toast({
+                            title: "Success",
+                            description: 'Swap executed successfully'
+                        })
+                    }
+                } else {
+                    // get amountIn
+                    const quoteIn = await getAmountIn(tokenIn, tokenOut, account.address, amountOut);
+                    if (!quoteIn) return <ChatBubble text="An error occured. Please try again" side='left' sender="AI"/>;
+                    amountIn = quoteIn[0].sellAmount;
+                    swapFunction = async () => {
+                        try {
+                            await swap(account, quoteIn[0].quoteId);
+                        } catch {
+                            toast({
+                                title: "Error",
+                                variant: 'destructive',
+                                description: 'An error occurred executing the swap'
+                            })
+                        }
+                        
+                        toast({
+                            title: "Success",
+                            description: 'Swap executed successfully'
+                        })
+                    }
+                }
+                
+                return <ActionBubble text={`Confirm Swap ${amountIn} ${toolCall.args.tokenIn} for ${amountOut} ${toolCall.args.tokenOut}`}
+                                     actionName={'Swap'} side='left' sender="AI" callback={() => swapFunction}/>;
+                
+            default:
+                return;
+                
+        }
     }
     
-    // useEffect(() => {
-    //     // initial message
-    //     setMessages((prev) => [...prev, { message: new AIMessage(''), chatBubble: <ActionBubble text="Confirm Stake " actionName="Stake" side="left" sender="AI" callback={()=>{}}/> }]);
-    // }, []);
     
     return (
         <div className="grid grid-rows-[auto,1fr] h-full">
+           
             <h1 className="pb-2 text-center text-4xl pt-1">AI Chat</h1>
             
-            <div className="h-full px-2 grid gap-2 w-full">
+            <div className="h-full px-2 grid gap-2 w-full overflow-y-scroll">
                 {messages.map((message, key) => {
                     return (
                         <Fragment key={key}>
@@ -93,12 +171,17 @@ export default function Chat() {
                 })}
             </div>
             
-            <div className="flex w-4/5 mx-auto">
-                <Input type="text" placeholder="Ask a Question..." ref={inputRef} onKeyDown={handleKeyDown}/>
+            {!account && <ConnectWalletButton />}
+            
+            {account && <div className="flex w-4/5 mx-auto mb-1">
+                <Input className="mr-1" type="text" placeholder="Ask a Question..." ref={inputRef}
+                       onKeyDown={handleKeyDown}/>
                 <Button onClick={sendMessage}>
                     <SendHorizontal/>
                 </Button>
-            </div>
+            </div>}
+        
         </div>
+        
     );
 }
