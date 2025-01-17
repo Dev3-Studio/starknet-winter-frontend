@@ -47,3 +47,8 @@ export async function unstakeAction(account: SessionAccountInterface) {
     
     return await sendTransaction(account, exitDelegationPoolCall);
 }
+
+export async function getStakeInfo(account: SessionAccountInterface) {
+    const delegationPoolContract = getStakingContract(account);
+    return await delegationPoolContract.get_pool_member_info(account.address);
+}
