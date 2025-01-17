@@ -150,11 +150,11 @@ export default function Chat() {
     
     
     return (
-        <div className="grid grid-rows-[auto,1fr] h-full">
+        <div className="grid grid-rows-[auto,1fr]">
            
             <h1 className="pb-2 text-center text-4xl pt-1">AI Chat</h1>
             
-            <div className="h-full px-2 grid gap-2 w-full overflow-y-scroll">
+            <div className="px-2 grid gap-2 w-full overflow-y-scroll">
                 {messages.map((message, key) => {
                     return (
                         <Fragment key={key}>

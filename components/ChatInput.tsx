@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createSpeechlySpeechRecognition } from '@speechly/speech-recognition-polyfill';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { Mic, MicOff, SendHorizontal } from 'lucide-react';
@@ -44,6 +44,12 @@ const ChatInput = (props: {inputRef: any, onSend: () => void}) => {
     // if (!browserSupportsSpeechRecognition) {
     //     return;
     // }
+    
+    // useEffect(() => {
+    //     if (transcript) {
+    //         props.inputRef.current.value = transcript;
+    //     }
+    // }, [transcript]);
     
     return (
         <div className="flex w-4/5 mx-auto mb-1">
