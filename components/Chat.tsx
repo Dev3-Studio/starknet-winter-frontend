@@ -10,6 +10,7 @@ import ChatBubble from '@/components/ChatBubble';
 import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
 import { useArgent } from '@/hooks/useArgent';
 import { useToast } from '@/hooks/use-toast';
+import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 
 type ChatBubbleProps = {
     chatBubble: JSX.Element;
@@ -95,8 +96,8 @@ export default function Chat() {
                 const tokenIn = toolCall.args.tokenIn;
                 const tokenOut = toolCall.args.tokenOut;
                 if (!tokenIn || !tokenOut) return <ChatBubble text="Invalid swap request" side='left' sender="AI"/>;
-                let amountIn = BigInt(toolCall.args.amountIn);
-                let amountOut = BigInt(toolCall.args.amountOut);
+                let amountIn = toolCall.args.amountIn;
+                let amountOut = toolCall.args.amountOut;
                 if (!amountIn && !amountOut) amountOut = 1n;
                 
                 let swapFunction;
@@ -157,9 +158,10 @@ export default function Chat() {
     
     return (
         <div className="grid grid-rows-[auto,1fr] h-full">
+           
             <h1 className="pb-2 text-center text-4xl pt-1">AI Chat</h1>
             
-            <div className="h-full px-2 grid gap-2 w-full">
+            <div className="h-full px-2 grid gap-2 w-full overflow-y-scroll">
                 {messages.map((message, key) => {
                     return (
                         <Fragment key={key}>
@@ -169,12 +171,17 @@ export default function Chat() {
                 })}
             </div>
             
-            <div className="flex w-4/5 mx-auto mb-1">
-                <Input className="mr-1" type="text" placeholder="Ask a Question..." ref={inputRef} onKeyDown={handleKeyDown}/>
+            {!account && <ConnectWalletButton />}
+            
+            {account && <div className="flex w-4/5 mx-auto mb-1">
+                <Input className="mr-1" type="text" placeholder="Ask a Question..." ref={inputRef}
+                       onKeyDown={handleKeyDown}/>
                 <Button onClick={sendMessage}>
                     <SendHorizontal/>
                 </Button>
-            </div>
+            </div>}
+        
         </div>
+        
     );
 }

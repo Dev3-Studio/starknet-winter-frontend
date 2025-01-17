@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { tool } from '@langchain/core/tools';
-import assetList from '../public/assetList.json';
+import assetList from '../public/pragmaTokens.json';
 
 const API_KEY = process.env.GOOGLE_API_KEY;
 if (!API_KEY) {
@@ -39,8 +39,8 @@ const stakeSchema = z.object({
 const swapSchema = z.object({
     tokenIn: tokenSchema.describe('The token that will be sent'),
     tokenOut: tokenSchema.describe('The token that will be received'),
-    amountIn: z.number().gt(0).optional().describe('The amount of tokenIn to swap'),
-    amountOut: z.number().gt(0).optional().describe('The amount of tokenOut to receive'),
+    amountIn: z.number().optional().describe('The amount of tokenIn to swap'),
+    amountOut: z.number().optional().describe('The amount of tokenOut to receive'),
 })
 
 const stakeTool = tool(
