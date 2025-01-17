@@ -1,11 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/shadcn/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { StakeUnstakeToggle } from '@/components/StakeUnstakeButton';
 import { DollarSection } from '@/components/DollarSection';
@@ -26,10 +21,7 @@ export default function StakeCard({ className, ...props }: CardProps) {
       <CardContent className='grid gap-4'>
         <DollarSection />
         <div className='w-full'>
-          {/*<ConnectWalletButton/>*/}
-          <button className='w-full bg-purple-500 px-8 py-2 rounded-[8px]'>
-            Connect Wallet
-          </button>
+          <ConnectWalletButton/>
         </div>
 
         <div className='flex items-center justify-between py-2 border-b border-contrast-0'>

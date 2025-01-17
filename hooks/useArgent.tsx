@@ -21,9 +21,12 @@ export const useArgent = () => {
             allowedMethods: [
                 // todo Placeholder list of contracts/methods allowed to be called by the session key
                 {
-                    contract:
-                        '0x036133c88c1954413150db74c26243e2af77170a4032934b275708d84ec5452f', // contract address
-                    selector: 'increment', //function selector
+                    contract: '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d', // contract address
+                    selector: 'approve', //function selector
+                },
+                {
+                    contract: '0x07134aad6969880f11b2d50e57c6e8d38ceef3a6b02bd9ea44837bd257023f6b',
+                    selector: 'enter_delegation_pool',
                 },
             ],
             validityDays: 90, // session validity (in days) - default: 90

@@ -2,7 +2,7 @@
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import { cn } from '@/lib/utils';
-import { PriceProps } from '@/types/Price';
+import { PriceProps } from '@/types/AllTypes';
 
 interface BuyCompProps {
   handleToggleModal: (buy: string) => void;

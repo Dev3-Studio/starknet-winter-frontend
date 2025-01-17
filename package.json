@@ -8,7 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@argent/tma-wallet": "^1.22.0",
+    "@argent/tma-wallet": "^1.21.1",
     "@avnu/avnu-sdk": "^3.0.0",
     "@langchain/core": "^0.3.27",
     "@langchain/google-genai": "^0.1.6",
