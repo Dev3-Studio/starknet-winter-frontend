@@ -1,3 +1,4 @@
+'use server';
 import { fetchBuildExecuteTransaction, fetchQuotes } from '@avnu/avnu-sdk';
 import { SessionAccountInterface } from '@argent/tma-wallet';
 import { num, RPC } from 'starknet';

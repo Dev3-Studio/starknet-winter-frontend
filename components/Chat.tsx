@@ -7,8 +7,9 @@ import { LLMMessage, runTradeAI } from '@/langchain';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import ActionBubble from '@/components/ActionBubble';
 import ChatBubble from '@/components/ChatBubble';
-import { getAmountIn, getAmountOut } from '@/lib/swap';
+import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
 import { useArgent } from '@/hooks/useArgent';
+import { useToast } from '@/hooks/use-toast';
 
 type ChatBubbleProps = {
     chatBubble: JSX.Element;
@@ -20,6 +21,7 @@ export default function Chat() {
     
     const inputRef = useRef<HTMLInputElement>(null);
     const {account} = useArgent();
+    const { toast } = useToast();
     
     async function sendMessage() {
         const message = inputRef.current?.value;
@@ -97,21 +99,54 @@ export default function Chat() {
                 let amountOut = BigInt(toolCall.args.amountOut);
                 if (!amountIn && !amountOut) amountOut = 1n;
                 
+                let swapFunction;
                 // quote swap
                 if (amountIn) {
                     // get amountOut
                     const quoteOut = await getAmountOut(tokenIn, tokenOut, account.address, amountIn);
                     if (!quoteOut) return <ChatBubble text="An error occured. Please try again" side='left' sender="AI"/>;
                     amountOut = quoteOut[0].buyAmount;
+                    swapFunction = async () => {
+                        try {
+                            await swap(account, quoteOut[0].quoteId);
+                        } catch {
+                            toast({
+                                title: "Error",
+                                variant: 'destructive',
+                                description: 'An error occurred executing the swap'
+                            })
+                        }
+                        
+                        toast({
+                            title: "Success",
+                            description: 'Swap executed successfully'
+                        })
+                    }
                 } else {
                     // get amountIn
                     const quoteIn = await getAmountIn(tokenIn, tokenOut, account.address, amountOut);
                     if (!quoteIn) return <ChatBubble text="An error occured. Please try again" side='left' sender="AI"/>;
                     amountIn = quoteIn[0].sellAmount;
+                    swapFunction = async () => {
+                        try {
+                            await swap(account, quoteIn[0].quoteId);
+                        } catch {
+                            toast({
+                                title: "Error",
+                                variant: 'destructive',
+                                description: 'An error occurred executing the swap'
+                            })
+                        }
+                        
+                        toast({
+                            title: "Success",
+                            description: 'Swap executed successfully'
+                        })
+                    }
                 }
                 
                 return <ActionBubble text={`Confirm Swap ${amountIn} ${toolCall.args.tokenIn} for ${amountOut} ${toolCall.args.tokenOut}`}
-                                     actionName={'Swap'} side='left' sender="AI" callback={() => {}}/>;
+                                     actionName={'Swap'} side='left' sender="AI" callback={() => swapFunction}/>;
                 
             default:
                 return;

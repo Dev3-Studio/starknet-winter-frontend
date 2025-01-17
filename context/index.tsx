@@ -9,7 +9,7 @@ const queryClient = new QueryClient();
 
 function ContextProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
-        init();
+        // init();
     }, []);
     return (
         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
