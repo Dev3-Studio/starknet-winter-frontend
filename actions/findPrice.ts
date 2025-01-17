@@ -1,9 +1,8 @@
 'use server';
 
-import { RpcProvider } from 'starknet';
-import abi from '@/public/abi.json';
+import { cairo, CairoCustomEnum, CairoOption, Contract, RpcProvider } from 'starknet';
+import abi from '@/public/pragma_abi.json';
 import { ContractAddress } from '@starknet-io/types-js';
-import { cairo, CairoCustomEnum, Contract, CairoOption } from 'starknet';
 
 const provider = new RpcProvider({
   nodeUrl: 'https://free-rpc.nethermind.io/mainnet-juno/v0_7',
