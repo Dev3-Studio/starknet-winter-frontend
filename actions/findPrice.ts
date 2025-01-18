@@ -3,6 +3,7 @@
 import { cairo, CairoCustomEnum, CairoOption, Contract, RpcProvider } from 'starknet';
 import abi from '@/public/pragma_abi.json';
 import { ContractAddress } from '@starknet-io/types-js';
+import { formatUnits } from 'ethers';
 
 const provider = new RpcProvider({
   nodeUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_7',
@@ -26,9 +27,8 @@ async function getAssetPriceMedian(pairId: string, decimals: number) {
   const res = (await contract.call('get_data_median', [
     enumData,
   ])) as GetDataMedianResponse;
-  const resNum = Number(res.price);
-  const priceInCrypto = resNum / Math.pow(10, decimals);
-  const priceInUSD = 1 / priceInCrypto; // Invert the price to get 1 BTC in USD
+  const priceInUSD = Number(formatUnits(res.price, decimals));
+  const priceInCrypto = 1 / priceInUSD; // Invert the price to get 1 BTC in USD
   return { priceInCrypto, priceInUSD };
 }
 

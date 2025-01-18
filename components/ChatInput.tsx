@@ -9,7 +9,7 @@ import { Input } from '@/components/shadcn/input';
 import { Button } from '@/components/shadcn/button';
 
 
-// const appId = process.env.SPEECHLY_API_KEY;
+// const appId = process.env.VOICE_API_KEY;
 // const SpeechlySpeechRecognition = createSpeechlySpeechRecognition(appId);
 // SpeechRecognition.applyPolyfill(SpeechlySpeechRecognition);
 

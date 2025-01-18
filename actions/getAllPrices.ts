@@ -10,11 +10,13 @@ type Price = {
     Decimals: number;
     priceInUSD: number;
 }
+
+// price caching
 let prices: Price[] = [];
 let stale = true;
 setTimeout(() => {
     stale = true;
-}, 1000 * 60 * 5); // 5 minutes
+}, 1000); // 1 second
 
 
 async function getAllPricesFormatted(): Promise<Price[]> {
