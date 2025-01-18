@@ -6,8 +6,7 @@ const StakingStats: React.FC<StakingStatsProps> = ({ stakingStats }) => {
   const stats = [
     { name: 'APY', number: 0 },
     { name: 'Fees', number: '0%' },
-    { name: 'Total STRK staked', number: 1110 },
-    { name: 'Delegated AVNU', number: 0 },
+    { name: 'Delegated to AVNU', number: 0 },
     { name: 'Delay to withdrawal', number: '5 minutes' },
   ];
   return (

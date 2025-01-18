@@ -25,7 +25,7 @@ const DollarSection: React.FC = ({}) => {
     : '0.00';
 
   return (
-    <div className='flex flex-row items-center justify-between p-2 rounded-lg mb-2 border border-solid border-contrast-0 focus-within:border-contrast-4 hover:bg-contrast-0'>
+    <div className='flex flex-row items-center justify-between p-2 rounded-lg mb-2 border border-solid focus-within:border-contrast-4 hover:bg-contrast-0'>
       {/* Icon Section */}
       <div className='flex flex-col'>
         <div className='flex flex-row items-center gap-x-3'>
@@ -41,9 +41,9 @@ const DollarSection: React.FC = ({}) => {
       </div>
       {/* Input Section */}
       <div className='flex flex-col items-end'>
-        <div className='tooltip_inputWrap___XCbD'>
+        <div>
           <input
-            className='!bg-transparent !p-0 !h-fit !m-0 !text-right !text-xl !text-contrast-5 !font-bold focus:outline-none focus:ring-0'
+            className='focus:outline-none focus:ring-0 bg-transparent text-right'
             tabIndex={1}
             placeholder='0.00'
             value={starkcoinAmount}
