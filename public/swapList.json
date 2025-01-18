@@ -11,16 +11,6 @@
     "l2_locking_contract": "0x035c332b8de00874e702b4831c84b22281fb3246f714475496d74e644f35d492"
   },
   {
-    "Name": "USDC",
-    "Ticker": "USDC/USD",
-    "PairID": "6148332971638477636",
-    "Decimals": 6,
-    "l1_token_address": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
-    "l1_bridge_address": "0x86dC0B32a5045FFa48D9a60B7e7Ca32F11faCd7B",
-    "l2_bridge_address": "0x0028729b12ce1140cbc1e7cbc7245455d3c15fa0c7f5d2e9fc8e0441567f6b50",
-    "l2_token_address": "0x053b40a647cedfca6ca84f542a0fe36736031905a9639a7f19a3c1e66bfd5080"
-  },
-  {
     "Name": "ETH",
     "Ticker": "ETH/USD",
     "PairID": "19514442401534788",
