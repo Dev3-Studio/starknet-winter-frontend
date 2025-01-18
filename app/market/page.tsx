@@ -1,8 +1,9 @@
 import TokenPrice from '@/components/TokenPrice';
 import { getAllPricesFormatted } from '@/actions/getAllPrices';
+import assetList from "@/public/pragmaTokens.json"
 
 export default async function MarketPage() {
-    const prices = await getAllPricesFormatted();
+    const prices = await getAllPricesFormatted(assetList);
     
     function getTokenImage(token: string) {
         return `./${token}.webp`;

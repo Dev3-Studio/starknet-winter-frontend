@@ -6,12 +6,17 @@ import { cn } from '@/lib/utils';
 import { useArgent } from '@/hooks/useArgent';
 
 export const ConnectWalletButton: React.FC<{ className?: string }> = ({ className }) => {
-    const { argentTMA, account, isConnected } = useArgent();
+    const { argentTMA, account, disconnect, isConnected } = useArgent();
     
     const handleConnectButton = async () => {
         await argentTMA.requestConnection({
             callbackData: 'test',
         });
+    };
+    
+    // useful for debugging
+    const handleClearSessionButton = async () => {
+        await disconnect();
     };
     
     const formatAddress = (address: string) => {
@@ -22,9 +27,9 @@ export const ConnectWalletButton: React.FC<{ className?: string }> = ({ classNam
         <div>
             {isConnected && <Button
                 className={cn('block rounded-md w-full', className)}
-                disabled
+                onClick={handleClearSessionButton}
             >
-                Connected: {formatAddress(account?.address)}
+                Disconnect: {formatAddress(account?.address)}
             </Button>}
             {!isConnected && <Button
                 className={cn('block rounded-md w-full', className)}

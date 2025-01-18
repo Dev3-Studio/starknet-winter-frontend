@@ -1,6 +1,12 @@
 'use server';
 
-import { cairo, CairoCustomEnum, CairoOption, Contract, RpcProvider } from 'starknet';
+import {
+  cairo,
+  CairoCustomEnum,
+  CairoOption,
+  Contract,
+  RpcProvider,
+} from 'starknet';
 import abi from '@/public/pragma_abi.json';
 import { ContractAddress } from '@starknet-io/types-js';
 import { formatUnits } from 'ethers';

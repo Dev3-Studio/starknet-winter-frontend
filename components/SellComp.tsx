@@ -14,7 +14,7 @@ interface SellCompProps {
 const SellComp: React.FC<SellCompProps> = ({
   handleToggleModal,
   Token,
-  amount = 0,
+  amount,
   setAmount,
 }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
