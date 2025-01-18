@@ -1,16 +1,17 @@
 'use client';
-import { Input } from '@/components/shadcn/input';
-import { Button } from '@/components/shadcn/button';
-import { SendHorizontal } from 'lucide-react';
-import { Fragment, useRef, useState } from 'react';
+
+import React, { Fragment, useRef, useState } from 'react';
 import { LLMMessage, runTradeAI } from '@/langchain';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import ActionBubble from '@/components/ActionBubble';
 import ChatBubble from '@/components/ChatBubble';
 import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
-import { useArgent } from '@/hooks/useArgent';
 import { useToast } from '@/hooks/use-toast';
-import { ConnectWalletButton } from '@/components/ConnectWalletButton';
+import ChatInput from './ChatInput';
+import { useArgent } from '@/hooks/useArgent';
+import { getTokenAddressFromName } from '@/lib/utils';
+import { stake } from '@/lib/stake';
+
 
 type ChatBubbleProps = {
     chatBubble: JSX.Element;
@@ -19,10 +20,9 @@ type ChatBubbleProps = {
 
 export default function Chat() {
     const [messages, setMessages] = useState<ChatBubbleProps[]>([]);
-    
     const inputRef = useRef<HTMLInputElement>(null);
-    const {account} = useArgent();
     const { toast } = useToast();
+    const { account } = useArgent();
     
     async function sendMessage() {
         const message = inputRef.current?.value;
@@ -35,7 +35,7 @@ export default function Chat() {
             // append new message to messages
             setMessages((prev) => [
                 ...prev,
-                { message: newMessage, chatBubble: <ChatBubble text={message} side='right' sender="You"/> }
+                { message: newMessage, chatBubble: <ChatBubble text={message} side="right" sender="You"/> },
             ]);
             
             const response = await runTradeAI([...messages.map(message => message.message), newMessage]);
@@ -47,30 +47,26 @@ export default function Chat() {
             for (const toolCall of tempMessage.tool_calls ?? []) {
                 switch (toolCall.name) {
                     case 'stakeConfirm':
-                        console.log('stakeConfirm', toolCall);
-                        const stakeBubble = await createActionBubble(tempMessage, "stake") ?? <ChatBubble text="An error occured. Please try again" side='left' sender="AI"/>;
+                        const stakeBubble = await createActionBubble(tempMessage, 'stake') ??
+                            <ChatBubble text="An error occured. Please try again" side="left" sender="AI"/>;
                         return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: stakeBubble }]);
                     case 'swapConfirm':
-                        console.log('swapConfirm', toolCall);
-                        const swapBubble = await createActionBubble(tempMessage, "swap") ?? <ChatBubble text="An error occured. Please try again" side='left' sender="AI"/>;
+                        const swapBubble = await createActionBubble(tempMessage, 'swap') ??
+                            <ChatBubble text="An error occured. Please try again" side="left" sender="AI"/>;
                         return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: swapBubble }]);
                     default:
-                        console.log('Unknown tool call', toolCall);
-                        break;
+                        throw new Error('Unknown tool call');
                 }
             }
             
             // append new message to messages
             setMessages((prev) => [
                 ...prev,
-                { message: tempMessage, chatBubble: <ChatBubble text={response.content as string} side='left' sender="AI"/> }
+                {
+                    message: tempMessage,
+                    chatBubble: <ChatBubble text={response.content as string} side="left" sender="AI"/>,
+                },
             ]);
-        }
-    }
-    
-    function handleKeyDown(event: React.KeyboardEvent) {
-        if (event.key === 'Enter') {
-            sendMessage().catch();
         }
     }
     
@@ -80,22 +76,40 @@ export default function Chat() {
         const toolCall = message.tool_calls?.find((toolCall) => toolCall.name.endsWith('Confirm'));
         if (!toolCall) return;
         
-        if (!account) return <ChatBubble text="Please connect your wallet before performing this action" side='left' sender="AI"/>;
+        if (!account) return <ChatBubble text="Please connect your wallet before performing this action" side="left"
+                                         sender="AI"/>;
         
         switch (action) {
             case 'stake':
-                // todo callback function
-                if (!toolCall.args.token) return <ChatBubble text="Only the stark token can be staked" side='left' sender="AI"/>;
-                const stakeAmount = toolCall.args.amount ?? 1;
+                if (!toolCall.args.token) return <ChatBubble text="Only the stark token can be staked" side="left"
+                                                             sender="AI"/>;
+                const stakeAmount = toolCall.args.amount ?? 1n;
+                
+                const stakeFunction = async () => {
+                    try {
+                        await stake(stakeAmount, account.address)
+                    } catch {
+                        toast({
+                            title: 'Error',
+                            variant: 'destructive',
+                            description: 'An error occurred executing the stake',
+                        });
+                    }
+                    
+                    toast({
+                        title: 'Success',
+                        description: 'Stake executed successfully',
+                    });
+                };
+                
                 return <ActionBubble text={
                     `Confirm Stake ${stakeAmount} ${toolCall.args.token}`}
-                                     actionName={'Stake'} side='left' sender="AI" callback={() => {}}/>;
-                
+                                     actionName={'Stake'} side="left" sender="AI" callback={() => stakeFunction}/>;
+            
             case 'swap':
-                // todo: callback function
                 const tokenIn = toolCall.args.tokenIn;
                 const tokenOut = toolCall.args.tokenOut;
-                if (!tokenIn || !tokenOut) return <ChatBubble text="Invalid swap request" side='left' sender="AI"/>;
+                if (!tokenIn || !tokenOut) return <ChatBubble text="Invalid swap request" side="left" sender="AI"/>;
                 let amountIn = toolCall.args.amountIn;
                 let amountOut = toolCall.args.amountOut;
                 if (!amountIn && !amountOut) amountOut = 1n;
@@ -104,64 +118,65 @@ export default function Chat() {
                 // quote swap
                 if (amountIn) {
                     // get amountOut
-                    const quoteOut = await getAmountOut(tokenIn, tokenOut, account.address, amountIn);
-                    if (!quoteOut) return <ChatBubble text="An error occured. Please try again" side='left' sender="AI"/>;
+                    const quoteOut = await getAmountOut(getTokenAddressFromName(tokenIn), getTokenAddressFromName(tokenOut), account.address, amountIn);
+                    if (!quoteOut) return <ChatBubble text="An error occured. Please try again" side="left"
+                                                      sender="AI"/>;
                     amountOut = quoteOut[0].buyAmount;
                     swapFunction = async () => {
                         try {
                             await swap(account, quoteOut[0].quoteId);
                         } catch {
                             toast({
-                                title: "Error",
+                                title: 'Error',
                                 variant: 'destructive',
-                                description: 'An error occurred executing the swap'
-                            })
+                                description: 'An error occurred executing the swap',
+                            });
                         }
                         
                         toast({
-                            title: "Success",
-                            description: 'Swap executed successfully'
-                        })
-                    }
+                            title: 'Success',
+                            description: 'Swap executed successfully',
+                        });
+                    };
                 } else {
                     // get amountIn
-                    const quoteIn = await getAmountIn(tokenIn, tokenOut, account.address, amountOut);
-                    if (!quoteIn) return <ChatBubble text="An error occured. Please try again" side='left' sender="AI"/>;
+                    const quoteIn = await getAmountIn(getTokenAddressFromName(tokenIn), getTokenAddressFromName(tokenOut), account.address, amountOut);
+                    if (!quoteIn) return <ChatBubble text="An error occured. Please try again" side="left"
+                                                     sender="AI"/>;
                     amountIn = quoteIn[0].sellAmount;
                     swapFunction = async () => {
                         try {
                             await swap(account, quoteIn[0].quoteId);
                         } catch {
                             toast({
-                                title: "Error",
+                                title: 'Error',
                                 variant: 'destructive',
-                                description: 'An error occurred executing the swap'
-                            })
+                                description: 'An error occurred executing the swap',
+                            });
                         }
                         
                         toast({
-                            title: "Success",
-                            description: 'Swap executed successfully'
-                        })
-                    }
+                            title: 'Success',
+                            description: 'Swap executed successfully',
+                        });
+                    };
                 }
-                
-                return <ActionBubble text={`Confirm Swap ${amountIn} ${toolCall.args.tokenIn} for ${amountOut} ${toolCall.args.tokenOut}`}
-                                     actionName={'Swap'} side='left' sender="AI" callback={() => swapFunction}/>;
-                
+                return <ActionBubble
+                    text={`Confirm Swap ${amountIn} ${toolCall.args.tokenIn} for ${amountOut} ${toolCall.args.tokenOut}`}
+                    actionName={'Swap'} side="left" sender="AI" callback={() => swapFunction}/>;
+            
             default:
                 return;
-                
         }
     }
     
     
     return (
-        <div className="grid grid-rows-[auto,1fr] h-full">
-           
+        <div className="grid grid-rows-[auto,1fr]">
+            
             <h1 className="pb-2 text-center text-4xl pt-1">AI Chat</h1>
             
-            <div className="h-full px-2 grid gap-2 w-full overflow-y-scroll">
+            <div className="px-2 grid gap-2 w-full overflow-y-scroll">
                 {messages.map((message, key) => {
                     return (
                         <Fragment key={key}>
@@ -171,17 +186,9 @@ export default function Chat() {
                 })}
             </div>
             
-            {!account && <ConnectWalletButton />}
-            
-            {account && <div className="flex w-4/5 mx-auto mb-1">
-                <Input className="mr-1" type="text" placeholder="Ask a Question..." ref={inputRef}
-                       onKeyDown={handleKeyDown}/>
-                <Button onClick={sendMessage}>
-                    <SendHorizontal/>
-                </Button>
-            </div>}
+            <ChatInput onSend={sendMessage} inputRef={inputRef}/>
         
         </div>
-        
+    
     );
 }
