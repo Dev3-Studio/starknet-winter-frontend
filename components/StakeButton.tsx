@@ -5,8 +5,18 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
-export const StakeButton: React.FC<{ className?: string }> = ({
+interface StakeButtonProps {
+  className: string;
+  amountInput: number | undefined;
+  balance: number;
+  active: boolean | undefined;
+}
+
+export const StakeButton: React.FC<StakeButtonProps> = ({
   className,
+  amountInput,
+  balance,
+  active,
 }) => {
   const { toast } = useToast();
 
@@ -22,6 +32,7 @@ export const StakeButton: React.FC<{ className?: string }> = ({
       <Button
         className={cn('block rounded-md w-full bg-secondary', className)}
         onClick={handleStake}
+        disabled={active}
       >
         Stake
       </Button>

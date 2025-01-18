@@ -7,12 +7,14 @@ import { FetchPoolMemberInfo } from './FetchPoolMemberInfo';
 import { Button } from './shadcn/button';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { set } from 'zod';
 
 interface ClaimProps {
   className: string;
+  active: boolean | undefined;
 }
 
-const Claim = ({ className }: ClaimProps) => {
+const Claim = ({ className, active }: ClaimProps) => {
   const { toast } = useToast();
   function handleClaim() {
     toast({
@@ -23,29 +25,39 @@ const Claim = ({ className }: ClaimProps) => {
 
   return (
     <div className={cn(className)}>
-      <Button onClick={handleClaim}>Claim</Button>
+      <Button onClick={handleClaim} disabled={!active}>
+        Claim
+      </Button>
     </div>
   );
 };
 
-export default function STRKSection() {
-  const [balance, setBalance] = useState<any>();
+interface STRKSectionProps {
+  balance: number;
+}
+
+const STRKSection: React.FC<STRKSectionProps> = ({ balance }) => {
   const [poolmemberinfo, setPoolMemberInfo] = useState<any>();
+  const [active, setActive] = useState<boolean>();
   const argent = useArgent();
 
   useEffect(() => {
     const fetchSTRKInfo = async () => {
       if (!argent.isConnected) return;
-      const fetchedBalance = await FetchStrkBalance(argent.account?.address);
+
       const fetchedPoolMemberInfo = await FetchPoolMemberInfo(
         argent.account?.address
       );
-      setBalance(fetchedBalance);
+
       setPoolMemberInfo(fetchedPoolMemberInfo);
+
+      if (fetchedPoolMemberInfo === null) {
+        setActive(false);
+      }
     };
 
     fetchSTRKInfo();
-  }, [argent]);
+  }, []);
   return (
     <div className='flex flex-col min-h-20 gap-8 border-t border-x border-solid rounded-t-md px-2 py-8 text-sm'>
       <div>
@@ -61,8 +73,10 @@ export default function STRKSection() {
           <span className='text-muted-foreground'>Staked Rewards</span>
           <div>{poolmemberinfo || '0.00'} STRK</div>
         </div>
-        <Claim className={'justify-self-end'} />
+        <Claim className={'justify-self-end'} active={active} />
       </div>
     </div>
   );
-}
+};
+
+export { STRKSection };

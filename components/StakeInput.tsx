@@ -1,11 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import Image from 'next/image';
 import StarknetIcon from '@/public/StarknetIcon.svg';
 import { getAssetPriceMedian } from '@/actions/findPrice';
 
-const DollarSection: React.FC = ({}) => {
+interface StakeInputProps {
+  starkcoinAmount: number | undefined;
+  callback: (arg: number) => void;
+}
+
+const StakeInput: React.FC<StakeInputProps> = ({
+  starkcoinAmount,
+  callback,
+}: StakeInputProps) => {
   useEffect(() => {
     const fetchConversionRate = async () => {
       const amountSTRK = await getAssetPriceMedian('6004514686061859652', 8);
@@ -18,10 +26,9 @@ const DollarSection: React.FC = ({}) => {
     priceInCrypto: 0,
     priceInUSD: 0,
   });
-  const [starkcoinAmount, setStarkcoinAmount] = useState<string>('');
 
   const dollarAmount = starkcoinAmount
-    ? (parseFloat(starkcoinAmount) * conversionRate?.priceInCrypto).toFixed(2)
+    ? (starkcoinAmount * conversionRate?.priceInCrypto).toFixed(2)
     : '0.00';
 
   return (
@@ -44,10 +51,18 @@ const DollarSection: React.FC = ({}) => {
         <div>
           <input
             className='focus:outline-none focus:ring-0 bg-transparent text-right'
-            tabIndex={1}
-            placeholder='0.00'
-            value={starkcoinAmount}
-            onChange={(e) => setStarkcoinAmount(e.target.value)}
+            placeholder='0'
+            value={
+              starkcoinAmount !== undefined ? starkcoinAmount.toString() : ''
+            }
+            type='number'
+            onChange={(e) =>
+              callback(
+                isNaN(parseFloat(e.target.value))
+                  ? 0
+                  : parseFloat(e.target.value)
+              )
+            }
           />
         </div>
         <div className='flex justify-end'>
@@ -60,4 +75,4 @@ const DollarSection: React.FC = ({}) => {
   );
 };
 
-export { DollarSection };
+export { StakeInput };
