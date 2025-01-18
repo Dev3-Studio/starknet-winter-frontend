@@ -14,12 +14,7 @@ interface SwapProps {
   callback: () => void;
 }
 
-export const SwapButton: React.FC<SwapProps> = ({
-  tokenA,
-  tokenB,
-  className,
-  wallet,
-}) => {
+export const SwapButton: React.FC<SwapProps> = ({ className }) => {
   return (
     <div>
       <Button

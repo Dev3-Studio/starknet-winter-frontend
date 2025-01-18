@@ -25,7 +25,7 @@ const DollarSection: React.FC = ({}) => {
     : '0.00';
 
   return (
-    <div className='flex flex-row items-center justify-between bg-contrast-0a p-2 rounded-lg mb-2 border border-solid border-contrast-0 focus-within:border-contrast-4 hover:bg-contrast-0'>
+    <div className='flex flex-row items-center justify-between p-2 rounded-lg mb-2 border border-solid border-contrast-0 focus-within:border-contrast-4 hover:bg-contrast-0'>
       {/* Icon Section */}
       <div className='flex flex-col'>
         <div className='flex flex-row items-center gap-x-3'>
@@ -43,15 +43,8 @@ const DollarSection: React.FC = ({}) => {
       <div className='flex flex-col items-end'>
         <div className='tooltip_inputWrap___XCbD'>
           <input
-            className='numericInput_input__Wo6Z3 !bg-transparent !p-0 !h-fit !m-0 !text-right !text-xl !text-contrast-5 !font-bold focus:outline-none focus:ring-0'
+            className='!bg-transparent !p-0 !h-fit !m-0 !text-right !text-xl !text-contrast-5 !font-bold focus:outline-none focus:ring-0'
             tabIndex={1}
-            type='number'
-            inputMode='decimal'
-            pattern='[0-9]*'
-            step='any'
-            title=''
-            min='0'
-            max='1000000'
             placeholder='0.00'
             value={starkcoinAmount}
             onChange={(e) => setStarkcoinAmount(e.target.value)}
