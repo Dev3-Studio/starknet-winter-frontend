@@ -1,6 +1,5 @@
 'use server';
-
-import assetList from '@/public/AssetList.json';
+import assetList from '@/public/pragmaTokens.json';
 import { getAssetPriceMedian } from './findPrice';
 
 type Price = {
@@ -17,16 +16,16 @@ setTimeout(() => {
   stale = true;
 }, 1000 * 60 * 5); // 5 minutes
 
-async function getAllPricesFormatted(list: any[]) {
+async function getAllPricesFormatted(list: any[]): Promise<Price[]> {
   if (stale) {
     prices = await Promise.all(
       list.map(async (asset) => {
         const price = await getAssetPriceMedian(asset.PairID, asset.Decimals);
         return {
-          Name: asset.Name,
-          Ticker: asset.Ticker,
           PairID: asset.PairID,
           Decimals: asset.Decimals,
+          Name: asset.Name,
+          Ticker: asset.Ticker,
           priceInCrypto: price.priceInCrypto,
           priceInUSD: price.priceInUSD,
         };
@@ -36,4 +35,5 @@ async function getAllPricesFormatted(list: any[]) {
   }
   return prices;
 }
+
 export { getAllPricesFormatted };

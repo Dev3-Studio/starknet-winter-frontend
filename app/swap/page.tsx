@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
 import { PriceProps } from '@/types/AllTypes';
