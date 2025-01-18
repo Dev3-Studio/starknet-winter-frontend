@@ -3,6 +3,7 @@ import { getAmountOut } from '@/lib/swap';
 import { PriceProps } from '@/types/AllTypes';
 import { Quote } from '@avnu/avnu-sdk';
 import { parseUnits, formatUnits } from 'ethers';
+import supportedTokens from '@/public/supportedTokens.json';
 
 interface FeesCompProps {
   address: string | undefined;
@@ -29,20 +30,43 @@ async function handleGetQuote({
       return;
     }
 
-    console.log('Fetching quote with parameters:', {
-      tokenA,
-      tokenB,
-      amountA,
-      address,
-    });
+    // console.log('Fetching quote with parameters:', {
+    //   tokenA,
+    //   tokenB,
+    //   amountA,
+    //   address,
+    // });
+
+    interface TempTokenProps {
+      name: string;
+      symbol: string;
+      address: string;
+    }
+
+    const tempTokenA: TempTokenProps | undefined = supportedTokens.find(
+      (p: any) => {
+        p.Name === tokenA.Name;
+      }
+    );
+    const tempTokenB: TempTokenProps | undefined = supportedTokens.find(
+      (p: any) => {
+        p.Name === tokenA.Name;
+      }
+    );
+
+    if (!tempTokenA || !tempTokenB) {
+      return 0;
+    }
 
     // Call the getAmountIn function
     const tempQuote: Quote[] = await getAmountOut(
-      tokenA.Name,
-      tokenB.Name,
+      tempTokenA.address,
+      tempTokenB.address,
       address,
       parseUnits(amountA.toFixed(tokenA.Decimals).toString())
     );
+
+    console.log(tempQuote);
 
     if (tempQuote.length === 0) {
       console.warn('No quote returned from getAmountIn');
