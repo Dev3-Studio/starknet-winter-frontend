@@ -1,9 +1,8 @@
 'use client';
 
 import { Button } from '@/components/shadcn/button';
-import React, { useEffect, useState } from 'react';
+
 import { cn } from '@/lib/utils';
-import { PriceProps } from '@/types/AllTypes';
 
 interface SwapProps {
   active: boolean;
