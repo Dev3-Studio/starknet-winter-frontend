@@ -8,11 +8,11 @@ const delegationPoolAddress = '0x07134aad6969880f11b2d50e57c6e8d38ceef3a6b02bd9e
 const starkAddress = '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d';
 
 function getStakingContract(account: SessionAccountInterface) {
-    return new Contract(stakeAbi, delegationPoolAddress, account);
+    return new Contract(stakeAbi, delegationPoolAddress, account).typedv2(stakeAbi);
 }
 
 function getStarkContract(account: SessionAccountInterface) {
-    return new Contract(strkAbi, starkAddress, account);
+    return new Contract(starkAbi, starkAddress, account).typedv2(starkAbi);
 }
 
 export async function stake(amount: bigint, account: SessionAccountInterface) {
