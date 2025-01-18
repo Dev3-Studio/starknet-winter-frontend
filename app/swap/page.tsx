@@ -12,6 +12,7 @@ import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { SwapButton } from '@/components/SwapButton';
 import FeesComp from '@/components/FeesComp';
 import { useArgent } from '@/hooks/useArgent';
+import { swipeBehavior } from '@telegram-apps/sdk';
 
 const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
@@ -23,6 +24,7 @@ const SwapPage: React.FC = () => {
   const [amountB, setAmountB] = useState<number>(0);
   const [isSwapped, setSwapped] = useState(false);
   const [isActive, setActive] = useState(false);
+  const [isSwipeSetup, setSwipeSetup] = useState(false);
 
   const argent = useArgent();
 
@@ -39,6 +41,10 @@ const SwapPage: React.FC = () => {
   };
 
   useEffect(() => {
+    if (swipeBehavior.isSupported()) {
+      swipeBehavior.disableVertical();
+      setSwipeSetup(true);
+    }
     fetchPrice().catch();
     if (amountA === 0 || amountB === 0) {
       setActive(true);
@@ -97,7 +103,7 @@ const SwapPage: React.FC = () => {
     setOpen(false);
   };
 
-  async function handleSwap() {
+  async function handleSwapTokens() {
     if (tokenA && tokenB) {
       console.log('Swapping..:', tokenA, tokenB);
       if (!isSwapped) {
@@ -134,7 +140,7 @@ const SwapPage: React.FC = () => {
     }
   };
 
-  const handleMakeSwap = () => {};
+  const handleGetFees = () => {};
 
   return (
     <div className='flex flex-col items-center h-full bg-transparent p-12'>
@@ -148,7 +154,7 @@ const SwapPage: React.FC = () => {
         />
 
         {/* Swap Feature */}
-        <SwapComp isSwapped={isSwapped} handleSwap={handleSwap} />
+        <SwapComp isSwapped={isSwapped} handleSwap={handleSwapTokens} />
 
         {/* Buy Comp */}
         <BuyComp
@@ -168,7 +174,7 @@ const SwapPage: React.FC = () => {
 
         {argent.isConnected ? (
           <SwapButton
-            callback={handleMakeSwap}
+            callback={() => {}}
             className={''}
             wallet={argent.account?.address}
             quoteID={null}
