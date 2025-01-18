@@ -9,7 +9,6 @@ interface SwapProps {
   active: boolean;
   className: string;
   wallet: { address: string };
-  callback: () => void;
 }
 
 export const SwapButton: React.FC<SwapProps> = ({ className, active }) => {
@@ -17,7 +16,6 @@ export const SwapButton: React.FC<SwapProps> = ({ className, active }) => {
     <div>
       <Button
         className={cn('block rounded-md w-full', className)}
-        onClick={() => {}}
         disabled={active}
       >
         Swap

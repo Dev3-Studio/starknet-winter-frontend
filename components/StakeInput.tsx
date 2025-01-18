@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import StarknetIcon from '@/public/StarknetIcon.svg';
 import { getAssetPriceMedian } from '@/actions/findPrice';

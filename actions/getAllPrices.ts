@@ -1,5 +1,6 @@
 'use server';
 import { getAssetPriceMedian } from './findPrice';
+import list from "@/public/pragmaTokens.json"
 
 type Price = {
   Name: string;
@@ -15,9 +16,10 @@ let prices: Price[] = [];
 let stale = true;
 setTimeout(() => {
     stale = true;
-}, 1000); // 1 second
+}, 1000); // 1 second)
 
-async function getAllPricesFormatted(list: any[]): Promise<Price[]> {
+async function getAllPricesFormatted(): Promise<Price[]> {
+  
   if (stale) {
     prices = await Promise.all(
       list.map(async (asset) => {
