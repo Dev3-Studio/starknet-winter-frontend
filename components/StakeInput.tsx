@@ -1,11 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import Image from 'next/image';
 import StarknetIcon from '@/public/StarknetIcon.svg';
 import { getAssetPriceMedian } from '@/actions/findPrice';
 
-const DollarSection: React.FC = ({}) => {
+interface StakeInputProps {
+  starkcoinAmount: number | undefined;
+  callback: (arg: number) => void;
+}
+
+const StakeInput: React.FC<StakeInputProps> = ({
+  starkcoinAmount,
+  callback,
+}: StakeInputProps) => {
   useEffect(() => {
     const fetchConversionRate = async () => {
       const amountSTRK = await getAssetPriceMedian('6004514686061859652', 8);
@@ -18,14 +26,13 @@ const DollarSection: React.FC = ({}) => {
     priceInCrypto: 0,
     priceInUSD: 0,
   });
-  const [starkcoinAmount, setStarkcoinAmount] = useState<string>('');
 
   const dollarAmount = starkcoinAmount
-    ? (parseFloat(starkcoinAmount) * conversionRate?.priceInCrypto).toFixed(2)
+    ? (starkcoinAmount * conversionRate?.priceInCrypto).toFixed(2)
     : '0.00';
 
   return (
-    <div className='flex flex-row items-center justify-between bg-contrast-0a p-2 rounded-lg mb-2 border border-solid border-contrast-0 focus-within:border-contrast-4 hover:bg-contrast-0'>
+    <div className='flex flex-row items-center justify-between p-2 rounded-lg mb-2 border border-solid focus-within:border-contrast-4 hover:bg-contrast-0'>
       {/* Icon Section */}
       <div className='flex flex-col'>
         <div className='flex flex-row items-center gap-x-3'>
@@ -41,20 +48,21 @@ const DollarSection: React.FC = ({}) => {
       </div>
       {/* Input Section */}
       <div className='flex flex-col items-end'>
-        <div className='tooltip_inputWrap___XCbD'>
+        <div>
           <input
-            className='numericInput_input__Wo6Z3 !bg-transparent !p-0 !h-fit !m-0 !text-right !text-xl !text-contrast-5 !font-bold focus:outline-none focus:ring-0'
-            tabIndex={1}
+            className='focus:outline-none focus:ring-0 bg-transparent text-right'
+            placeholder='0'
+            value={
+              starkcoinAmount !== undefined ? starkcoinAmount.toString() : ''
+            }
             type='number'
-            inputMode='decimal'
-            pattern='[0-9]*'
-            step='any'
-            title=''
-            min='0'
-            max='1000000'
-            placeholder='0.00'
-            value={starkcoinAmount}
-            onChange={(e) => setStarkcoinAmount(e.target.value)}
+            onChange={(e) =>
+              callback(
+                isNaN(parseFloat(e.target.value))
+                  ? 0
+                  : parseFloat(e.target.value)
+              )
+            }
           />
         </div>
         <div className='flex justify-end'>
@@ -67,4 +75,4 @@ const DollarSection: React.FC = ({}) => {
   );
 };
 
-export { DollarSection };
+export { StakeInput };

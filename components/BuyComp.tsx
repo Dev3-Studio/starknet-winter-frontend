@@ -7,7 +7,7 @@ import { PriceProps } from '@/types/AllTypes';
 interface BuyCompProps {
   handleToggleModal: (buy: string) => void;
   Token: PriceProps | undefined;
-  amount: number | undefined;
+  amount: number | 0;
   setAmount: (amount: number) => void;
 }
 

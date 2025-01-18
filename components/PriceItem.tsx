@@ -25,7 +25,7 @@ const PriceItem: React.FC<PriceItemProps> = ({
       </div>
       {price.priceInCrypto ? (
         <div>
-          <div> {price.priceInCrypto}</div>
+          <div>$ {price.priceInCrypto}</div>
         </div>
       ) : (
         <div>Loading...</div>
