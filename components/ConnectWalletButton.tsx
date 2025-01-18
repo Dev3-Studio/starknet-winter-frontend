@@ -3,13 +3,13 @@
 import { Button } from '@/components/shadcn/button';
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { useArgent } from '@/hooks/useArgent';
+import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 
 export const ConnectWalletButton: React.FC<{ className?: string }> = ({ className }) => {
-    const { argentTMA, account, disconnect, isConnected } = useArgent();
+    const { argent, account, disconnect, isConnected } = useArgentTelegram();
     
     const handleConnectButton = async () => {
-        await argentTMA.requestConnection({
+        await argent.requestConnection({
             callbackData: 'test',
         });
     };

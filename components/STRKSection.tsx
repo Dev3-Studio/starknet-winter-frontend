@@ -1,13 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useArgent } from '@/hooks/useArgent';
-import { FetchStrkBalance } from './FetchStrkBalance';
+import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { FetchPoolMemberInfo } from './FetchPoolMemberInfo';
 import { Button } from './shadcn/button';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { set } from 'zod';
 
 interface ClaimProps {
   className: string;
@@ -39,7 +37,7 @@ interface STRKSectionProps {
 const STRKSection: React.FC<STRKSectionProps> = ({ balance }) => {
   const [poolmemberinfo, setPoolMemberInfo] = useState<any>();
   const [active, setActive] = useState<boolean>();
-  const argent = useArgent();
+  const argent = useArgentTelegram();
 
   useEffect(() => {
     const fetchSTRKInfo = async () => {

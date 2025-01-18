@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { ArgentTMA, SessionAccountInterface } from '@argent/tma-wallet';
 
-export const useArgent = () => {
+export const useArgentTelegram = () => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [account, setAccount] = useState<SessionAccountInterface | null>(null);
 
@@ -14,8 +14,8 @@ export const useArgent = () => {
       'Missing required environment variable: NEXT_PUBLIC_MINI_APP_LINK'
     );
   }
-
-  const argentTMA = ArgentTMA.init({
+  
+  const argent = ArgentTMA.init({
     environment: 'sepolia', // "sepolia" | "mainnet" (Whitelisting required)
     appName: 'Starknet DEX', // todo Change the app name
     appTelegramUrl,
@@ -53,14 +53,14 @@ export const useArgent = () => {
   });
 
   const disconnect = async () => {
-    await argentTMA.clearSession();
+    await argent.clearSession();
     setAccount(null);
     setIsConnected(false);
   };
 
   useEffect(() => {
     // Call connect() as soon as the app is loaded
-    argentTMA
+    argent
       .connect()
       .then((res) => {
         if (!res) {
@@ -94,6 +94,6 @@ export const useArgent = () => {
         console.error('Failed to connect', err);
       });
   }, []);
-
-  return { argentTMA, account, disconnect, isConnected };
+  
+  return { argent, account, disconnect, isConnected };
 };

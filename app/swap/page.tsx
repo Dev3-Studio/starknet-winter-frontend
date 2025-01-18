@@ -11,7 +11,7 @@ import { getAllPricesFormatted } from '@/actions/getAllPrices';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { SwapButton } from '@/components/SwapButton';
 import FeesComp from '@/components/FeesComp';
-import { useArgent } from '@/hooks/useArgent';
+import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 
 const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
@@ -23,8 +23,8 @@ const SwapPage: React.FC = () => {
   const [amountB, setAmountB] = useState<number>(0);
   const [isSwapped, setSwapped] = useState(false);
   const [isActive, setActive] = useState(false);
-
-  const argent = useArgent();
+  
+  const argent = useArgentTelegram();
 
   const fetchPrice = async () => {
     if (prices.length === swapList.length) {

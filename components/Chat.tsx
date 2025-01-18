@@ -8,7 +8,7 @@ import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import ActionBubble from '@/components/ActionBubble';
 import ChatBubble from '@/components/ChatBubble';
 import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
-import { useArgent } from '@/hooks/useArgent';
+import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { useToast } from '@/hooks/use-toast';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 
@@ -21,7 +21,7 @@ export default function Chat() {
     const [messages, setMessages] = useState<ChatBubbleProps[]>([]);
     
     const inputRef = useRef<HTMLInputElement>(null);
-    const {account} = useArgent();
+    const { account } = useArgentTelegram();
     const { toast } = useToast();
     
     async function sendMessage() {
