@@ -1,126 +1,185 @@
 'use client';
 
-import { Button } from '@/components/shadcn/button';
-import { ArrowDownUpIcon, ChevronDown } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DrawerModal from '@/components/DrawerModal';
-import { Price } from '@/objects/Price';
-import { get_asset_price_median } from '@/actions/findPrice';
-import { assetList } from '@/objects/AssetList';
-import { AssetProps } from '@/objects/Asset';
+import { PriceProps } from '@/types/AllTypes';
+import swapList from '@/public/swapList.json';
 import { SellComp } from '@/components/SellComp';
 import { BuyComp } from '@/components/BuyComp';
-
-const SwapComp = () => {
-  const [isSwapped, setSwapped] = useState(false);
-
-  function handleSwap() {
-    setSwapped(!isSwapped);
-    setTimeout(() => {
-      setSwapped(false);
-    }, 80);
-  }
-
-  return (
-    <div
-      className='flex flex-col justify-center bg-accent items-center size-12 rounded-full self-center active:bg-foreground'
-      onClick={handleSwap}
-    >
-      <ArrowDownUpIcon color={isSwapped ? '#FFA600' : 'white'} size={28} />
-    </div>
-  );
-};
+import { SwapComp } from '@/components/SwapComp';
+import { getAllPricesFormatted } from '@/actions/getAllPrices';
+import { ConnectWalletButton } from '@/components/ConnectWalletButton';
+import { SwapButton } from '@/components/SwapButton';
+import FeesComp from '@/components/FeesComp';
+import { useArgent } from '@/hooks/useArgent';
 
 const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
   const [typeAction, setAction] = useState('');
-  const [price, setPrice] = useState<Price[]>([]);
-  const [isBuy, setBuy] = useState<AssetProps>();
-  const [isSell, setSell] = useState<AssetProps>();
+  const [prices, setPrices] = useState<PriceProps[]>([]);
+  const [tokenA, setTokenA] = useState<PriceProps>();
+  const [tokenB, setTokenB] = useState<PriceProps>();
+  const [amountA, setAmountA] = useState<number>(0);
+  const [amountB, setAmountB] = useState<number>(0);
+  const [isSwapped, setSwapped] = useState(false);
+  const [isActive, setActive] = useState(false);
+
+  const argent = useArgent();
+
+  const fetchPrice = async () => {
+    if (prices.length === swapList.length) {
+      return;
+    }
+
+    const priceList = await getAllPricesFormatted(swapList);
+
+    setTokenA(priceList ? priceList[0] : undefined);
+    setTokenB(priceList[1]);
+    setPrices(priceList);
+  };
 
   useEffect(() => {
-    const randomBuy: AssetProps =
-      assetList[Math.floor(Math.random() * assetList.length)];
-    const randomSell: AssetProps =
-      assetList[Math.floor(Math.random() * assetList.length)];
-
-    randomBuy != randomSell;
-
-    setBuy(randomBuy);
-    setSell(randomSell);
-    console.log('Buy:', randomBuy);
-    console.log('Sell:', randomSell);
-    const fetchPrice = async () => {
-      if (price.length === assetList.length) {
-        return;
-      }
-
-      const prices = [];
-      for (const asset of assetList) {
-        const fetchedPrice = await get_asset_price_median(
-          asset.PairID,
-          asset.Decimals
-        );
-        prices.push({
-          Name: asset.Name,
-          Ticker: asset.Ticker,
-          priceInCrypto: fetchedPrice.priceInCrypto,
-          priceInUSD: fetchedPrice.priceInUSD,
-        });
-      }
-      setPrice(prices);
-    };
-    fetchPrice();
-  }, []);
+    fetchPrice().catch();
+    if (amountA === 0 || amountB === 0) {
+      setActive(true);
+    } else {
+      setActive(false);
+    }
+  }, [amountA, amountB]);
 
   const handleToggleModal = (action: string) => {
     setAction(action);
     setOpen(!isOpen);
   };
 
-  const handleChooseCrypto = useCallback(
-    (ticker: string, action: string) => {
-      if (action === 'Buy') {
-        const buy = assetList.find((p) => p.Ticker === ticker);
-        if (buy === isSell) {
-          console.error('Cannot buy the same asset');
-          return;
-        }
-        setBuy(buy);
-        console.log('Set Buy', buy);
-      } else {
-        const sell = assetList.find((p) => p.Ticker === ticker);
-        if (sell === isBuy) {
-          console.error('Cannot buy the same asset');
-          return;
-        }
-        setSell(sell);
-        console.log('Set Sell', sell);
+  const handleChooseCrypto = (ticker: string, action: string) => {
+    const selectedAsset = prices.find((p) => p.Ticker === ticker);
+
+    if (!selectedAsset) {
+      console.error('Asset not found');
+      return;
+    }
+
+    if (action === 'Buy') {
+      if (selectedAsset.Ticker === tokenB?.Ticker) {
+        console.error('Cannot buy the same asset being sold');
+        return;
       }
-      setOpen(false);
-    },
-    [assetList, setBuy, setSell, setOpen] // Dependencies
-  );
+
+      const buyAsset: PriceProps = {
+        Name: selectedAsset.Name,
+        Ticker: selectedAsset.Ticker,
+        PairID: selectedAsset.PairID,
+        Decimals: selectedAsset.Decimals,
+        priceInCrypto: selectedAsset.priceInCrypto || 0, // Default or fetched value
+        priceInUSD: selectedAsset.priceInUSD || 0, // Default or fetched value
+      };
+
+      setTokenA(buyAsset);
+    } else {
+      if (selectedAsset.Ticker === tokenA?.Ticker) {
+        console.error('Cannot sell the same asset being bought');
+        return;
+      }
+
+      const sellAsset: PriceProps = {
+        Name: selectedAsset.Name,
+        Ticker: selectedAsset.Ticker,
+        PairID: selectedAsset.PairID,
+        Decimals: selectedAsset.Decimals,
+        priceInCrypto: selectedAsset.priceInCrypto || 0, // Default or fetched value
+        priceInUSD: selectedAsset.priceInUSD || 0, // Default or fetched value
+      };
+
+      setTokenB(sellAsset);
+    }
+
+    setOpen(false);
+  };
+
+  async function handleSwap() {
+    if (tokenA && tokenB) {
+      console.log('Swapping..:', tokenA, tokenB);
+      if (!isSwapped) {
+        const tempT: PriceProps = tokenB;
+        setTokenB(tokenA);
+        setTokenA(tempT);
+        setAmountA(amountA);
+        setAmountB(amountB);
+      }
+    } else {
+      console.error('Cannot swap: one of the assets is undefined');
+    }
+
+    setTimeout(() => {
+      setSwapped(!isSwapped);
+    }, 80);
+  }
+
+  const handleAmountAChange = (amount: number) => {
+    setAmountA(amount);
+    if (tokenA && tokenB) {
+      const tokenBamount =
+        (amount * tokenA.priceInCrypto) / tokenB.priceInCrypto;
+      setAmountB(parseFloat(tokenBamount.toFixed(6)));
+    }
+  };
+
+  const handleAmountBChange = (amount: number) => {
+    setAmountB(amount);
+    if (tokenA && tokenB) {
+      const tokenAamount =
+        (amount * tokenB.priceInCrypto) / tokenA.priceInCrypto;
+      setAmountA(parseFloat(tokenAamount.toFixed(6)));
+    }
+  };
+
+  const handleMakeSwap = () => {};
 
   return (
-    <div className='flex flex-col items-center h-screen bg-transparent p-12'>
+    <div className='flex flex-col items-center h-full bg-transparent p-12'>
       <div className='flex flex-col gap-2 w-full'>
         {/* Sell Comp */}
-        <SellComp handleToggleModal={handleToggleModal} isSell={isSell} />
+        <SellComp
+          handleToggleModal={handleToggleModal}
+          Token={tokenB}
+          amount={amountB}
+          setAmount={handleAmountBChange}
+        />
 
         {/* Swap Feature */}
-        <SwapComp />
+        <SwapComp isSwapped={isSwapped} handleSwap={handleSwap} />
 
         {/* Buy Comp */}
-        <BuyComp handleToggleModal={handleToggleModal} isBuy={isBuy} />
+        <BuyComp
+          handleToggleModal={handleToggleModal}
+          Token={tokenA}
+          amount={amountA}
+          setAmount={handleAmountAChange}
+        />
 
         <DrawerModal
           handleToggleModal={handleToggleModal}
           handleChooseCrypto={handleChooseCrypto}
           typeAction={typeAction}
           isOpen={isOpen}
-          cryptos={price}
+          cryptos={prices}
         />
+
+        {argent.isConnected ? (
+          <SwapButton
+            callback={handleMakeSwap}
+            className={''}
+            wallet={argent.account?.address}
+            quoteID={null}
+            active={isActive}
+          />
+        ) : (
+          <ConnectWalletButton />
+        )}
+
+        {/* Fees Comp */}
+        {!amountA || !amountB ? null : <FeesComp />}
       </div>
     </div>
   );

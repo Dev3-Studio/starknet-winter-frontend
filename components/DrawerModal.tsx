@@ -10,21 +10,20 @@ import {
   DrawerTitle,
 } from '@/components/shadcn/drawer';
 
-import { PriceItem } from '@/components/PriceItem';
-
-import { Price } from '@/objects/Price';
+import { PriceProps } from '@/types/AllTypes';
+import { PriceItem } from './PriceItem';
 
 interface DrawerModalProps {
-  handleToggleModal: () => void;
+  handleToggleModal: (arg: string) => void;
   handleChooseCrypto: (arg: string, action: string) => void;
 
   typeAction: string;
   isOpen: boolean;
-  cryptos: Array<Price>;
+  cryptos: Array<PriceProps>;
 }
 
 interface CryptoListProps {
-  cryptos: Array<Price>;
+  cryptos: Array<PriceProps>;
   typeAction: string;
   handleChooseCrypto: (arg: string, action: string) => void;
 }
@@ -60,7 +59,7 @@ export default function DrawerModal({
   cryptos = [],
 }: DrawerModalProps) {
   return (
-    <Drawer open={isOpen} onOpenChange={handleToggleModal}>
+    <Drawer open={isOpen} onOpenChange={() => handleToggleModal('')}>
       <DrawerContent>
         <DrawerHeader className='space-y-4'>
           <DrawerTitle>{typeAction}</DrawerTitle>

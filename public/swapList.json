@@ -1,0 +1,33 @@
+[
+  {
+    "Name": "STRK",
+    "Ticker": "STRK/USD",
+    "PairID": "6004514686061859652",
+    "Decimals": 8,
+    "l1_token_address": "0xCa14007Eff0dB1f8135f4C25B34De49AB0d42766",
+    "l2_token_address": "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+    "l1_bridge_address": "0xcE5485Cfb26914C5dcE00B9BAF0580364daFC7a4",
+    "l2_bridge_address": "0x0594c1582459ea03f77deaf9eb7e3917d6994a03c13405ba42867f83d85f085d",
+    "l2_locking_contract": "0x035c332b8de00874e702b4831c84b22281fb3246f714475496d74e644f35d492"
+  },
+  {
+    "Name": "USDC",
+    "Ticker": "USDC/USD",
+    "PairID": "6148332971638477636",
+    "Decimals": 6,
+    "l1_token_address": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+    "l1_bridge_address": "0x86dC0B32a5045FFa48D9a60B7e7Ca32F11faCd7B",
+    "l2_bridge_address": "0x0028729b12ce1140cbc1e7cbc7245455d3c15fa0c7f5d2e9fc8e0441567f6b50",
+    "l2_token_address": "0x053b40a647cedfca6ca84f542a0fe36736031905a9639a7f19a3c1e66bfd5080"
+  },
+  {
+    "Name": "ETH",
+    "Ticker": "ETH/USD",
+    "PairID": "19514442401534788",
+    "Decimals": 8,
+    "l1_token_address": "0x0000000000000000000000000000000000455448",
+    "l2_token_address": "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+    "l1_bridge_address": "0x8453FC6Cd1bCfE8D4dFC069C400B433054d47bDc",
+    "l2_bridge_address": "0x04c5772d1914fe6ce891b64eb35bf3522aeae1315647314aac58b01137607f3f"
+  }
+]

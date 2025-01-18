@@ -1,12 +1,17 @@
 'use server';
 
-import { RpcProvider } from 'starknet';
-import abi from '../public/abi.json';
+import {
+  cairo,
+  CairoCustomEnum,
+  CairoOption,
+  Contract,
+  RpcProvider,
+} from 'starknet';
+import abi from '@/public/pragma_abi.json';
 import { ContractAddress } from '@starknet-io/types-js';
-import { cairo, CairoCustomEnum, Contract, CairoOption } from 'starknet';
 
 const provider = new RpcProvider({
-  nodeUrl: 'https://free-rpc.nethermind.io/mainnet-juno/v0_7',
+  nodeUrl: 'https://starknet-mainnet.public.blastapi.io/rpc/v0_7',
 });
 
 type GetDataMedianResponse = {
@@ -18,7 +23,7 @@ type GetDataMedianResponse = {
 };
 
 // gets median price of an asset
-async function get_asset_price_median(pairId: string, decimals: number) {
+async function getAssetPriceMedian(pairId: string, decimals: number) {
   const contractAddress: ContractAddress =
     '0x02a85bd616f912537c50a49a4076db02c00b29b2cdc8a197ce92ed1837fa875b';
 
@@ -35,4 +40,4 @@ async function get_asset_price_median(pairId: string, decimals: number) {
 
 // // pair id from https://docs.pragma.build/v1/Resources/data-feeds/supported-assets
 
-export { get_asset_price_median };
+export { getAssetPriceMedian };
