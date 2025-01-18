@@ -9,7 +9,6 @@ import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
 import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { useToast } from '@/hooks/use-toast';
 import ChatInput from './ChatInput';
-import { useArgent } from '@/hooks/useArgent';
 import { getTokenAddressFromName } from '@/lib/utils';
 import { stake } from '@/lib/stake';
 
