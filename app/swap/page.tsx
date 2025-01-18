@@ -22,6 +22,7 @@ const SwapPage: React.FC = () => {
   const [amountA, setAmountA] = useState<number>(0);
   const [amountB, setAmountB] = useState<number>(0);
   const [isSwapped, setSwapped] = useState(false);
+  const [isActive, setActive] = useState(false);
 
   const argent = useArgent();
 
@@ -31,14 +32,20 @@ const SwapPage: React.FC = () => {
     }
 
     const priceList = await getAllPricesFormatted(swapList);
-    setTokenA(priceList[0]);
+
+    setTokenA(priceList ? priceList[0] : undefined);
     setTokenB(priceList[1]);
     setPrices(priceList);
   };
 
   useEffect(() => {
     fetchPrice().catch();
-  }, []);
+    if (amountA === 0 || amountB === 0) {
+      setActive(true);
+    } else {
+      setActive(false);
+    }
+  }, [amountA, amountB]);
 
   const handleToggleModal = (action: string) => {
     setAction(action);
@@ -160,13 +167,19 @@ const SwapPage: React.FC = () => {
         />
 
         {argent.isConnected ? (
-          <SwapButton tokenA={tokenA} tokenB={tokenB} />
+          <SwapButton
+            callback={handleMakeSwap}
+            className={''}
+            wallet={argent.account?.address}
+            quoteID={null}
+            active={isActive}
+          />
         ) : (
           <ConnectWalletButton />
         )}
 
         {/* Fees Comp */}
-        {/* {!amountA || !amountB ? null : <FeesComp />} */}
+        {!amountA || !amountB ? null : <FeesComp />}
       </div>
     </div>
   );
