@@ -45,6 +45,9 @@ const SwapPage: React.FC = () => {
       swipeBehavior.disableVertical();
       setSwipeSetup(true);
     }
+  }, []);
+
+  useEffect(() => {
     fetchPrice().catch();
     if (amountA === 0 || amountB === 0) {
       setActive(true);
@@ -140,8 +143,6 @@ const SwapPage: React.FC = () => {
     }
   };
 
-  const handleGetFees = () => {};
-
   return (
     <div className='flex flex-col items-center h-full bg-transparent p-12'>
       <div className='flex flex-col gap-2 w-full'>
@@ -177,7 +178,6 @@ const SwapPage: React.FC = () => {
             callback={() => {}}
             className={''}
             wallet={argent.account?.address}
-            quoteID={null}
             active={isActive}
           />
         ) : (
@@ -185,7 +185,14 @@ const SwapPage: React.FC = () => {
         )}
 
         {/* Fees Comp */}
-        {!amountA || !amountB ? null : <FeesComp />}
+        {!amountA || !amountB ? null : (
+          <FeesComp
+            amountA={amountA}
+            tokenA={tokenA}
+            tokenB={tokenB}
+            address={argent.account.address}
+          />
+        )}
       </div>
     </div>
   );

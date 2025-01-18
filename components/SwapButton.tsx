@@ -3,12 +3,12 @@
 import { Button } from '@/components/shadcn/button';
 
 import { cn } from '@/lib/utils';
+import { Quote } from '@avnu/avnu-sdk';
 
 interface SwapProps {
   active: boolean;
   className: string;
   wallet: { address: string };
-  quoteID: string | null;
   callback: () => void;
 }
 
