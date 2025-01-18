@@ -5,6 +5,8 @@ export default function InfoPage() {
         <div className="">
             <h1 className="text-2xl mt-1 text-center">FAQ</h1>
             
+            <Faq question="Why do I get an error telling me to activate my account?" answer={"This is due to an unimplemented function in the Argent wallet Telegram SDK. On new accounts, you need to first perform a transaction to deploy your account before you can interact with our app.\n\nYou can do this by sending a small amount of STRK to yourself"}/>
+            
             <Faq question="How do I get started?" answer="Simple. Connect your wallet through the argent wallet and then
              head to the page corresponding to the action you would like to perform. If you prefer not to get technical
              just chat to our AI and it can perform your action for you!
