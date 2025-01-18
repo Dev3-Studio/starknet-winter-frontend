@@ -15,6 +15,13 @@ export default function InfoPage() {
             <Faq question="What happens if the AI hallucinates or misunderstands me?" answer="Fear not. Our AI can not
             perform any actions without first prompting for your confirmation on what it intends to do, ensuring there
             are no unfortunate mishaps."/>
+            
+            <Faq question="What is the Stark token?" answer="The Stark token is the native token of the Starknet network.
+             It is used for staking, governance and fees."/>
+            
+            <Faq question="Which token are available to swap?" answer="Since this is a proof of concept running on
+            Sepolia, we only support swaps with USDC, ETH and STRK. This is due to the limited token liquidity avaliable
+            on Sepolia and a mainnet deployment would require minimal changes to support any token on."/>
         </div>
     
     )
