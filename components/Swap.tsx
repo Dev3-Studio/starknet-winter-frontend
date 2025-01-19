@@ -3,13 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import { PriceProps } from '@/types/AllTypes';
 import { getAllPricesFormatted } from '@/actions/getAllPrices';
-import { useArgent } from '@/hooks/useArgent';
+import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { swipeBehavior } from '@telegram-apps/sdk';
 import { TokenSelector } from '@/components/TokenSelector';
 import { SwapComp } from '@/components/SwapComp';
 import { SwapButton } from '@/components/SwapButton';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
-import FeesComp from '@/components/FeesComp';
 
 const supportedTokens = ["ETH", "USDC", "STRK"];
 const usdc = { Name: 'USDC', Ticker: 'USDC/USD', PairID: '', priceInCrypto: 1, Decimals: 18, priceInUSD: 1 };
@@ -24,7 +23,7 @@ const Swap: React.FC = () => {
     const [tokenIn, settokenIn] = useState<SwapToken>({ token: usdc, amount: 0 });
     const [tokenOut, setTokenOut] = useState<SwapToken>({ token: usdc, amount: 10 });
     
-    const { account } = useArgent();
+    const { account } = useArgentTelegram();
     
     function setAmountIn(amount: number) {
         settokenIn((prev) => ({ ...prev, amount }));
