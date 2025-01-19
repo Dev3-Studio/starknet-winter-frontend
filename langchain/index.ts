@@ -9,7 +9,7 @@ const API_KEY = process.env.GOOGLE_API_KEY;
 if (!API_KEY) {
     throw new Error('GOOGLE_API_KEY is not set');
 }
-const availableTokens = assetList.map((asset) => asset.name) as [string];
+const availableTokens = assetList.map((asset) => asset.symbol) as [string];
 
 // Options:
 // gemini-2.0-flash-exp

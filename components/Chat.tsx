@@ -9,7 +9,7 @@ import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
 import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { useToast } from '@/hooks/use-toast';
 import ChatInput from './ChatInput';
-import { getTokenAddressFromName } from '@/lib/utils';
+import { getPragmaTokenFromName, getTokenAddressFromSymbol } from '@/lib/utils';
 import { stake } from '@/lib/stake';
 
 
@@ -18,6 +18,10 @@ type ChatBubbleProps = {
     message: LLMMessage;
 }
 
+
+function ErrorChatBubble() {
+    return <ChatBubble text="An error occured. Please try again" side="left" sender="AI"/>;
+}
 export default function Chat() {
     const [messages, setMessages] = useState<ChatBubbleProps[]>([]);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -44,29 +48,30 @@ export default function Chat() {
             tempMessage.content = response.content;
             tempMessage.tool_calls = response.tool_calls;
             
-            for (const toolCall of tempMessage.tool_calls ?? []) {
-                switch (toolCall.name) {
-                    case 'stakeConfirm':
-                        const stakeBubble = await createActionBubble(tempMessage, 'stake') ??
-                            <ChatBubble text="An error occured. Please try again" side="left" sender="AI"/>;
-                        return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: stakeBubble }]);
-                    case 'swapConfirm':
-                        const swapBubble = await createActionBubble(tempMessage, 'swap') ??
-                            <ChatBubble text="An error occured. Please try again" side="left" sender="AI"/>;
-                        return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: swapBubble }]);
-                    default:
-                        throw new Error('Unknown tool call');
-                }
+            
+            if (!tempMessage.tool_calls) return;
+            switch (tempMessage.tool_calls[0].name) {
+                case 'stakeConfirm':
+                    const stakeBubble = await createActionBubble(tempMessage, 'stake') ??
+                        ErrorChatBubble();
+                    return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: stakeBubble }]);
+                case 'swapConfirm':
+                    const swapBubble = await createActionBubble(tempMessage, 'swap') ??
+                        ErrorChatBubble();
+                    return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: swapBubble }]);
+                default:
+                    throw new Error('Unknown tool call');
             }
             
+            
             // append new message to messages
-            setMessages((prev) => [
-                ...prev,
-                {
-                    message: tempMessage,
-                    chatBubble: <ChatBubble text={response.content as string} side="left" sender="AI"/>,
-                },
-            ]);
+            // setMessages((prev) => [
+            //     ...prev,
+            //     {
+            //         message: tempMessage,
+            //         chatBubble: <ChatBubble text={response.content as string} side="left" sender="AI"/>,
+            //     },
+            // ]);
         }
     }
     
@@ -112,6 +117,7 @@ export default function Chat() {
             case 'swap':
                 const tokenIn = toolCall.args.tokenIn;
                 const tokenOut = toolCall.args.tokenOut;
+                // need at least 1 known token to swap
                 if (!tokenIn || !tokenOut) return <ChatBubble text="Invalid swap request" side="left" sender="AI"/>;
                 let amountIn = toolCall.args.amountIn;
                 let amountOut = toolCall.args.amountOut;
@@ -120,15 +126,20 @@ export default function Chat() {
                 let swapFunction;
                 // quote swap
                 if (amountIn) {
+                    // multiply by decimals
+                    const pragmaToken = getPragmaTokenFromName(tokenIn);
+                    if (!pragmaToken) return ErrorChatBubble();
+                    const amountInFormatted = BigInt(amountIn * 10 ** pragmaToken.Decimals);
                     // get amountOut
-                    const quoteOut = await getAmountOut(getTokenAddressFromName(tokenIn), getTokenAddressFromName(tokenOut), account.address, amountIn);
-                    if (!quoteOut[0]) return <ChatBubble
-                        text="An error occured. Please try again" side="left"
-                        sender="AI"/>;
+                    console.log(getTokenAddressFromSymbol(tokenIn), getTokenAddressFromSymbol(tokenOut), account.address, amountInFormatted);
+                    const quoteOut = await getAmountOut(getTokenAddressFromSymbol(tokenIn), getTokenAddressFromSymbol(tokenOut), account.address, amountInFormatted);
+                    if (!quoteOut[0]) return ErrorChatBubble();
                     amountOut = quoteOut[0].buyAmount;
+                    
+                    let res = '';
                     swapFunction = async () => {
                         try {
-                            await swap(account, quoteOut[0].quoteId);
+                            res = await swap(account, quoteOut[0].quoteId);
                         } catch {
                             toast({
                                 title: 'Error',
@@ -139,19 +150,21 @@ export default function Chat() {
                         
                         toast({
                             title: 'Success',
-                            description: 'Swap executed successfully',
+                            description: `Swap executed successfully ${res}`,
                         });
                     };
                 } else {
+                    const pragmaToken = getPragmaTokenFromName(tokenOut);
+                    if (!pragmaToken) return ErrorChatBubble();
+                    const amountOutFormatted = BigInt(amountOut * 10 ** pragmaToken.Decimals);
                     // get amountIn
-                    const quoteIn = await getAmountIn(getTokenAddressFromName(tokenIn), getTokenAddressFromName(tokenOut), account.address, amountOut);
-                    if (!quoteIn[0]) return <ChatBubble
-                        text="An error occured. Please try again" side="left"
-                        sender="AI"/>;
+                    const quoteIn = await getAmountIn(getTokenAddressFromSymbol(tokenIn), getTokenAddressFromSymbol(tokenOut), account.address, amountOutFormatted);
+                    if (!quoteIn[0]) return ErrorChatBubble();
                     amountIn = quoteIn[0].sellAmount;
+                    let res = '';
                     swapFunction = async () => {
                         try {
-                            await swap(account, quoteIn[0].quoteId);
+                            res = await swap(account, quoteIn[0].quoteId);
                         } catch {
                             toast({
                                 title: 'Error',
@@ -162,7 +175,7 @@ export default function Chat() {
                         
                         toast({
                             title: 'Success',
-                            description: 'Swap executed successfully',
+                            description: `Swap executed successfully ${res}`,
                         });
                     };
                 }
@@ -190,7 +203,6 @@ export default function Chat() {
             </div>
             
             <ChatInput onSend={sendMessage} inputRef={inputRef}/>
-        
         </div>
     
     );

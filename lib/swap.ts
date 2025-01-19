@@ -4,7 +4,7 @@ import { sendTransaction } from '@/lib/starknet';
 
 // Mainnet: https://starknet.api.avnu.fi
 // Testnet: https://sepolia.api.avnu.fi
-export const QUOTE_URL = 'https://starknet.api.avnu.fi';
+export const QUOTE_URL = 'https://sepolia.api.avnu.fi';
 
 export async function getAmountOut(
   tokenIn: string,

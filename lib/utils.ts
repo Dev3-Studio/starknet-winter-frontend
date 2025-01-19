@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import assetList from '@/public/supportedTokens.json';
+import pragmaTokens from '@/public/pragmaTokens.json';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -9,6 +10,23 @@ export function cn(...inputs: ClassValue[]) {
 export function getTokenAddressFromName(name: string) {
   const token = assetList.find((asset) => asset.name === name)?.address;
   
+    if (!token) {
+        throw new Error('Token not found');
+    }
+  return token;
+}
+
+export function getTokenAddressFromSymbol(symbol: string) {
+    const token = assetList.find((asset) => asset.symbol === symbol)?.address;
+    
+        if (!token) {
+            throw new Error('Token not found');
+        }
+    return token;
+}
+
+export function getPragmaTokenFromName(name: string) {
+  const token = pragmaTokens.find((asset) => asset.Name === name);
     if (!token) {
         throw new Error('Token not found');
     }
