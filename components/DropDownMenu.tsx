@@ -9,6 +9,7 @@ import {
 import { CircleChevronLeftIcon } from 'lucide-react';
 import { Navbar } from './Navbar';
 import Image from 'next/image';
+import { ConnectWalletButton } from './ConnectWalletButton';
 
 export function DropDownMenu() {
   return (
@@ -31,6 +32,7 @@ export function DropDownMenu() {
             <SheetTitle className='self-center'>Menu</SheetTitle>
           </SheetHeader>
           <Navbar className='flex-col bg-transparent' />
+          <ConnectWalletButton />
         </div>
         <a
           className='self-center text-xs text-muted-foreground flex items-center gap-1'
