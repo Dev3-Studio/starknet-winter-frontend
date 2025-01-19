@@ -25,7 +25,7 @@ const SwapPage: React.FC = () => {
   const [isSwapped, setSwapped] = useState(false);
   const [isActive, setActive] = useState(false);
   const [isSwipeSetup, setSwipeSetup] = useState(false);
-  
+
   const argent = useArgentTelegram();
 
   const fetchPrice = async () => {
@@ -185,14 +185,14 @@ const SwapPage: React.FC = () => {
         )}
 
         {/* Fees Comp */}
-        {!amountA || !amountB ? null : (
+        {/* {!amountA || !amountB ? null : (
           <FeesComp
             amountA={amountA}
             tokenA={tokenA}
             tokenB={tokenB}
             address={argent.account.address}
           />
-        )}
+        )} */}
       </div>
     </div>
   );
