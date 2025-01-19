@@ -8,21 +8,18 @@ import { Button } from '@/components/shadcn/button';
 import 'regenerator-runtime/runtime';
 import { createSpeechServicesPonyfill } from 'web-speech-cognitive-services';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import { getVoiceAuthToken } from '@/actions/getVoiceAuthToken';
 
 
-const API_KEY = process.env.NEXT_PUBLIC_VOICE_API_KEY;
-if (!API_KEY) {
-    throw new Error('Missing NEXT_PUBLIC_VOICE_API_KEY');
-}
-
-
-const { SpeechRecognition: AzureSpeechRecognition } = createSpeechServicesPonyfill({
-    credentials: {
-        region: "eastus",
-        subscriptionKey: API_KEY,
-    }
-});
-SpeechRecognition.applyPolyfill(AzureSpeechRecognition);
+getVoiceAuthToken().then((token) => {
+    const { SpeechRecognition: AzureSpeechRecognition } = createSpeechServicesPonyfill({
+        credentials: {
+            region: 'eastus',
+            authorizationToken: token,
+        }
+    });
+    SpeechRecognition.applyPolyfill(AzureSpeechRecognition);
+})
 
 
 export function SpeechMic(props: {inputRef: any}) {
@@ -48,6 +45,10 @@ export function SpeechMic(props: {inputRef: any}) {
         continuous: false,
         language: 'en-US'
     });
+    
+    if (!SpeechRecognition) {
+        return;
+    }
 
     return(
         <button

@@ -11,6 +11,7 @@ export default function Header() {
         className='h-8 w-auto'
         width={300}
         height={62}
+        priority={true}
       />
       <DropDownMenu />
     </header>

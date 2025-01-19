@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/shadcn/button';
 import { AlignJustifyIcon, Grid2X2Icon } from 'lucide-react';
-import TokenPrice from '@/components/TokenPriceCard';
 import TokenPriceCard from '@/components/TokenPriceCard';
 import TokenPriceList from './TokenPriceList';
 
@@ -41,7 +40,7 @@ export default function MarketClient({ prices }: MarketClientProps) {
     );
   };
 
-  const Marketlist = () => {
+  const MarketList = () => {
     return (
       <div className='flex flex-rows flex-wrap gap-4 px-4 w-md mx-4 mt-4 rounded-t-2xl bg-secondary'>
         {prices.map((asset, index) => (
@@ -59,16 +58,16 @@ export default function MarketClient({ prices }: MarketClientProps) {
 
   return (
     <div className=''>
-      <div className='flex flex-rows overflow-clip p-2 place-content-end'>
+      <div className='flex flex-rows overflow-clip place-content-end'>
         <Button
           onClick={handleToggle}
-          className='bg-transparent hover:bg-secondary absolute right-4 top-4'
+          className='bg-transparent hover:bg-secondary absolute left-48 top-4'
         >
           {toggle ? <AlignJustifyIcon /> : <Grid2X2Icon />}
         </Button>
       </div>
       <div className='w-screen h-[calc(100vh-133px)] overflow-x-auto'>
-        {toggle ? <MarketCards /> : <Marketlist />}
+        {toggle ? <MarketCards /> : <MarketList />}
       </div>
     </div>
   );
