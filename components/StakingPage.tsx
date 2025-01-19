@@ -128,11 +128,14 @@ function StakingFormTemplate({ maxAmount, children, onSubmit, onUpdate }: Stakin
     
     const form = useForm<z.infer<typeof stakeFormSchema>>({
         resolver: zodResolver(stakeFormSchema),
+        defaultValues: {
+            amount: '',
+        },
     });
     
     const parseInput = (input: string) => {
         try {
-            return parseUnits(Number(input).toFixed(18), 18);
+            return parseUnits(input.toString(), 18);
         } catch {
             return 0n;
         }
@@ -172,7 +175,7 @@ function StakingFormTemplate({ maxAmount, children, onSubmit, onUpdate }: Stakin
                                             variant="outline"
                                             type="button"
                                             onClick={() => {
-                                                field.onChange({ target: { value: formatUnits(maxAmount, 18) } });
+                                                form.setValue('amount', formatUnits(maxAmount, 18));
                                                 void onTokenAmountChange(formatUnits(maxAmount, 18));
                                             }}
                                         >
@@ -397,7 +400,7 @@ function UnstakeForm() {
                 />
             )}
             <Button type="submit" className="w-full" disabled={disabled}>
-                Initiate Unstake
+                {disabled ? 'Invalid Amount' : 'Initiate Unstake'}
             </Button>
         </StakingFormTemplate>
     );
