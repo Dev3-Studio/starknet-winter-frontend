@@ -1,12 +1,8 @@
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/shadcn/accordion"
-export function Faq(props: {question: string, answer: string}) {
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/shadcn/accordion';
+
+export function Faq(props: { question: string, answer: string }) {
     return (
-        <Accordion type="single" collapsible className='w-4/5 mx-auto'>
+        <Accordion type="single" collapsible className="w-4/5 mx-auto">
             <AccordionItem value="item-1">
                 <AccordionTrigger className="text-left">{props.question}</AccordionTrigger>
                 <AccordionContent>
@@ -14,6 +10,6 @@ export function Faq(props: {question: string, answer: string}) {
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
-    )
+    );
     
 }

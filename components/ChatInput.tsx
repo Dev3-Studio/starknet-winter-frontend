@@ -18,38 +18,38 @@ if (!API_KEY) {
 
 const { SpeechRecognition: AzureSpeechRecognition } = createSpeechServicesPonyfill({
     credentials: {
-        region: "eastus",
+        region: 'eastus',
         subscriptionKey: API_KEY,
-    }
+    },
 });
 SpeechRecognition.applyPolyfill(AzureSpeechRecognition);
 
 
-export function SpeechMic(props: {inputRef: any}) {
+export function SpeechMic(props: { inputRef: any }) {
     // speech input
     const {
         transcript,
         listening,
-        browserSupportsSpeechRecognition
+        browserSupportsSpeechRecognition,
     } = useSpeechRecognition();
-
-
+    
+    
     useEffect(() => {
         if (transcript) {
             props.inputRef.current.value = transcript;
         }
     }, [transcript]);
-
+    
     if (!browserSupportsSpeechRecognition) {
         return;
     }
-
+    
     const startListening = () => SpeechRecognition.startListening({
         continuous: false,
-        language: 'en-US'
+        language: 'en-US',
     });
-
-    return(
+    
+    return (
         <button
             onTouchStart={startListening}
             onMouseDown={startListening}
@@ -60,9 +60,10 @@ export function SpeechMic(props: {inputRef: any}) {
             {listening && <Mic/>}
             {!listening && <MicOff/>}
         </button>
-    )
+    );
 }
-const ChatInput = (props: {inputRef: any, onSend: () => void}) => {
+
+const ChatInput = (props: { inputRef: any, onSend: () => void }) => {
     const { account } = useArgentTelegram();
     
     // send on enter
@@ -72,23 +73,24 @@ const ChatInput = (props: {inputRef: any, onSend: () => void}) => {
         }
     }
     
-    if (!account){
+    if (!account) {
         return (
-            <ConnectWalletButton />
-        )
+            <ConnectWalletButton/>
+        );
     }
     
     return (
         <div className="flex w-full mb-1 px-2">
             <SpeechMic inputRef={props.inputRef}/>
             
-            <Input className="mx-1" type="text" placeholder="Ask a Question..." ref={props.inputRef}
-                   onKeyDown={handleKeyDown}/>
+            <Input
+                className="mx-1" type="text" placeholder="Ask a Question..." ref={props.inputRef}
+                onKeyDown={handleKeyDown}/>
             <Button onClick={props.onSend}>
-                <SendHorizontal />
+                <SendHorizontal/>
             </Button>
         </div>
-        
+    
     );
 };
 export default ChatInput;
