@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/shadcn/button';
-import { AlignJustifyIcon, Grid2X2Icon } from 'lucide-react';
-import TokenPrice from '@/components/TokenPriceCard';
+import { Grid2X2Icon, LogsIcon } from 'lucide-react';
 import TokenPriceCard from '@/components/TokenPriceCard';
 import TokenPriceList from './TokenPriceList';
 
@@ -64,7 +63,7 @@ export default function MarketClient({ prices }: MarketClientProps) {
           onClick={handleToggle}
           className='bg-transparent hover:bg-secondary absolute right-4 top-4'
         >
-          {toggle ? <AlignJustifyIcon /> : <Grid2X2Icon />}
+          {toggle ? <LogsIcon/> : <Grid2X2Icon/>}
         </Button>
       </div>
       <div className='w-screen h-[calc(100vh-133px)] overflow-x-auto'>
