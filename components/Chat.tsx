@@ -26,7 +26,6 @@ function ErrorChatBubble() {
 }
 
 async function swapFn(account: SessionAccountInterface, quoteId: string) {
-    console.log('executing swap');
     
     try {
         await swap(account, quoteId);
@@ -38,7 +37,6 @@ async function swapFn(account: SessionAccountInterface, quoteId: string) {
             description: 'An error occurred executing the swap',
         });
     }
-    console.log('swap executed');
     toast({
         title: 'Success✅',
         description: 'Swap executed successfully',
