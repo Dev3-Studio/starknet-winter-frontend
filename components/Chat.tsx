@@ -7,9 +7,8 @@ import ActionBubble from '@/components/ActionBubble';
 import ChatBubble from '@/components/ChatBubble';
 import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
 import { useArgentTelegram } from '@/hooks/useArgentTelegram';
-import { toast, useToast } from '@/hooks/use-toast';
 import ChatInput from './ChatInput';
-import { getTokenFromSymbol } from '@/lib/utils';
+import { customToast, getTokenFromSymbol } from '@/lib/utils';
 import { stake } from '@/lib/stake';
 import { formatUnits } from 'ethers';
 import { SessionAccountInterface } from '@argent/tma-wallet';
@@ -26,29 +25,28 @@ function ErrorChatBubble() {
 }
 
 async function swapFn(account: SessionAccountInterface, quoteId: string) {
+    console.log('executing swap');
     
     try {
         await swap(account, quoteId);
     } catch (e) {
         console.log(e);
-        return toast({
-            title: 'Error',
-            variant: 'destructive',
-            description: 'An error occurred executing the swap',
+        return customToast({
+            variant: 'error',
+            description: 'Could not execute swap',
         });
     }
-    toast({
-        title: 'Success✅',
+    console.log('swap executed');
+    customToast({
+        variant: 'success',
         description: 'Swap executed successfully',
     });
-    
 }
 
 export default function Chat() {
     const [messages, setMessages] = useState<ChatBubbleProps[]>([]);
     const inputRef = useRef<HTMLInputElement>(null);
     const { account } = useArgentTelegram();
-    const { toast } = useToast();
     
     async function sendMessage() {
         const message = inputRef.current?.value;
@@ -118,24 +116,22 @@ export default function Chat() {
                 const stakeAmount = BigInt(((toolCall.args.amount) ?? 1) * 10 ** 18);
                 
                 const stakeFunction = async () => {
-                    if (!account) return toast({
-                        title: 'Error',
-                        variant: 'destructive',
+                    if (!account) return customToast({
+                        variant: 'error',
                         description: 'Please connect your wallet before performing this action',
                     });
                     try {
                         await stake(stakeAmount, account);
                     } catch (e) {
                         console.log(e);
-                        return toast({
-                            title: 'Error',
-                            variant: 'destructive',
+                        return customToast({
+                            variant: 'error',
                             description: 'An error occurred executing the stake',
                         });
                     }
                     
-                    toast({
-                        title: 'Success✅',
+                    customToast({
+                        variant: 'success',
                         description: 'Stake executed successfully',
                     });
                 };

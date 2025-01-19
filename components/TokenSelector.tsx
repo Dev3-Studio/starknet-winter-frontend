@@ -13,6 +13,7 @@ interface TokenSelectorProps {
     token: Token;
     amount: string;
     onChangeAmount: (value: string) => void;
+    maxAmount: string;
     onSelectToken: (symbol: string) => void;
     tokenList: Array<Token>;
 }
@@ -22,6 +23,7 @@ const TokenSelector: React.FC<TokenSelectorProps> = ({
     token,
     amount,
     onChangeAmount,
+    maxAmount,
     onSelectToken,
     tokenList,
 }) => {
@@ -33,34 +35,19 @@ const TokenSelector: React.FC<TokenSelectorProps> = ({
     
     return (
         <div
-            className={cn('shadow-md rounded-[10px] p-2 flex flex-row justify-between', type === 'buy' ? 'bg-primary' : 'bg-secondary')}
+            className={cn(
+                'shadow-md rounded-md p-2 flex flex-col justify-between space-y-1',
+                type === 'buy' ? 'bg-primary' : 'bg-secondary',
+            )}
         >
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-row w-full justify-between items-center p-1">
                 <span className="opacity-80 text-sm">{capitalizeFirstLetter(type)}</span>
-                <input
-                    value={amount}
-                    placeholder="0"
-                    type="number"
-                    min={0}
-                    className={cn(
-                        'w-full mr-1 bg-transparent placeholder-inherit focus-within:border-none focus:outline-none',
-                    )}
-                    onChange={(e) => onChangeAmount(e.target.value)}
-                />
-                
-                <span className="flex opacity-80 items-baseline">
-          <p className="text-lg">
-            ${(Number(amount) * assetPrice).toFixed(2)}
-          </p>
-        </span>
-            </div>
-            <div className="flex items-center text-xl text-left h-full ">
                 <TokenSelectDrawer
                     onSelectToken={handleSelectToken}
                     tokens={tokenList}
                     title={type}
                 >
-                    <Button className="rounded-full bg-accent flex text-primary-foreground gap-4 w-max-40">
+                    <Button className="rounded-full border bg-accent flex text-primary-foreground gap-4 w-max-40">
                         <img
                             src={token ? `./${token.symbol}.webp` : undefined}
                             className="w-6 h-6 rounded-full"
@@ -69,6 +56,25 @@ const TokenSelector: React.FC<TokenSelectorProps> = ({
                         <ChevronDown/>
                     </Button>
                 </TokenSelectDrawer>
+            </div>
+            <input
+                value={amount}
+                placeholder="0"
+                type="number"
+                min={0}
+                className={cn(
+                    'p-1 text-lg w-full mr-1 bg-transparent placeholder-inherit focus-within:border-none focus:outline-none',
+                )}
+                onChange={(e) => onChangeAmount(e.target.value)}
+            />
+            <div className="flex flex-row w-full justify-between items-center p-1">
+                <p className="text-sm">${(Number(amount) * assetPrice).toFixed(2)}</p>
+                <Button
+                    className="bg-secondary border-primary p-1 h-fit text-xs uppercase rounded-md"
+                    onClick={() => onChangeAmount(maxAmount)}
+                >
+                    Max
+                </Button>
             </div>
         </div>
     );

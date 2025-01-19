@@ -2,6 +2,8 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import assetList from '@/public/supportedTokens.json';
 import pragmaTokens from '@/public/pragmaTokens.json';
+import crypto from 'crypto';
+import { toast } from '@/hooks/use-toast';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -36,4 +38,38 @@ export function getPragmaTokenFromName(name: string) {
 
 export function capitalizeFirstLetter(val: string) {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
+export function getUuidV4() {
+    return crypto.randomUUID();
+}
+
+interface CustomToastProps {
+    title?: string;
+    description?: string;
+    variant?: 'default' | 'error' | 'success';
+}
+
+export function customToast({ title, description, variant }: CustomToastProps) {
+    switch (variant) {
+        case 'error':
+            toast({
+                title: `❌ ${title || 'Error'}`,
+                description: description || 'An error occurred',
+                variant: 'destructive',
+            });
+            break;
+        case 'success':
+            toast({
+                title: `✅ ${title || 'Success'}`,
+                description,
+            });
+            break;
+        default:
+            toast({
+                title: `🔔 ${title || 'Notification'}`,
+                description,
+            });
+            break;
+    }
 }

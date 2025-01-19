@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { TokenSelector } from '@/components/TokenSelector';
-import { SwapComp } from '@/components/SwapComp';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import supportedTokens from '@/public/supportedTokens.json';
 import { formatUnits, parseUnits } from 'ethers';
@@ -11,9 +10,29 @@ import { useDebounce } from 'use-debounce';
 import { Quote } from '@avnu/avnu-sdk';
 import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/shadcn/button';
-import { getVoiceAuthToken } from '@/actions/getVoiceAuthToken';
+import { ArrowDownUpIcon } from 'lucide-react';
+import { getTokenBalance } from '@/lib/starknet';
+import { customToast } from '@/lib/utils';
+
+interface FlipTokensButtonProps {
+    isSwapped: boolean;
+    handleSwap: () => void;
+}
+
+const FlipTokensButton: React.FC<FlipTokensButtonProps> = ({
+    isSwapped,
+    handleSwap,
+}: FlipTokensButtonProps) => {
+    return (
+        <ArrowDownUpIcon
+            color={isSwapped ? '#FFA600' : 'white'}
+            size={50}
+            onClick={handleSwap}
+            className="self-center bg-secondary rounded-full p-2 cursor-pointer"
+        />
+    );
+};
 
 export type Token = {
     name: string;
@@ -23,10 +42,7 @@ export type Token = {
     pragmaId: string;
 }
 
-export type SwapToken = Token & { amount: bigint };
-
 const Swap: React.FC = () => {
-    
     const { account } = useArgentTelegram();
     
     const [amountInText, setAmountInText] = useState('');
@@ -38,7 +54,9 @@ const Swap: React.FC = () => {
     const [debounceAmountOutText] = useDebounce(amountOutText, 2000);
     
     const [tokenIn, setTokenIn] = useState<Token>({ ...supportedTokens[0] });
+    const [balanceTokenIn, setBalanceTokenIn] = useState<string>('0');
     const [tokenOut, setTokenOut] = useState<Token>({ ...supportedTokens[1] });
+    const [balanceTokenOut, setBalanceTokenOut] = useState<string>('0');
     
     const [quote, setQuote] = useState<Quote | null>(null);
     
@@ -46,44 +64,39 @@ const Swap: React.FC = () => {
         mutationFn: async () => {
             if (!quote) return;
             if (!account) return;
-            toast({
-                title: 'Broadcasting swap',
-                description: 'Executing swap...',
+            customToast({
+                title: 'Pending',
+                description: 'Swapping...',
             });
             await swap(account, quote.quoteId);
         },
         onError: (e) => {
             console.log(e);
             if (e instanceof Error) {
-                toast({
-                    title: 'Error',
+                customToast({
+                    variant: 'error',
                     description: e.message,
-                    variant: 'destructive',
                 });
                 return;
             }
-            toast({
-                title: 'Error',
-                description: 'An error occurred',
-                variant: 'destructive',
-            });
+            customToast({ variant: 'error' });
         },
         onSuccess: () => {
-            toast({
-                title: 'Success!',
-                description: 'Swapped successfully',
+            customToast({
+                variant: 'success',
+                description: 'Swap completed',
             });
         },
     });
     
     useEffect(() => {
         if (lockQuote) {
-            setLockQuote(() => false);
+            setLockQuote(false);
             return;
         }
         
         async function handleDebounceAmountInTextChange() {
-            setQuote(() => null);
+            setQuote(null);
             if (!account) return;
             if (debounceAmountInText) {
                 try {
@@ -95,16 +108,15 @@ const Swap: React.FC = () => {
                         parsedAmountIn,
                     );
                     if (!quotes[0]) {
-                        toast({
-                            title: 'Quote Failed!',
-                            description: 'Insufficient liquidity',
-                            variant: 'destructive',
+                        customToast({
+                            variant: 'error',
+                            description: 'Quote Failed! Insufficient liquidity',
                         });
                         return;
                     }
                     setQuote(() => quotes[0]);
-                    setLockQuote(() => true);
-                    setAmountOutText(() => formatUnits(quotes[0].buyAmount, tokenOut.decimals));
+                    setLockQuote(true);
+                    setAmountOutText(formatUnits(quotes[0].buyAmount, tokenOut.decimals));
                 } catch {
                     // Do nothing
                 }
@@ -116,12 +128,12 @@ const Swap: React.FC = () => {
     
     useEffect(() => {
         if (lockQuote) {
-            setLockQuote(() => false);
+            setLockQuote(false);
             return;
         }
         
         async function handleDebounceAmountOutTextChange() {
-            setQuote(() => null);
+            setQuote(null);
             if (!account) return;
             if (debounceAmountOutText) {
                 try {
@@ -133,16 +145,15 @@ const Swap: React.FC = () => {
                         parsedAmountOut,
                     );
                     if (!quotes[0]) {
-                        toast({
-                            title: 'Quote Failed!',
-                            description: 'Insufficient liquidity',
-                            variant: 'destructive',
+                        customToast({
+                            variant: 'error',
+                            description: 'Quote Failed! Insufficient liquidity',
                         });
                         return;
                     }
                     setQuote(() => quotes[0]);
-                    setLockQuote(() => true);
-                    setAmountInText(() => formatUnits(quotes[0].sellAmount, tokenIn.decimals));
+                    setLockQuote(true);
+                    setAmountInText(formatUnits(quotes[0].sellAmount, tokenIn.decimals));
                 } catch {
                     // Do nothing
                 }
@@ -151,6 +162,16 @@ const Swap: React.FC = () => {
         
         void handleDebounceAmountOutTextChange();
     }, [debounceAmountOutText]);
+    
+    useEffect(() => {
+        if (!account) return;
+        getTokenBalance(account, tokenIn.address).then((balance) => {
+            setBalanceTokenIn(formatUnits(balance, tokenIn.decimals));
+        });
+        getTokenBalance(account, tokenOut.address).then((balance) => {
+            setBalanceTokenOut(formatUnits(balance, tokenOut.decimals));
+        });
+    }, [tokenIn.address, tokenOut.address, account?.address]);
     
     function handleChooseTokenIn(symbol: string) {
         const selectedAsset = supportedTokens.find((t) => t.symbol === symbol);
@@ -170,53 +191,50 @@ const Swap: React.FC = () => {
             const tempToken: Token = tokenOut;
             setTokenOut(() => tokenIn);
             setTokenIn(() => tempToken);
-            
-            if (amountOutText) {
-                setAmountInText(() => amountOutText);
-            } else if (amountInText) {
-                setAmountOutText(() => amountInText);
-            }
+            setAmountInText('');
+            setAmountOutText('');
         }
     }
     
     
     return (
-        <div className="flex flex-col items-center h-full bg-transparent p-12">
-            <div className="flex flex-col gap-2 w-full">
-                {/* Sell Comp */}
-                <TokenSelector
-                    token={tokenIn}
-                    amount={amountInText}
-                    onChangeAmount={(value) => setAmountInText(value)}
-                    type="buy"
-                    onSelectToken={handleChooseTokenIn}
-                    tokenList={supportedTokens.filter((t) => t.name !== tokenIn.symbol)}
-                />
-                
-                {/* Swap Feature */}
-                <SwapComp isSwapped={false} handleSwap={handleSwapTokens}/>
-                
-                {/* Buy Comp */}
-                <TokenSelector
-                    token={tokenOut}
-                    amount={amountOutText}
-                    onChangeAmount={(value) => setAmountOutText(value)}
-                    type="sell"
-                    onSelectToken={handleChooseTokenOut}
-                    tokenList={supportedTokens.filter((t) => t.name !== tokenOut.symbol)}
-                />
-                
-                {account ? (
-                    <Button
-                        onClick={() => swapMutator.mutate()}
-                        className="bg-primary text-white px-4 py-2 rounded-xl w-full mt-2"
-                    >
-                        Swap
-                    </Button>
-                ) : (
-                    <ConnectWalletButton/>
-                )}
-            </div>
+        <div className="flex flex-col gap-2 items-center h-full bg-transparent p-4">
+            {/* Sell Comp */}
+            <TokenSelector
+                token={tokenIn}
+                amount={amountInText}
+                onChangeAmount={(value) => setAmountInText(value)}
+                maxAmount={balanceTokenIn}
+                type="buy"
+                onSelectToken={handleChooseTokenIn}
+                tokenList={supportedTokens.filter((t) => t.name !== tokenIn.symbol)}
+            />
+            
+            {/* Swap Feature */}
+            <FlipTokensButton isSwapped={false} handleSwap={handleSwapTokens}/>
+            
+            {/* Buy Comp */}
+            <TokenSelector
+                token={tokenOut}
+                amount={amountOutText}
+                onChangeAmount={(value) => setAmountOutText(value)}
+                maxAmount={balanceTokenOut}
+                type="sell"
+                onSelectToken={handleChooseTokenOut}
+                tokenList={supportedTokens.filter((t) => t.name !== tokenOut.symbol)}
+            />
+            
+            {account ? (
+                <Button
+                    onClick={() => swapMutator.mutate()}
+                    className="bg-primary text-white px-4 py-2 rounded-md w-full"
+                    disabled={lockQuote}
+                >
+                    Swap
+                </Button>
+            ) : (
+                <ConnectWalletButton/>
+            )}
         </div>
     );
 };
