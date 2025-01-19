@@ -62,7 +62,7 @@ export default function MarketClient({ prices }: MarketClientProps) {
       <div className='flex flex-rows overflow-clip p-2 place-content-end'>
         <Button
           onClick={handleToggle}
-          className='bg-transparent hover:bg-secondary'
+          className='bg-transparent hover:bg-secondary absolute right-4 top-4'
         >
           {toggle ? <AlignJustifyIcon /> : <Grid2X2Icon />}
         </Button>

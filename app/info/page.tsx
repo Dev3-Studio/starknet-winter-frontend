@@ -23,9 +23,11 @@ export default function InfoPage() {
                 "Stake 10 Stark", "Buy 1 ETH", "Swap 3 Stark for USDC"`}/>
             
             <Faq
-                question="What happens if the AI hallucinates or misunderstands me?" answer="Fear not. Our AI can not
-            perform any actions without first prompting for your confirmation on what it intends to do, ensuring there
-            are no unfortunate mishaps."/>
+                question="What happens if the AI hallucinates or misunderstands me?" answer={`Fear not. Our AI can not
+                perform any actions without first prompting for your confirmation on what it intends to do, ensuring there
+                are no unfortunate mishaps.
+                Do note that when asking for information about tokens, the information provided may not be accurate as the AI
+                is prone to hallucinations.`}/>
             
             <Faq
                 question="What is the Stark token?" answer="The Stark token is the native token of the Starknet network.

@@ -115,7 +115,7 @@ interface StakingFormTemplateProps {
 }
 
 function StakingFormTemplate({ maxAmount, children, onSubmit, onUpdate }: StakingFormTemplateProps) {
-    const { isConnected } = useArgentTelegram();
+    const { account } = useArgentTelegram();
     const [price, setPrice] = useState(0);
     const { data: starkPrice } = useQuery({
         queryKey: ['getAssetPriceMedian', '6004514686061859652', 8],
@@ -196,8 +196,8 @@ function StakingFormTemplate({ maxAmount, children, onSubmit, onUpdate }: Stakin
                         </FormItem>
                     )}
                 />
-                {!isConnected && <ConnectWalletButton type="button" className="w-full"/>}
-                {isConnected && children}
+                {!account && <ConnectWalletButton type="button" className="w-full"/>}
+                {account && children}
             </form>
         </Form>
     );
