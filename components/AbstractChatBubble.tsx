@@ -14,9 +14,9 @@ export default function AbstractChatBubble(props: {
         <div className="text-xs">
             <div className={cn('max-w-[50%]', props.side === 'left' ? 'float-left' : 'float-right')}>
                 <Avatar className={cn('mx-3', props.side === 'left' ? 'float-left' : 'float-right')}>
-                    {props.sender === 'AI' && <Bot color="#f67300"/>}
+                    {props.sender === 'AI' && <Bot color="#f67300" className="w-full h-full size-16"/>}
                     {props.sender !== 'AI' && <AvatarImage src="https://github.com/shadcn.png" alt="User Avatar Image"/>}
-                    <AvatarFallback>{props.sender}</AvatarFallback>
+                    {/*<AvatarFallback>{props.sender}</AvatarFallback>*/}
                 </Avatar>
                 
                 <div className="flex flex-col">
