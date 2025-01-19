@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { TokenSelector } from '@/components/TokenSelector';
-import { SwapComp } from '@/components/SwapComp';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import supportedTokens from '@/public/supportedTokens.json';
 import { formatUnits, parseUnits } from 'ethers';
@@ -13,6 +12,26 @@ import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/shadcn/button';
+import { ArrowDownUpIcon } from 'lucide-react';
+
+interface FlipTokensButtonProps {
+    isSwapped: boolean;
+    handleSwap: () => void;
+}
+
+const FlipTokensButton: React.FC<FlipTokensButtonProps> = ({
+    isSwapped,
+    handleSwap,
+}: FlipTokensButtonProps) => {
+    return (
+        <ArrowDownUpIcon
+            color={isSwapped ? '#FFA600' : 'white'}
+            size={50}
+            onClick={handleSwap}
+            className="self-center bg-secondary rounded-full p-2 cursor-pointer"
+        />
+    );
+};
 
 export type Token = {
     name: string;
@@ -21,8 +40,6 @@ export type Token = {
     decimals: number;
     pragmaId: string;
 }
-
-export type SwapToken = Token & { amount: bigint };
 
 const Swap: React.FC = () => {
     const { account } = useArgentTelegram();
@@ -192,7 +209,7 @@ const Swap: React.FC = () => {
                 />
                 
                 {/* Swap Feature */}
-                <SwapComp isSwapped={false} handleSwap={handleSwapTokens}/>
+                <FlipTokensButton isSwapped={false} handleSwap={handleSwapTokens}/>
                 
                 {/* Buy Comp */}
                 <TokenSelector
