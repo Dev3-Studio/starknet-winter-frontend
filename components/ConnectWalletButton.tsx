@@ -9,6 +9,9 @@ export const ConnectWalletButton: React.FC<ButtonProps> = ({ ...props }) => {
     const { argent, account, disconnect, isConnected } = useArgentTelegram();
     
     const handleConnectButton = async () => {
+        if (!argent) {
+            return;
+        }
         await argent.requestConnection({
             callbackData: 'test',
         });
