@@ -17,11 +17,11 @@ import { getAssetPriceMedian } from '@/actions/findPrice';
 import { Button } from '@/components/shadcn/button';
 import { claimRewards, stake, unstakeAction, unstakeIntent } from '@/lib/stake';
 import { useStarkBalance } from '@/hooks/useStarkBalance';
-import { toast } from '@/hooks/use-toast';
 import { useStakeInfo } from '@/hooks/useStakeInfo';
 import { Card, CardContent } from '@/components/shadcn/card';
 import { TokenAmountText } from '@/components/TokenAmountText';
 import { TimerLabel } from '@/components/TimerLabel';
+import { customToast } from '@/lib/utils';
 
 const stakeFormSchema = z.object({
     amount: z.string().regex(/^\d*\.?\d*$/),
@@ -50,7 +50,7 @@ const StakingStats: React.FC<StakingStatsProps> = ({ balance, totalStaked, uncla
     const claimMutation = useMutation({
         mutationFn: async () => {
             if (!account) throw new Error('Please connect your wallet');
-            toast({
+            customToast({
                 title: 'Pending',
                 description: 'Claiming Rewards...',
             });
@@ -58,22 +58,17 @@ const StakingStats: React.FC<StakingStatsProps> = ({ balance, totalStaked, uncla
         },
         onError: (e) => {
             if (e instanceof Error) {
-                toast({
-                    title: 'Error',
+                customToast({
+                    variant: 'error',
                     description: e.message,
-                    variant: 'destructive',
                 });
                 return;
             }
-            toast({
-                title: 'Error',
-                description: 'An error occurred',
-                variant: 'destructive',
-            });
+            customToast({ variant: 'error' });
         },
         onSuccess: () => {
-            toast({
-                title: 'Success!',
+            customToast({
+                variant: 'success',
                 description: 'Claimed your rewards successfully!',
             });
         },
@@ -213,9 +208,9 @@ function StakeForm() {
     const stakeMutation = useMutation({
         mutationFn: async (amount: bigint) => {
             if (!account) throw new Error('Please connect your wallet');
-            toast({
+            customToast({
                 title: 'Pending',
-                description: 'Staking STRK...',
+                description: 'Staking your tokens...',
             });
             setDisabled(true);
             await stake(amount, account);
@@ -223,23 +218,18 @@ function StakeForm() {
         onError: (e) => {
             setDisabled(false);
             if (e instanceof Error) {
-                toast({
-                    title: 'Error',
+                customToast({
+                    variant: 'error',
                     description: e.message,
-                    variant: 'destructive',
                 });
                 return;
             }
-            toast({
-                title: 'Error',
-                description: 'An error occurred',
-                variant: 'destructive',
-            });
+            customToast({ variant: 'error' });
         },
         onSuccess: () => {
             setDisabled(false);
-            toast({
-                title: 'Success!',
+            customToast({
+                variant: 'success',
                 description: 'Staked your tokens successfully!',
             });
         },
@@ -274,9 +264,9 @@ function ClaimPendingWithdrawalCard({ amount, unlockDate }: { amount: bigint, un
     const claimMutation = useMutation({
         mutationFn: async () => {
             if (!account) throw new Error('Please connect your wallet');
-            toast({
+            customToast({
                 title: 'Pending',
-                description: 'Claiming Pending Withdrawal...',
+                description: 'Claiming your pending withdrawal...',
             });
             setDisabled(true);
             await unstakeAction(account);
@@ -284,23 +274,18 @@ function ClaimPendingWithdrawalCard({ amount, unlockDate }: { amount: bigint, un
         onError: (e) => {
             setDisabled(false);
             if (e instanceof Error) {
-                toast({
-                    title: 'Error',
+                customToast({
+                    variant: 'error',
                     description: e.message,
-                    variant: 'destructive',
                 });
                 return;
             }
-            toast({
-                title: 'Error',
-                description: 'An error occurred',
-                variant: 'destructive',
-            });
+            customToast({ variant: 'error' });
         },
         onSuccess: () => {
             setDisabled(false);
-            toast({
-                title: 'Success!',
+            customToast({
+                variant: 'success',
                 description: 'Claimed your pending withdrawal successfully!',
             });
         },
@@ -340,9 +325,9 @@ function UnstakeForm() {
     const unstakeMutation = useMutation({
         mutationFn: async (amount: bigint) => {
             if (!account) throw new Error('Please connect your wallet');
-            toast({
+            customToast({
                 title: 'Pending',
-                description: 'Initiating Unstake...',
+                description: 'Initiating unstake...',
             });
             setDisabled(true);
             await unstakeIntent(amount, account);
@@ -350,24 +335,19 @@ function UnstakeForm() {
         onError: (e) => {
             setDisabled(false);
             if (e instanceof Error) {
-                toast({
-                    title: 'Error',
+                customToast({
+                    variant: 'error',
                     description: e.message,
-                    variant: 'destructive',
                 });
                 return;
             }
-            toast({
-                title: 'Error',
-                description: 'An error occurred',
-                variant: 'destructive',
-            });
+            customToast({ variant: 'error' });
         },
         onSuccess: () => {
             setDisabled(false);
-            toast({
-                title: 'Success!',
-                description: 'Initiated unstake successfully. Please wait for the cooldown period to end before claiming your tokens.',
+            customToast({
+                variant: 'success',
+                description: 'Initiated unstake successfully!',
             });
         },
     });
