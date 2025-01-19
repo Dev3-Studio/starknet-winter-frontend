@@ -85,7 +85,7 @@ const ChatInput = (props: {inputRef: any, onSend: () => void}) => {
             <Input className="mx-1" type="text" placeholder="Ask a Question..." ref={props.inputRef}
                    onKeyDown={handleKeyDown}/>
             <Button onClick={props.onSend}>
-                <SendHorizontal/>
+                <SendHorizontal />
             </Button>
         </div>
         

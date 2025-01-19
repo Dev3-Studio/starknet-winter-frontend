@@ -16,8 +16,8 @@ export function getTokenAddressFromName(name: string) {
   return token;
 }
 
-export function getTokenAddressFromSymbol(symbol: string) {
-    const token = assetList.find((asset) => asset.symbol === symbol)?.address;
+export function getTokenFromSymbol(symbol: string) {
+    const token = assetList.find((asset) => asset.symbol === symbol);
     
         if (!token) {
             throw new Error('Token not found');
