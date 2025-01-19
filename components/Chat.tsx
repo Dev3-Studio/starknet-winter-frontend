@@ -172,7 +172,7 @@ export default function Chat() {
     
     
     return (
-        <div className="grid grid-rows-[auto,1fr]">
+        <div className="h-full grid grid-rows-[auto,1fr,auto]">
             
             <h1 className="pb-2 text-center text-4xl pt-1">AI Chat</h1>
             

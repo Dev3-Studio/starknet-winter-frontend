@@ -1,15 +1,9 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { cn } from '@/lib/utils';
-import {
-  ChartCandlestick,
-  ArrowDownUp,
-  BrainCircuit,
-  Wallet,
-  Info,
-} from 'lucide-react';
-import { useRouter, usePathname } from 'next/navigation';
+import { ArrowDownUp, BrainCircuit, ChartCandlestick, Info, Wallet } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 
 const routes = [
   { name: 'Staking', icon: Wallet, route: '/stake' },
@@ -36,7 +30,7 @@ export const Navbar: React.FC<{ className?: string }> = ({ className }
   return (
     <div
       className={cn(
-        'flex justify-evenly w-screen bottom-0 h-20 bg-accent',
+          'flex justify-evenly w-screen bottom-0 h-full bg-accent',
         className
       )}
     >
