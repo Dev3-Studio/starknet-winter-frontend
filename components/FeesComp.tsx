@@ -1,41 +1,31 @@
 'use server';
 import { getAmountOut } from '@/lib/swap';
-import { PriceProps } from '@/types/AllTypes';
 import { Quote } from '@avnu/avnu-sdk';
-import { parseUnits, formatUnits } from 'ethers';
+import { parseUnits } from 'ethers';
 import supportedTokens from '@/public/supportedTokens.json';
+import { SwapToken } from '@/components/Swap';
 
 interface FeesCompProps {
   address: string | undefined;
-  tokenA: PriceProps;
-  tokenB: PriceProps;
-  amountA: number;
+  tokenIn: SwapToken;
+  tokenOut: SwapToken;
 }
 
 async function handleGetQuote({
-  tokenA,
-  tokenB,
-  amountA,
+  tokenIn,
+  tokenOut,
   address,
 }: FeesCompProps) {
   try {
     // Check for invalid input
-    if (!tokenA || !tokenB || !amountA || !address) {
+    if (!tokenIn || !tokenOut || !address) {
       console.error('Missing required parameters:', {
-        tokenA,
-        tokenB,
-        amountA,
+        tokenIn,
+        tokenOut,
         address,
       });
       return;
     }
-
-    // console.log('Fetching quote with parameters:', {
-    //   tokenA,
-    //   tokenB,
-    //   amountA,
-    //   address,
-    // });
 
     interface TempTokenProps {
       name: string;
@@ -44,13 +34,13 @@ async function handleGetQuote({
     }
 
     const tempTokenA: TempTokenProps | undefined = supportedTokens.find(
-      (p: any) => {
-        p.Name === tokenA.Name;
+      (p) => {
+        return p.name === tokenIn.token.Name;
       }
     );
     const tempTokenB: TempTokenProps | undefined = supportedTokens.find(
-      (p: any) => {
-        p.Name === tokenA.Name;
+      (p) => {
+        return p.name === tokenIn.token.Name;
       }
     );
 
@@ -63,10 +53,9 @@ async function handleGetQuote({
       tempTokenA.address,
       tempTokenB.address,
       address,
-      parseUnits(amountA.toFixed(tokenA.Decimals).toString())
+      parseUnits(tokenIn.amount.toFixed(tokenIn.token.Decimals).toString())
     );
 
-    console.log(tempQuote);
 
     if (tempQuote.length === 0) {
       console.warn('No quote returned from getAmountIn');
@@ -82,18 +71,15 @@ async function handleGetQuote({
 
 const FeesComp: React.FC<FeesCompProps> = async ({
   address,
-  tokenA,
-  tokenB,
-  amountA,
+  tokenIn,
+  tokenOut,
 }: FeesCompProps) => {
   try {
     if (address === undefined) {
       return;
     }
-    console.log('Fetching quote for', { address, tokenA, tokenB, amountA });
-    const isQuote = await handleGetQuote({ tokenA, tokenB, address, amountA });
+    const isQuote = await handleGetQuote({ tokenIn, tokenOut, address });
 
-    console.log('Received quote:', isQuote);
 
     return (
       <div className='h-[140px] overflow-hidden w-full will-change-[height]'>
