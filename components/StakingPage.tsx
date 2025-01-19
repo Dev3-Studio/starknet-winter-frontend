@@ -157,7 +157,7 @@ function StakingFormTemplate({ maxAmount, children, onSubmit, onUpdate }: Stakin
                     render={({ field }) => (
                         <FormItem>
                             <FormControl>
-                                <div className="flex p-2 gap-2 border rounded-md w-full">
+                                <div className="flex p-2 gap-2 border rounded-md w-full bg-background">
                                     <div className="flex flex-col gap-1 min-w-10 items-center justify-between">
                                         <Image
                                             src={strkIcon}
@@ -410,7 +410,7 @@ export default function StakingPage() {
     
     return (
         <div className="flex flex-col gap-2 items-center">
-            <div className="flex w-fit p-1 border rounded-md">
+            <div className="flex w-fit p-1 gap-1 border rounded-md">
                 <Button variant={activeTab === 'stake' ? 'default' : 'ghost'} onClick={() => setActiveTab('stake')}>
                     Stake
                 </Button>

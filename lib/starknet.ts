@@ -5,13 +5,20 @@ import starkAbi from './abi/starkToken';
 export async function sendTransaction(account: SessionAccountInterface, calls: AllowArray<Call>): Promise<string> {
     const { resourceBounds } = await account.estimateInvokeFee(calls);
     
-    const { transaction_hash } = await account.execute(calls, {
-        version: 3,
-        feeDataAvailabilityMode: RPC.EDataAvailabilityMode.L1,
-        resourceBounds,
-    });
-    
-    return transaction_hash;
+    try {
+        const { transaction_hash } = await account.execute(calls, {
+            version: 3,
+            feeDataAvailabilityMode: RPC.EDataAvailabilityMode.L1,
+            resourceBounds,
+        });
+        
+        return transaction_hash;
+    } catch (e) {
+        if (e instanceof Error && e.message === 'Method not implemented.') {
+            throw new Error('Please initiate your Argent wallet. Please see our FAQ for more information.');
+        }
+        throw e;
+    }
 }
 
 export async function getStarkBalance(account: SessionAccountInterface) {
