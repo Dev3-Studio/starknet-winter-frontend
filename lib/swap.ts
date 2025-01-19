@@ -31,8 +31,8 @@ export async function getAmountIn(
 ) {
     return await fetchQuotes(
         {
-            sellTokenAddress: tokenOut,
-            buyTokenAddress: tokenIn,
+            sellTokenAddress: tokenIn,
+            buyTokenAddress: tokenOut,
             buyAmount: amountOut,
             takerAddress: wallet,
         },
@@ -46,6 +46,7 @@ export async function swap(account: SessionAccountInterface, quoteId: string) {
         account.address,
         0.05,
         true,
+        { baseUrl: QUOTE_URL },
     );
     
     return await sendTransaction(account, txBuild.calls);
