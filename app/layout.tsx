@@ -14,8 +14,8 @@ const inter = Inter({
 
 // todo: update metadata
 export const metadata: Metadata = {
-    title: 'Starknet Winter Hackathon',
-    description: 'Starknet Winter Hackathon Frontend',
+    title: 'TeleSwap',
+    description: 'Starknet\'s first DEX on Telegram',
     authors: [{ name: 'Dev3 Studio', url: 'https://dev3.studio' }],
 };
 
