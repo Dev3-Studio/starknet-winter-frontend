@@ -13,6 +13,7 @@ import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/shadcn/button';
+import { getVoiceAuthToken } from '@/actions/getVoiceAuthToken';
 
 export type Token = {
     name: string;
@@ -25,6 +26,7 @@ export type Token = {
 export type SwapToken = Token & { amount: bigint };
 
 const Swap: React.FC = () => {
+    
     const { account } = useArgentTelegram();
     
     const [amountInText, setAmountInText] = useState('');
