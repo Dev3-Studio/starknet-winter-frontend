@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import { SendHorizontal, Mic, MicOff } from 'lucide-react';
+import { Mic, MicOff, SendHorizontal } from 'lucide-react';
 import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { Input } from '@/components/shadcn/input';
@@ -12,7 +12,7 @@ import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognitio
 
 const API_KEY = process.env.NEXT_PUBLIC_VOICE_API_KEY;
 if (!API_KEY) {
-    throw new Error('Missing VOICE_API_KEY');
+    throw new Error('Missing NEXT_PUBLIC_VOICE_API_KEY');
 }
 
 
