@@ -3,48 +3,48 @@
 @tailwind utilities;
 
 @layer utilities {
-    .text-balance {
-        text-wrap: balance;
-    }
+  .text-balance {
+    text-wrap: balance;
+  }
 
-    .no-scrollbar::-webkit-scrollbar {
-        display: none;
-    }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
-    .no-scrollbar {
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-    }
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
 }
 
 @layer base {
-    :root {
-        --background: 240, 10%, 3.9%;
-        --foreground: 60, 9%, 98%;
-        --card: 240, 10%, 3.9%;
-        --card-foreground: 60, 9%, 98%;
-        --popover: 240, 10%, 3.9%;
-        --popover-foreground: 60, 9%, 98%;
-        --primary: 20.5, 90.2%, 48.2%;
-        --primary-foreground: 60, 9%, 98%;
-        --secondary: 240, 3.7%, 15.9%;
-        --secondary-foreground: 60, 9%, 98%;
-        --muted: 240, 3.7%, 15.9%;
-        --muted-foreground: 240, 5%, 64.9%;
-        --accent: 240, 3.7%, 15.9%;
-        --accent-foreground: 60, 9%, 98%;
-        --destructive: 0, 72.2%, 50.6%;
-        --destructive-foreground: 60, 9%, 98%;
-        --border: 240, 3.7%, 15.9%;
-        --input: 240, 3.7%, 15.9%;
-        --ring: 20.5, 90.2%, 48.2%;
-        --radius: 0.5rem;
-        --chart-1: 220, 70%, 50%;
-        --chart-2: 160, 60%, 45%;
-        --chart-3: 30, 80%, 55%;
-        --chart-4: 280, 65%, 60%;
-        --chart-5: 340, 75%, 55%;
-    }
+  :root {
+    --background: 240, 10%, 3.9%;
+    --foreground: 60, 9%, 98%;
+    --card: 240, 10%, 3.9%;
+    --card-foreground: 60, 9%, 98%;
+    --popover: 240, 10%, 3.9%;
+    --popover-foreground: 60, 9%, 98%;
+    --primary: 28, 100%, 48.2%;
+    --primary-foreground: 60, 9%, 98%;
+    --secondary: 240, 3.7%, 15.9%;
+    --secondary-foreground: 60, 9%, 98%;
+    --muted: 240, 3.7%, 15.9%;
+    --muted-foreground: 240, 5%, 64.9%;
+    --accent: 240, 3.7%, 15.9%;
+    --accent-foreground: 60, 9%, 98%;
+    --destructive: 0, 72.2%, 50.6%;
+    --destructive-foreground: 60, 9%, 98%;
+    --border: 240, 3.7%, 15.9%;
+    --input: 240, 3.7%, 15.9%;
+    --ring: 20.5, 90.2%, 48.2%;
+    --radius: 0.5rem;
+    --chart-1: 220, 70%, 50%;
+    --chart-2: 160, 60%, 45%;
+    --chart-3: 30, 80%, 55%;
+    --chart-4: 280, 65%, 60%;
+    --chart-5: 340, 75%, 55%;
+  }
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -60,11 +60,11 @@ input[type=number] {
 }
 
 @layer base {
-    * {
-        @apply border-border;
-    }
+  * {
+    @apply border-border;
+  }
 
-    body {
-        @apply bg-background text-foreground;
-    }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
