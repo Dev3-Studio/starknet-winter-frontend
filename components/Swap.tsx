@@ -10,10 +10,10 @@ import { useDebounce } from 'use-debounce';
 import { Quote } from '@avnu/avnu-sdk';
 import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/shadcn/button';
 import { ArrowDownUpIcon } from 'lucide-react';
 import { getTokenBalance } from '@/lib/starknet';
+import { customToast } from '@/lib/utils';
 
 interface FlipTokensButtonProps {
     isSwapped: boolean;
@@ -64,32 +64,27 @@ const Swap: React.FC = () => {
         mutationFn: async () => {
             if (!quote) return;
             if (!account) return;
-            toast({
-                title: 'Broadcasting swap',
-                description: 'Executing swap...',
+            customToast({
+                title: 'Pending',
+                description: 'Swapping...',
             });
             await swap(account, quote.quoteId);
         },
         onError: (e) => {
             console.log(e);
             if (e instanceof Error) {
-                toast({
-                    title: 'Error',
+                customToast({
+                    variant: 'error',
                     description: e.message,
-                    variant: 'destructive',
                 });
                 return;
             }
-            toast({
-                title: 'Error',
-                description: 'An error occurred',
-                variant: 'destructive',
-            });
+            customToast({ variant: 'error' });
         },
         onSuccess: () => {
-            toast({
-                title: 'Success!',
-                description: 'Swapped successfully',
+            customToast({
+                variant: 'success',
+                description: 'Swap completed',
             });
         },
     });
@@ -113,10 +108,9 @@ const Swap: React.FC = () => {
                         parsedAmountIn,
                     );
                     if (!quotes[0]) {
-                        toast({
-                            title: 'Quote Failed!',
-                            description: 'Insufficient liquidity',
-                            variant: 'destructive',
+                        customToast({
+                            variant: 'error',
+                            description: 'Quote Failed! Insufficient liquidity',
                         });
                         return;
                     }
@@ -151,10 +145,9 @@ const Swap: React.FC = () => {
                         parsedAmountOut,
                     );
                     if (!quotes[0]) {
-                        toast({
-                            title: 'Quote Failed!',
-                            description: 'Insufficient liquidity',
-                            variant: 'destructive',
+                        customToast({
+                            variant: 'error',
+                            description: 'Quote Failed! Insufficient liquidity',
                         });
                         return;
                     }

@@ -1,13 +1,12 @@
 'use client';
 import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { Button } from '@/components/shadcn/button';
-import { useToast } from '@/hooks/use-toast';
 import { useStarkBalance } from '@/hooks/useStarkBalance';
 import { formatUnits } from 'ethers';
+import { customToast } from '@/lib/utils';
 
 export default function WalletStats() {
     const { account, isConnected } = useArgentTelegram();
-    const { toast } = useToast();
     const balance = useStarkBalance();
     
     if (!isConnected || !account) {
@@ -21,11 +20,10 @@ export default function WalletStats() {
     function handleAddressClick() {
         if (!account || !account.address) return;
         navigator.clipboard.writeText(account.address).catch();
-        toast({
+        customToast({
             title: 'Copied Address',
             description: 'Your address has been copied to the clipboard',
         });
-        
     }
     
     return (
