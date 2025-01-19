@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="133.8884"
+   height="27.519611"
+   viewBox="0 0 133.8884 27.519612"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="swatch31">
+      <stop
+         style="stop-color:#fc7d00;stop-opacity:1;"
+         offset="0"
+         id="stop32" />
+    </linearGradient>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipath_lpe_path-effect31">
+      <rect
+         style="display:none;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5.3205;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.1;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+         id="rect31"
+         width="8.4597702"
+         height="43.770115"
+         x="13.7318"
+         y="0.98084295"
+         rx="0.62914491"
+         ry="0.34660909"
+         d="m 14.360945,0.98084295 h 7.20148 c 0.348547,0 0.629145,0.15458765 0.629145,0.34660905 v 43.076897 c 0,0.192021 -0.280598,0.346609 -0.629145,0.346609 h -7.20148 c -0.348546,0 -0.629145,-0.154588 -0.629145,-0.346609 V 1.327452 c 0,-0.1920214 0.280599,-0.34660905 0.629145,-0.34660905 z" />
+      <path
+         id="lpe_path-effect31"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:5.3205;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.1;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+         class="powerclip"
+         d="M -2.999999,2.233716 H 38.877395 V 44.11111 H -2.999999 Z M 14.360945,0.98084295 c -0.348546,0 -0.629145,0.15458765 -0.629145,0.34660905 v 43.076897 c 0,0.192021 0.280599,0.346609 0.629145,0.346609 h 7.20148 c 0.348547,0 0.629145,-0.154588 0.629145,-0.346609 V 1.327452 c 0,-0.1920214 -0.280598,-0.34660905 -0.629145,-0.34660905 z" />
+    </clipPath>
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-0.44683552,-42.525949)">
+    <g
+       id="g30"
+       transform="matrix(1.15009,0,0,1.110066,-6.0920134,178.77023)">
+      <path
+         style="fill:#ff7900;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.1;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+         id="path28"
+         clip-path="url(#clipath_lpe_path-effect31)"
+         d="M 33.877395,23.172413 A 15.938697,15.938697 0 0 1 17.938698,39.11111 15.938697,15.938697 0 0 1 2.000001,23.172413 15.938697,15.938697 0 0 1 17.938698,7.233716 15.938697,15.938697 0 0 1 33.877395,23.172413 Z"
+         transform="matrix(0.7687697,0,0,0.7687697,4.1479705,-128.29636)" />
+      <path
+         style="fill:#ff7900;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.1;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+         id="path29"
+         d="M 53.702853,6.8659005 47.07961,10.689832 V 3.0419693 Z"
+         transform="matrix(0.7687697,0,0,0.7687697,-21.724603,-124.6473)" />
+      <path
+         style="fill:#ff7900;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.1;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+         id="path30"
+         d="M 53.702853,6.8659005 47.07961,10.689832 V 3.0419693 Z"
+         transform="matrix(-0.7687697,0,0,-0.7687697,57.618948,-96.351079)" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:25.889px;font-family:Tahoma;-inkscape-font-specification:Tahoma;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.377953;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+       x="30.805161"
+       y="64.648445"
+       id="text31"><tspan
+         id="tspan31"
+         x="30.805161"
+         y="64.648445"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.377953;stroke-dasharray:none;stroke-opacity:1">Teleswap</tspan></text>
+  </g>
+</svg>
