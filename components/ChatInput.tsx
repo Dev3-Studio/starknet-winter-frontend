@@ -1,9 +1,7 @@
 'use client';
-import React, { useEffect } from 'react';
-import { createSpeechlySpeechRecognition } from '@speechly/speech-recognition-polyfill';
-import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
-import { Mic, MicOff, SendHorizontal } from 'lucide-react';
-import { useArgent } from '@/hooks/useArgent';
+import React from 'react';
+import { SendHorizontal } from 'lucide-react';
+import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { Input } from '@/components/shadcn/input';
 import { Button } from '@/components/shadcn/button';
@@ -15,7 +13,7 @@ import { Button } from '@/components/shadcn/button';
 
 const ChatInput = (props: {inputRef: any, onSend: () => void}) => {
     
-    const {account} = useArgent();
+    const { account } = useArgentTelegram();
     
     
     // speech input

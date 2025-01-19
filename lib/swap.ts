@@ -1,6 +1,6 @@
 import { fetchBuildExecuteTransaction, fetchQuotes } from '@avnu/avnu-sdk';
 import { SessionAccountInterface } from '@argent/tma-wallet';
-import { sendTransaction } from '@/lib/transaction';
+import { sendTransaction } from '@/lib/starknet';
 
 // Mainnet: https://starknet.api.avnu.fi
 // Testnet: https://sepolia.api.avnu.fi

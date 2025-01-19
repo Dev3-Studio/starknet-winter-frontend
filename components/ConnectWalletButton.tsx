@@ -1,15 +1,15 @@
 'use client';
 
-import { Button } from '@/components/shadcn/button';
+import { Button, ButtonProps } from '@/components/shadcn/button';
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { useArgent } from '@/hooks/useArgent';
+import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 
-export const ConnectWalletButton: React.FC<{ className?: string }> = ({ className }) => {
-    const { argentTMA, account, disconnect, isConnected } = useArgent();
+export const ConnectWalletButton: React.FC<ButtonProps> = ({ ...props }) => {
+    const { argent, account, disconnect, isConnected } = useArgentTelegram();
     
     const handleConnectButton = async () => {
-        await argentTMA.requestConnection({
+        await argent.requestConnection({
             callbackData: 'test',
         });
     };
@@ -24,19 +24,21 @@ export const ConnectWalletButton: React.FC<{ className?: string }> = ({ classNam
     };
     
     return (
-        <div>
+        <>
             {isConnected && <Button
-                className={cn('block rounded-md w-full', className)}
+                {...props}
+                className={cn('block rounded-md w-full', props.className)}
                 onClick={handleClearSessionButton}
             >
                 Disconnect: {formatAddress(account?.address)}
             </Button>}
             {!isConnected && <Button
-                className={cn('block rounded-md w-full', className)}
+                {...props}
+                className={cn('block rounded-md w-full', props.className)}
                 onClick={handleConnectButton}
             >
                 Connect Wallet
             </Button>}
-        </div>
+        </>
     );
 };

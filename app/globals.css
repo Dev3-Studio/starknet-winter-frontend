@@ -6,6 +6,15 @@
     .text-balance {
         text-wrap: balance;
     }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
 }
 
 @layer base {

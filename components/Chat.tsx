@@ -6,9 +6,9 @@ import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import ActionBubble from '@/components/ActionBubble';
 import ChatBubble from '@/components/ChatBubble';
 import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
+import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { useToast } from '@/hooks/use-toast';
 import ChatInput from './ChatInput';
-import { useArgent } from '@/hooks/useArgent';
 import { getTokenAddressFromName } from '@/lib/utils';
 import { stake } from '@/lib/stake';
 
@@ -21,8 +21,8 @@ type ChatBubbleProps = {
 export default function Chat() {
     const [messages, setMessages] = useState<ChatBubbleProps[]>([]);
     const inputRef = useRef<HTMLInputElement>(null);
+    const { account } = useArgentTelegram();
     const { toast } = useToast();
-    const { account } = useArgent();
     
     async function sendMessage() {
         const message = inputRef.current?.value;
@@ -76,18 +76,20 @@ export default function Chat() {
         const toolCall = message.tool_calls?.find((toolCall) => toolCall.name.endsWith('Confirm'));
         if (!toolCall) return;
         
-        if (!account) return <ChatBubble text="Please connect your wallet before performing this action" side="left"
-                                         sender="AI"/>;
+        if (!account) return <ChatBubble
+            text="Please connect your wallet before performing this action" side="left"
+            sender="AI"/>;
         
         switch (action) {
             case 'stake':
-                if (!toolCall.args.token) return <ChatBubble text="Only the stark token can be staked" side="left"
-                                                             sender="AI"/>;
+                if (!toolCall.args.token) return <ChatBubble
+                    text="Only the stark token can be staked" side="left"
+                    sender="AI"/>;
                 const stakeAmount = toolCall.args.amount ?? 1n;
                 
                 const stakeFunction = async () => {
                     try {
-                        await stake(stakeAmount, account.address)
+                        await stake(stakeAmount, account.address);
                     } catch {
                         toast({
                             title: 'Error',
@@ -102,9 +104,10 @@ export default function Chat() {
                     });
                 };
                 
-                return <ActionBubble text={
-                    `Confirm Stake ${stakeAmount} ${toolCall.args.token}`}
-                                     actionName={'Stake'} side="left" sender="AI" callback={() => stakeFunction}/>;
+                return <ActionBubble
+                    text={
+                        `Confirm Stake ${stakeAmount} ${toolCall.args.token}`}
+                    actionName={'Stake'} side="left" sender="AI" callback={() => stakeFunction}/>;
             
             case 'swap':
                 const tokenIn = toolCall.args.tokenIn;
@@ -119,8 +122,9 @@ export default function Chat() {
                 if (amountIn) {
                     // get amountOut
                     const quoteOut = await getAmountOut(getTokenAddressFromName(tokenIn), getTokenAddressFromName(tokenOut), account.address, amountIn);
-                    if (!quoteOut) return <ChatBubble text="An error occured. Please try again" side="left"
-                                                      sender="AI"/>;
+                    if (!quoteOut) return <ChatBubble
+                        text="An error occured. Please try again" side="left"
+                        sender="AI"/>;
                     amountOut = quoteOut[0].buyAmount;
                     swapFunction = async () => {
                         try {
@@ -141,8 +145,9 @@ export default function Chat() {
                 } else {
                     // get amountIn
                     const quoteIn = await getAmountIn(getTokenAddressFromName(tokenIn), getTokenAddressFromName(tokenOut), account.address, amountOut);
-                    if (!quoteIn) return <ChatBubble text="An error occured. Please try again" side="left"
-                                                     sender="AI"/>;
+                    if (!quoteIn) return <ChatBubble
+                        text="An error occured. Please try again" side="left"
+                        sender="AI"/>;
                     amountIn = quoteIn[0].sellAmount;
                     swapFunction = async () => {
                         try {
@@ -172,7 +177,7 @@ export default function Chat() {
     
     
     return (
-        <div className="grid grid-rows-[auto,1fr]">
+        <div className="h-full grid grid-rows-[auto,1fr,auto]">
             
             <h1 className="pb-2 text-center text-4xl pt-1">AI Chat</h1>
             
