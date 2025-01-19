@@ -6,9 +6,9 @@ import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import ActionBubble from '@/components/ActionBubble';
 import ChatBubble from '@/components/ChatBubble';
 import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
+import { useArgentTelegram } from '@/hooks/useArgentTelegram';
 import { useToast } from '@/hooks/use-toast';
 import ChatInput from './ChatInput';
-import { useArgent } from '@/hooks/useArgent';
 import { getTokenAddressFromName } from '@/lib/utils';
 import { stake } from '@/lib/stake';
 
@@ -21,8 +21,8 @@ type ChatBubbleProps = {
 export default function Chat() {
     const [messages, setMessages] = useState<ChatBubbleProps[]>([]);
     const inputRef = useRef<HTMLInputElement>(null);
+    const { account } = useArgentTelegram();
     const { toast } = useToast();
-    const { account } = useArgent();
     
     async function sendMessage() {
         const message = inputRef.current?.value;

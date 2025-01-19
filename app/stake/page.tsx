@@ -1,8 +1,7 @@
-import StakeCard from '@/components/StakePage';
+import StakePageContent from '@/components/StakingPage';
+
 export default function StakePage() {
-  return (
-    <>
-      <StakeCard />
-    </>
-  );
+    return <div className="p-4">
+        <StakePageContent/>
+    </div>;
 }
