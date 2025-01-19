@@ -12,6 +12,7 @@ import { ConnectWalletButton } from '@/components/ConnectWalletButton';
 import { SwapButton } from '@/components/SwapButton';
 import FeesComp from '@/components/FeesComp';
 import { useArgentTelegram } from '@/hooks/useArgentTelegram';
+import { swipeBehavior } from '@telegram-apps/sdk';
 
 const SwapPage: React.FC = () => {
   const [isOpen, setOpen] = useState(false);
@@ -23,6 +24,7 @@ const SwapPage: React.FC = () => {
   const [amountB, setAmountB] = useState<number>(0);
   const [isSwapped, setSwapped] = useState(false);
   const [isActive, setActive] = useState(false);
+  const [isSwipeSetup, setSwipeSetup] = useState(false);
   
   const argent = useArgentTelegram();
 
@@ -37,6 +39,13 @@ const SwapPage: React.FC = () => {
     setTokenB(priceList[1]);
     setPrices(priceList);
   };
+
+  useEffect(() => {
+    if (swipeBehavior.isSupported()) {
+      swipeBehavior.disableVertical();
+      setSwipeSetup(true);
+    }
+  }, []);
 
   useEffect(() => {
     fetchPrice().catch();
@@ -97,7 +106,7 @@ const SwapPage: React.FC = () => {
     setOpen(false);
   };
 
-  async function handleSwap() {
+  async function handleSwapTokens() {
     if (tokenA && tokenB) {
       console.log('Swapping..:', tokenA, tokenB);
       if (!isSwapped) {
@@ -134,8 +143,6 @@ const SwapPage: React.FC = () => {
     }
   };
 
-  const handleMakeSwap = () => {};
-
   return (
     <div className='flex flex-col items-center h-full bg-transparent p-12'>
       <div className='flex flex-col gap-2 w-full'>
@@ -148,7 +155,7 @@ const SwapPage: React.FC = () => {
         />
 
         {/* Swap Feature */}
-        <SwapComp isSwapped={isSwapped} handleSwap={handleSwap} />
+        <SwapComp isSwapped={isSwapped} handleSwap={handleSwapTokens} />
 
         {/* Buy Comp */}
         <BuyComp
@@ -168,10 +175,9 @@ const SwapPage: React.FC = () => {
 
         {argent.isConnected ? (
           <SwapButton
-            callback={handleMakeSwap}
+            callback={() => {}}
             className={''}
             wallet={argent.account?.address}
-            quoteID={null}
             active={isActive}
           />
         ) : (
@@ -179,7 +185,14 @@ const SwapPage: React.FC = () => {
         )}
 
         {/* Fees Comp */}
-        {!amountA || !amountB ? null : <FeesComp />}
+        {!amountA || !amountB ? null : (
+          <FeesComp
+            amountA={amountA}
+            tokenA={tokenA}
+            tokenB={tokenB}
+            address={argent.account.address}
+          />
+        )}
       </div>
     </div>
   );
