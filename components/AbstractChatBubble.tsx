@@ -2,12 +2,17 @@ import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
 
 export type Side = 'left' | 'right';
-export default function AbstractChatBubble(props: {contents: JSX.Element, side: Side, sender: string, className?: string}) {
+export default function AbstractChatBubble(props: {
+    contents: JSX.Element,
+    side: Side,
+    sender: string,
+    className?: string
+}) {
     
-    return(
+    return (
         <div className="text-xs">
-            <div className={cn("max-w-[50%]", props.side === 'left' ? 'float-left' : 'float-right')}>
-                <Avatar className={cn("mx-3", props.side === 'left' ? 'float-left' : 'float-right')}>
+            <div className={cn('max-w-[50%]', props.side === 'left' ? 'float-left' : 'float-right')}>
+                <Avatar className={cn('mx-3', props.side === 'left' ? 'float-left' : 'float-right')}>
                     <AvatarImage src="https://github.com/shadcn.png" alt="Avatar Image"/>
                     <AvatarFallback>{props.sender}</AvatarFallback>
                 </Avatar>
@@ -20,5 +25,5 @@ export default function AbstractChatBubble(props: {contents: JSX.Element, side: 
                 </div>
             </div>
         </div>
-    )
+    );
 }

@@ -30,8 +30,8 @@ async function swapFn(account: SessionAccountInterface, quoteId: string) {
     
     try {
         await swap(account, quoteId);
-    } catch(e) {
-        console.log(e)
+    } catch (e) {
+        console.log(e);
         return toast({
             title: 'Error',
             variant: 'destructive',
@@ -83,7 +83,7 @@ export default function Chat() {
                         const swapBubble = await createActionBubble(tempMessage, 'swap') ??
                             ErrorChatBubble();
                         return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: swapBubble }]);
-                        
+                    
                     default:
                         throw new Error('Unknown tool call');
                 }
@@ -127,7 +127,7 @@ export default function Chat() {
                     });
                     try {
                         await stake(stakeAmount, account);
-                    } catch(e) {
+                    } catch (e) {
                         console.log(e);
                         return toast({
                             title: 'Error',

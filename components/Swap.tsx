@@ -216,15 +216,6 @@ const Swap: React.FC = () => {
                 ) : (
                     <ConnectWalletButton/>
                 )}
-                
-                {/* Fees Comp */}
-                {/*{!tokenIn || !tokenOut || !account ? null : (*/}
-                {/*    <FeesComp*/}
-                {/*        tokenIn={tokenIn}*/}
-                {/*        tokenOut={tokenOut}*/}
-                {/*        address={account.address}*/}
-                {/*    />*/}
-                {/*)}*/}
             </div>
         </div>
     );
