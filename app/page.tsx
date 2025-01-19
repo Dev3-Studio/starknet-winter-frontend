@@ -1,13 +1,5 @@
-'use client';
-
-import { ConnectWalletButton } from '@/components/ConnectWalletButton';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  const router = useRouter();
-  useEffect(() => {
-    router.push('/stake');
-  }, []);
-  return <></>;
+    redirect('/stake');
 }
