@@ -19,7 +19,7 @@ export const useArgentTelegram = () => {
     const argent = useMemo(() => {
         return ArgentTMA.init({
             environment: 'sepolia', // "sepolia" | "mainnet" (Whitelisting required)
-            appName: 'Starknet DEX', // todo Change the app name
+            appName: 'TeleSwap',
             appTelegramUrl,
             provider: new RpcProvider({
                 nodeUrl: 'https://starknet-sepolia.public.blastapi.io/rpc/v0_7',
@@ -29,8 +29,8 @@ export const useArgentTelegram = () => {
                     // todo Placeholder list of contracts/methods allowed to be called by the session key
                     {
                         contract:
-                            '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d', // contract address
-                        selector: 'approve', //function selector
+                            '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+                        selector: 'approve',
                     },
                     {
                         contract:
