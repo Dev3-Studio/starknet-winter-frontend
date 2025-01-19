@@ -122,7 +122,7 @@ export default function Chat() {
                 if (amountIn) {
                     // get amountOut
                     const quoteOut = await getAmountOut(getTokenAddressFromName(tokenIn), getTokenAddressFromName(tokenOut), account.address, amountIn);
-                    if (!quoteOut) return <ChatBubble
+                    if (!quoteOut[0]) return <ChatBubble
                         text="An error occured. Please try again" side="left"
                         sender="AI"/>;
                     amountOut = quoteOut[0].buyAmount;
@@ -145,7 +145,7 @@ export default function Chat() {
                 } else {
                     // get amountIn
                     const quoteIn = await getAmountIn(getTokenAddressFromName(tokenIn), getTokenAddressFromName(tokenOut), account.address, amountOut);
-                    if (!quoteIn) return <ChatBubble
+                    if (!quoteIn[0]) return <ChatBubble
                         text="An error occured. Please try again" side="left"
                         sender="AI"/>;
                     amountIn = quoteIn[0].sellAmount;
@@ -177,9 +177,7 @@ export default function Chat() {
     
     
     return (
-        <div className="h-full grid grid-rows-[auto,1fr,auto]">
-            
-            <h1 className="pb-2 text-center text-4xl pt-1">AI Chat</h1>
+        <div className="h-full grid grid-rows-[1fr,auto]">
             
             <div className="px-2 grid gap-2 w-full overflow-y-scroll">
                 {messages.map((message, key) => {
