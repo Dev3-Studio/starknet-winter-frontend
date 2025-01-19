@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import assetList from '@/public/supportedTokens.json';
 import pragmaTokens from '@/public/pragmaTokens.json';
+import crypto from 'crypto';
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -36,4 +37,8 @@ export function getPragmaTokenFromName(name: string) {
 
 export function capitalizeFirstLetter(val: string) {
     return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
+export function getUuidV4() {
+    return crypto.randomUUID();
 }
