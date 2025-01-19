@@ -3,110 +3,73 @@
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import { capitalizeFirstLetter, cn } from '@/lib/utils';
-import { SwapToken } from '@/components/Swap';
-import DrawerModal from '@/components/DrawerModal';
-import React, { useEffect, useState } from 'react';
-import { PriceProps } from '@/types/AllTypes';
-import { useDebounce } from 'use-debounce';
+import { Token } from '@/components/Swap';
+import TokenSelectDrawer from '@/components/TokenSelectDrawer';
+import React from 'react';
 import { useTokenPrice } from '@/hooks/useTokenPrice';
-import { formatUnits, parseUnits } from 'ethers';
 
 interface TokenSelectorProps {
     type: 'buy' | 'sell';
-    token: SwapToken;
-    onSelectToken: (buy: string, action: string) => void;
-    onAmountChange: (amount: bigint) => void;
-    tokenList: Array<PriceProps>;
+    token: Token;
+    amount: string;
+    onChangeAmount: (value: string) => void;
+    onSelectToken: (symbol: string) => void;
+    tokenList: Array<Token>;
 }
 
 const TokenSelector: React.FC<TokenSelectorProps> = ({
     type,
     token,
+    amount,
+    onChangeAmount,
     onSelectToken,
-    onAmountChange,
     tokenList,
 }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [amount, setAmount] = useState<bigint>(0n);
-    const assetPrice = useTokenPrice({ pragmaFeedId: token.token.PairID });
-    const [debounceAmount] = useDebounce(amount, 500);
+    const assetPrice = useTokenPrice({ pragmaFeedId: token.pragmaId });
     
-    useEffect(() => {
-        onAmountChange(debounceAmount);
-    }, [debounceAmount]);
-    
-    const parseInput = (value: number) => {
-        const valueStr = value.toString();
-        try {
-            return parseUnits(valueStr, token.token.Decimals);
-        } catch {
-            return 0n;
-        }
-    };
-    
-    const formatAmount = (value: bigint) => {
-        return Number(formatUnits(value, token.token.Decimals));
-    };
-    
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseFloat(e.target.value) || 0;
-        setAmount(parseInput(value));
-    };
-    
-    function chooseCrypto(crypto: string, action: string) {
-        onSelectToken(crypto, action);
-        setIsOpen(false);
-    }
-    
-    function handleKeyDown(event: React.KeyboardEvent) {
-        if (event.key === 'Escape') {
-            setIsOpen(false);
-        }
+    function handleSelectToken(symbol: string) {
+        onSelectToken(symbol);
     }
     
     return (
         <div
             className={cn('shadow-md rounded-[10px] p-2 flex flex-row justify-between', type === 'buy' ? 'bg-primary' : 'bg-secondary')}
-            onKeyDown={handleKeyDown}>
+        >
             <div className="flex flex-col gap-2">
                 <span className="opacity-80 text-sm">{capitalizeFirstLetter(type)}</span>
                 <input
-                    value={formatUnits(amount, token.token.Decimals)}
+                    value={amount}
+                    placeholder="0"
                     type="number"
                     min={0}
                     className={cn(
                         'w-full mr-1 bg-transparent placeholder-inherit focus-within:border-none focus:outline-none',
                     )}
-                    onChange={handleInputChange}
+                    onChange={(e) => onChangeAmount(e.target.value)}
                 />
                 
                 <span className="flex opacity-80 items-baseline">
           <p className="text-lg">
-            ${(formatAmount(amount) * assetPrice).toFixed(2)}
+            ${(Number(amount) * assetPrice).toFixed(2)}
           </p>
         </span>
             </div>
             <div className="flex items-center text-xl text-left h-full ">
-                <Button
-                    className="rounded-full bg-accent flex text-primary-foreground gap-4 w-max-40"
-                    onClick={() => setIsOpen(true)}
+                <TokenSelectDrawer
+                    onSelectToken={handleSelectToken}
+                    tokens={tokenList}
+                    title={type}
                 >
-                    <img
-                        src={token ? `./${token.token.Name}.webp` : undefined}
-                        className="w-6 h-6 rounded-full"
-                    />
-                    <p>{token ? token.token.Name : ''}</p>
-                    <ChevronDown/>
-                </Button>
+                    <Button className="rounded-full bg-accent flex text-primary-foreground gap-4 w-max-40">
+                        <img
+                            src={token ? `./${token.symbol}.webp` : undefined}
+                            className="w-6 h-6 rounded-full"
+                        />
+                        <p>{token ? token.symbol : ''}</p>
+                        <ChevronDown/>
+                    </Button>
+                </TokenSelectDrawer>
             </div>
-            
-            {/*buy modal*/}
-            <DrawerModal
-                handleChooseCrypto={chooseCrypto}
-                typeAction={type}
-                cryptos={tokenList}
-                isOpen={isOpen}
-            />
         </div>
     );
 };
