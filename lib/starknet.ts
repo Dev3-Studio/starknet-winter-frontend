@@ -3,7 +3,7 @@ import { SessionAccountInterface } from '@argent/tma-wallet';
 import starkAbi from './abi/starkToken';
 
 export async function sendTransaction(account: SessionAccountInterface, calls: AllowArray<Call>): Promise<string> {
-    const { resourceBounds } = await account.estimateInvokeFee(calls);
+    const { resourceBounds } = await account.estimateInvokeFee(calls); // todo Catch uninitiated error here too.
     
     try {
         const { transaction_hash } = await account.execute(calls, {
