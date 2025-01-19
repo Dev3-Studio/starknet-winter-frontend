@@ -73,7 +73,7 @@ export default function Chat() {
             tempMessage.tool_calls = response.tool_calls;
             
             
-            if (tempMessage.tool_calls) {
+            if (tempMessage.tool_calls && tempMessage.tool_calls.length > 0) {
                 switch (tempMessage.tool_calls[0].name) {
                     case 'stakeConfirm':
                         const stakeBubble = await createActionBubble(tempMessage, 'stake') ??
@@ -83,6 +83,7 @@ export default function Chat() {
                         const swapBubble = await createActionBubble(tempMessage, 'swap') ??
                             ErrorChatBubble();
                         return setMessages((prev) => [...prev, { message: tempMessage, chatBubble: swapBubble }]);
+                        
                     default:
                         throw new Error('Unknown tool call');
                 }
