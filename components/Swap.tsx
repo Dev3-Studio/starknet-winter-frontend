@@ -2,44 +2,27 @@
 
 import React, { useEffect, useState } from 'react';
 import { PriceProps } from '@/types/AllTypes';
-
 import { getAllPricesFormatted } from '@/actions/getAllPrices';
-
 import { useArgent } from '@/hooks/useArgent';
 import { swipeBehavior } from '@telegram-apps/sdk';
 import { TokenSelector } from '@/components/TokenSelector';
 import { SwapComp } from '@/components/SwapComp';
-import DrawerModal from '@/components/DrawerModal';
 import { SwapButton } from '@/components/SwapButton';
-import FeesComp from '@/components/FeesComp';
 import { ConnectWalletButton } from '@/components/ConnectWalletButton';
+import FeesComp from '@/components/FeesComp';
 
 const supportedTokens = ["ETH", "USDC", "STRK"];
+const usdc = { Name: 'USDC', Ticker: 'USDC/USD', PairID: '', priceInCrypto: 1, Decimals: 18, priceInUSD: 1 };
 
 export type SwapToken = {
     token: PriceProps;
     amount: number;
 }
 
-const placeHolderToken: PriceProps = {
-    Name: '',
-    Ticker: '',
-    PairID: '',
-    priceInCrypto: 0,
-    Decimals: 0,
-    priceInUSD: 0,
-};
-
-
 const Swap: React.FC = () => {
-    const [isOpen, setOpen] = useState(false);
-    const [typeAction, setAction] = useState('');
     const [prices, setPrices] = useState<PriceProps[]>([]);
-    const [tokenIn, settokenIn] = useState<SwapToken>({ token: placeHolderToken, amount: 0 });
-    const [tokenOut, setTokenOut] = useState<SwapToken>({ token: placeHolderToken, amount: 0 });
-
-    const [isActive, setActive] = useState(false);
-    const [isSwipeSetup, setSwipeSetup] = useState(false);
+    const [tokenIn, settokenIn] = useState<SwapToken>({ token: usdc, amount: 0 });
+    const [tokenOut, setTokenOut] = useState<SwapToken>({ token: usdc, amount: 10 });
     
     const { account } = useArgent();
     
@@ -51,43 +34,25 @@ const Swap: React.FC = () => {
         setTokenOut((prev) => ({ ...prev, amount }));
     }
     
-    // fetches and sets prices for buy and sell
+    // fetch price list
     const updatePrice = () => {
-        console.log('Updating Prices');
         getAllPricesFormatted().then(
             (priceList) => {
-                // console.log('PriceList:', priceList);
                 priceList = priceList.filter((p) => supportedTokens.includes(p.Name));
-                const tInAmt = tokenIn.amount;
-                const tOutAmt = tokenOut.amount;
-                    settokenIn({ token: priceList[0], amount: tInAmt });
-                    setTokenOut({ token: priceList[1], amount: tOutAmt });
-                    setPrices(priceList);
+                // add usdc as it is not supported in pragma
+                setPrices([...priceList, usdc]);
+                settokenIn({ token: priceList[0], amount: 0 });
+                setTokenOut({ token: usdc, amount: 0 });
             });
     };
     
     useEffect(() => {
+        updatePrice();
         if (swipeBehavior.isSupported()) {
             swipeBehavior.disableVertical();
-            setSwipeSetup(true);
         }
     }, []);
     
-    useEffect(() => {
-        console.log(tokenIn)
-        
-        updatePrice();
-        if (tokenIn.amount === 0 || tokenOut.amount === 0) {
-            setActive(true);
-        } else {
-            setActive(false);
-        }
-    }, [tokenIn]);
-    
-    const handleToggleModal = (action: string) => {
-        setAction(action);
-        setOpen(!isOpen);
-    };
     
     const handleChooseCrypto = (ticker: string, action: string) => {
         const selectedAsset = prices.find((p) => p.Ticker === ticker);
@@ -97,9 +62,9 @@ const Swap: React.FC = () => {
             return;
         }
         
-        if (action === 'Buy' && tokenOut) {
+        if (action === 'buy' && tokenOut) {
             if (selectedAsset.Ticker === tokenOut.token.Ticker) {
-                console.error('Cannot buy the same asset being sold');
+                handleSwapTokens();
                 return;
             }
             
@@ -107,19 +72,15 @@ const Swap: React.FC = () => {
         } else {
             if (!tokenIn) return;
             if (selectedAsset.Ticker === tokenIn.token.Ticker) {
-                console.error('Cannot sell the same asset being bought');
+                handleSwapTokens();
                 return;
             }
-            
             setTokenOut((prev) => ({ ...prev, token: selectedAsset }));
         }
-        
-        setOpen(false);
     };
     
     function handleSwapTokens() {
         if (tokenIn && tokenOut) {
-            console.log('Swapping..:', tokenIn, tokenOut);
         
             const tempT: SwapToken = tokenOut;
             setTokenOut(tokenIn);
@@ -127,73 +88,71 @@ const Swap: React.FC = () => {
         }
     }
     
+    function calculateOtherTokenAmount(token: SwapToken, otherToken: SwapToken) {
+        if (tokenIn && tokenOut) {
+            // Other token is same usd value as token
+            const otherTokenAmount = (token.amount * token.token.priceInUSD) / otherToken.token.priceInUSD;
+            return parseFloat(otherTokenAmount.toFixed(6));
+        }
+        return 0;
+    }
+    
     const handleAmountInChange = (amount: number) => {
         setAmountIn(amount);
-        if (tokenIn && tokenOut) {
-            const tokenBamount =
-                (amount * tokenIn.token.priceInCrypto) / tokenOut.token.priceInCrypto;
-            setAmountOut(parseFloat(tokenBamount.toFixed(6)));
-        }
+        // bypass slow react state update
+        const otherTokenAmount = calculateOtherTokenAmount({ ...tokenIn, amount }, tokenOut);
+        setAmountOut(otherTokenAmount);
     };
     
     const handleAmountOutChange = (amount: number) => {
         setAmountOut(amount);
-        if (tokenIn && tokenOut) {
-            const tokenInAmt = (amount * tokenOut.token.priceInCrypto) / tokenIn.token.priceInCrypto;
-            
-            settokenIn((prev) => ({ ...prev,  amount: parseFloat(tokenInAmt.toFixed(6)) }));
-        }
+        // bypass slow react state update
+        const otherTokenAmount = calculateOtherTokenAmount({ ...tokenOut, amount }, tokenIn);
+        setAmountIn(otherTokenAmount);
     };
+    
     
     return (
         <div className='flex flex-col items-center h-full bg-transparent p-12'>
             <div className='flex flex-col gap-2 w-full'>
                 {/* Sell Comp */}
                 <TokenSelector
-                    handleToggleModal={handleToggleModal}
-                    Token={tokenOut}
-                    setAmount={handleAmountOutChange}
+                    Token={tokenIn}
+                    setAmount={handleAmountInChange}
                     type="buy"
+                    handleChooseCrypto={handleChooseCrypto}
+                    cryptos={prices.filter((p) => p.Ticker !== tokenIn.token.Ticker)}
                 />
                 
                 {/* Swap Feature */}
-                {/* todo replace isSwapped */}
                 <SwapComp isSwapped={false} handleSwap={handleSwapTokens} />
                 
                 {/* Buy Comp */}
                 <TokenSelector
-                    handleToggleModal={handleToggleModal}
-                    Token={tokenIn}
-                    setAmount={handleAmountInChange}
+                    Token={tokenOut}
+                    setAmount={handleAmountOutChange}
                     type="sell"
-                />
-                
-                <DrawerModal
-                    handleToggleModal={handleToggleModal}
                     handleChooseCrypto={handleChooseCrypto}
-                    typeAction={typeAction}
-                    isOpen={isOpen}
-                    cryptos={prices}
+                    cryptos={prices.filter((p) => p.Ticker !== tokenOut.token.Ticker)}
                 />
                 
                 {account ? (
                     <SwapButton
                         className={''}
                         wallet={account.address}
-                        active={isActive}
                     />
                 ) : (
                     <ConnectWalletButton />
                 )}
                 
                 {/* Fees Comp */}
-                {!tokenIn || !tokenOut || !account ? null : (
-                    <FeesComp
-                        tokenIn={tokenIn}
-                        tokenOut={tokenOut}
-                        address={account.address}
-                    />
-                )}
+                {/*{!tokenIn || !tokenOut || !account ? null : (*/}
+                {/*    <FeesComp*/}
+                {/*        tokenIn={tokenIn}*/}
+                {/*        tokenOut={tokenOut}*/}
+                {/*        address={account.address}*/}
+                {/*    />*/}
+                {/*)}*/}
             </div>
         </div>
     );

@@ -9,24 +9,22 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from '@/components/shadcn/drawer';
-
 import { PriceProps } from '@/types/AllTypes';
 import { PriceItem } from './PriceItem';
 import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/shadcn/input';
+import { capitalizeFirstLetter } from '@/lib/utils';
 
 interface DrawerModalProps {
-    handleToggleModal: (arg: string) => void;
     handleChooseCrypto: (arg: string, action: string) => void;
-    
-    typeAction: string;
     isOpen: boolean;
+    typeAction: "buy" | "sell";
     cryptos: Array<PriceProps>;
 }
 
 interface CryptoListProps {
     cryptos: Array<PriceProps>;
-    typeAction: string;
+    typeAction: "buy" | "sell";
     handleChooseCrypto: (arg: string, action: string) => void;
 }
 
@@ -55,7 +53,6 @@ function CryptoList({
 }
 
 export default function DrawerModal({
-    handleToggleModal,
     handleChooseCrypto,
     typeAction,
     isOpen,
@@ -72,7 +69,7 @@ export default function DrawerModal({
             if (searchValue === '') return;
 
             const filteredTokens = cryptos.filter((token) =>
-                token.Ticker.toLowerCase().includes(searchValue.toLowerCase()),
+                token.Name.toLowerCase().includes(searchValue.toLowerCase()),
             );
             setTokensToDisplay(filteredTokens);
         } else {
@@ -84,11 +81,12 @@ export default function DrawerModal({
         setTokensToDisplay(cryptos);
     }, [cryptos]);
     
+    
     return (
-        <Drawer open={isOpen} onOpenChange={() => handleToggleModal('')}>
+        <Drawer open={isOpen}>
             <DrawerContent>
                 <DrawerHeader className="space-y-4">
-                    <DrawerTitle>{typeAction}</DrawerTitle>
+                    <DrawerTitle>{capitalizeFirstLetter(typeAction)}</DrawerTitle>
                     <DrawerDescription>
                         Select a token from our default list or search for a token by symbol
                         or address.

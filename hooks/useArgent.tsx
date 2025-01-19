@@ -88,7 +88,7 @@ export const useArgent = () => {
         setAccount(account);
         setIsConnected(true);
         // Custom data passed to the requestConnection() method is available here
-        console.log('callback data:', callbackData);
+        // console.log('callback data:', callbackData);
       })
       .catch((err) => {
         console.error('Failed to connect', err);
