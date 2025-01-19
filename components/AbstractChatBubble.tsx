@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
+import tSwap from '@/public/tSwap.png'
+import { Bot } from 'lucide-react';
 
 export type Side = 'left' | 'right';
 export default function AbstractChatBubble(props: {
@@ -13,7 +15,8 @@ export default function AbstractChatBubble(props: {
         <div className="text-xs">
             <div className={cn('max-w-[50%]', props.side === 'left' ? 'float-left' : 'float-right')}>
                 <Avatar className={cn('mx-3', props.side === 'left' ? 'float-left' : 'float-right')}>
-                    <AvatarImage src="https://github.com/shadcn.png" alt="Avatar Image"/>
+                    {props.sender === 'AI' && <Bot color="#f67300"/>}
+                    {props.sender !== 'AI' && <AvatarImage src="https://github.com/shadcn.png" alt="User Avatar Image"/>}
                     <AvatarFallback>{props.sender}</AvatarFallback>
                 </Avatar>
                 
