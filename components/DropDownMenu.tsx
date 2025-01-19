@@ -22,7 +22,7 @@ export function DropDownMenu() {
                                 height={62}
                             />
                         </a>
-                        <SheetTitle className="self-center">Menu</SheetTitle>
+                        {/*<SheetTitle className="self-center">Menu</SheetTitle>*/}
                     </SheetHeader>
                     <WalletStats/>
                     {/*<Navbar className="flex-col bg-transparent"/>*/}
