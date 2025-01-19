@@ -103,5 +103,11 @@
     "Ticker": "SSTRK/USD",
     "PairID": "1537084272803954643780",
     "Decimals": 8
+  },
+  {
+    "Name": "USDC",
+    "Ticker": "USDC/USD",
+    "PairID": "6148332971638477636",
+    "Decimals": 8
   }
 ]
