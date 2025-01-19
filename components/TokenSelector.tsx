@@ -1,86 +1,75 @@
 'use client';
+
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/shadcn/button';
 import { capitalizeFirstLetter, cn } from '@/lib/utils';
-import { SwapToken } from '@/components/Swap';
-import DrawerModal from '@/components/DrawerModal';
+import { Token } from '@/components/Swap';
+import TokenSelectDrawer from '@/components/TokenSelectDrawer';
 import React from 'react';
-import { PriceProps } from '@/types/AllTypes';
+import { useTokenPrice } from '@/hooks/useTokenPrice';
 
 interface TokenSelectorProps {
-    handleChooseCrypto: (buy: string, action: string) => void;
-    Token: SwapToken;
-    setAmount: (amount: number) => void;
-    type: "buy" | "sell";
-    cryptos: Array<PriceProps>;
+    type: 'buy' | 'sell';
+    token: Token;
+    amount: string;
+    onChangeAmount: (value: string) => void;
+    onSelectToken: (symbol: string) => void;
+    tokenList: Array<Token>;
 }
 
 const TokenSelector: React.FC<TokenSelectorProps> = ({
-    handleChooseCrypto,
-    Token,
-    setAmount,
     type,
-    cryptos,
+    token,
+    amount,
+    onChangeAmount,
+    onSelectToken,
+    tokenList,
 }) => {
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseFloat(e.target.value) || 0;
-        setAmount(value);
-    };
+    const assetPrice = useTokenPrice({ pragmaFeedId: token.pragmaId });
     
-    const [isOpen, setIsOpen] = React.useState(false);
-    
-    function chooseCrypto(crypto: string, action: string) {
-        handleChooseCrypto(crypto, action);
-        setIsOpen(false);
-    }
-    
-    function handleKeyDown(event: React.KeyboardEvent) {
-        if (event.key === 'Escape') {
-            setIsOpen(false);
-        }
+    function handleSelectToken(symbol: string) {
+        onSelectToken(symbol);
     }
     
     return (
-        <div className={cn('shadow-md rounded-[10px] p-2 flex flex-row justify-between', type === 'buy' ? 'bg-primary' : 'bg-secondary')} onKeyDown={handleKeyDown}>
-            <div className='flex flex-col gap-2'>
-                <span className='opacity-80 text-sm'>{capitalizeFirstLetter(type)}</span>
+        <div
+            className={cn('shadow-md rounded-[10px] p-2 flex flex-row justify-between', type === 'buy' ? 'bg-primary' : 'bg-secondary')}
+        >
+            <div className="flex flex-col gap-2">
+                <span className="opacity-80 text-sm">{capitalizeFirstLetter(type)}</span>
                 <input
-                    value={Token.amount || '0'}
-                    type='number'
+                    value={amount}
+                    placeholder="0"
+                    type="number"
                     min={0}
                     className={cn(
-                        'w-full mr-1 bg-transparent placeholder-inherit focus-within:border-none focus:outline-none'
+                        'w-full mr-1 bg-transparent placeholder-inherit focus-within:border-none focus:outline-none',
                     )}
-                    onChange={handleInputChange}
+                    onChange={(e) => onChangeAmount(e.target.value)}
                 />
                 
-                <span className='flex opacity-80 items-baseline'>
-          <p className='text-lg'>
-            $ {(Token.amount * (Token.token.priceInUSD ?? 0)).toFixed(2)}
+                <span className="flex opacity-80 items-baseline">
+          <p className="text-lg">
+            ${(Number(amount) * assetPrice).toFixed(2)}
           </p>
         </span>
             </div>
-            <div className='flex items-center text-xl text-left h-full '>
-                <Button
-                    className='rounded-full bg-accent flex text-primary-foreground gap-4 w-max-40'
-                    onClick={() => setIsOpen(true)}
+            <div className="flex items-center text-xl text-left h-full ">
+                <TokenSelectDrawer
+                    onSelectToken={handleSelectToken}
+                    tokens={tokenList}
+                    title={type}
                 >
-                    <img
-                        src={Token ? `./${Token.token.Name}.webp` : undefined}
-                        className='w-6 h-6 rounded-full'
-                    />
-                    <p>{Token ? Token.token.Name : ''}</p>
-                    <ChevronDown />
-                </Button>
+                    <Button className="rounded-full bg-accent flex text-primary-foreground gap-4 w-max-40">
+                        <img
+                            src={token ? `./${token.symbol}.webp` : undefined}
+                            className="w-6 h-6 rounded-full"
+                        />
+                        <p>{token ? token.symbol : ''}</p>
+                        <ChevronDown/>
+                    </Button>
+                </TokenSelectDrawer>
             </div>
-            
-            {/*buy modal*/}
-            <DrawerModal
-                handleChooseCrypto={chooseCrypto}
-                typeAction={type}
-                cryptos={cryptos}
-                isOpen={isOpen}
-            />
         </div>
     );
 };

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ArgentTMA, SessionAccountInterface } from '@argent/tma-wallet';
 import { RpcProvider } from 'starknet';
+import supportedTokens from '@/public/supportedTokens.json';
 
 export const useArgentTelegram = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -27,11 +28,10 @@ export const useArgentTelegram = () => {
             sessionParams: {
                 allowedMethods: [
                     // todo Placeholder list of contracts/methods allowed to be called by the session key
-                    {
-                        contract:
-                            '0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d',
+                    ...supportedTokens.map((t) => ({
+                        contract: t.address,
                         selector: 'approve',
-                    },
+                    })),
                     {
                         contract:
                             '0x07134aad6969880f11b2d50e57c6e8d38ceef3a6b02bd9ea44837bd257023f6b',
@@ -56,6 +56,11 @@ export const useArgentTelegram = () => {
                         contract:
                             '0x07134aad6969880f11b2d50e57c6e8d38ceef3a6b02bd9ea44837bd257023f6b',
                         selector: 'exit_delegation_pool_action',
+                    },
+                    {
+                        contract:
+                            '0x02c56e8b00dbe2a71e57472685378fc8988bba947e9a99b26a00fade2b4fe7c2',
+                        selector: 'multi_route_swap',
                     },
                 ],
                 validityDays: 90, // session validity (in days) - default: 90
