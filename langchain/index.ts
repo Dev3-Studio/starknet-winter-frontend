@@ -20,10 +20,10 @@ const availableTokens = assetList.map((asset) => asset.symbol) as [string];
 const LLM_MODEL = 'gemini-1.5-flash';
 
 const llm = new ChatGoogleGenerativeAI(
-        {
-            apiKey: API_KEY,
-            model: LLM_MODEL,
-        },
+    {
+        apiKey: API_KEY,
+        model: LLM_MODEL,
+    },
 );
 
 // requires paid api to use
@@ -46,18 +46,18 @@ if (availableTokens.length <= 1) {
 }
 
 // use availableTokens to validate the token
-const tokenSchema = z.enum(availableTokens)
+const tokenSchema = z.enum(availableTokens);
 const stakeSchema = z.object({
     token: tokenSchema.describe('The token to stake'),
     amount: z.number().describe('The amount of the token to stake'),
-})
+});
 
 const swapSchema = z.object({
     tokenIn: tokenSchema.describe('The token that will be sent'),
     tokenOut: tokenSchema.describe('The token that will be received'),
     amountIn: z.number().optional().describe('The amount of tokenIn to swap'),
     amountOut: z.number().optional().describe('The amount of tokenOut to receive'),
-})
+});
 
 const stakeTool = tool(
     () => undefined,
@@ -65,8 +65,8 @@ const stakeTool = tool(
         name: 'stakeConfirm',
         description: 'A tool that generates a stake confirmation',
         schema: stakeSchema,
-    }
-)
+    },
+);
 
 const swapTool = tool(
     () => undefined,
@@ -74,9 +74,8 @@ const swapTool = tool(
         name: 'swapConfirm',
         description: 'A tool that generates a swap confirmation',
         schema: swapSchema,
-    }
-)
-
+    },
+);
 
 
 // const tokenSearchTool = tool(
@@ -102,15 +101,15 @@ The only token that can be staked is the stark token. If the user says to "stake
 If they mention staking another token, reply that only the stark token can be staked.
 You know information on every token that exists, not just the ones that can be traded.
 If the user asks for information about any token, reply with the information you know.
-`)
+`);
 const tools = [stakeTool, swapTool];
 const modelWithTools = llm.bind({
     tools: tools,
-})
+});
 
-export type LLMMessage = (AIMessage | HumanMessage );
+export type LLMMessage = (AIMessage | HumanMessage);
 
-export async function runTradeAI(messages: LLMMessage[]){
+export async function runTradeAI(messages: LLMMessage[]) {
     const result = await modelWithTools.invoke([systemPrompt, ...messages]);
     return { content: result.content, tool_calls: result.tool_calls };
 }
