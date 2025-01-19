@@ -5,6 +5,7 @@ import ContextProvider from '@/context';
 import { ReactNode } from 'react';
 import { Navbar } from '@/components/Navbar';
 import { Toaster } from '@/components/shadcn/toaster';
+import Header from '@/components/Header';
 
 const inter = Inter({
     variable: '--font-inter',
@@ -31,7 +32,8 @@ export default function RootLayout({
                             <div
                                 className="absolute bottom-0 left-0 right-0 top-0 bg-[radial-gradient(circle_800px_at_100%_200px,hsla(var(--background)),transparent)]"></div>
                         </div>
-                        <div className="grid grid-rows-[auto,5rem] h-full">
+                        <div className="grid grid-rows-[4rem,auto,5rem] h-full">
+                            <Header/>
                             <div className="overflow-y-scroll no-scrollbar">
                                 {children}
                             </div>
