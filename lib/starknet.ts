@@ -33,3 +33,15 @@ export async function getStarkBalance(account: SessionAccountInterface) {
         return uint256.uint256ToBN(res);
     }
 }
+
+export async function getTokenBalance(account: SessionAccountInterface, address: string) {
+    const tokenContract = new Contract(starkAbi, address, account).typedv2(starkAbi);
+    const res = await tokenContract.balance_of(account.address);
+    if (typeof res === 'number') {
+        return BigInt(res);
+    } else if (typeof res === 'bigint') {
+        return res;
+    } else {
+        return uint256.uint256ToBN(res);
+    }
+}
