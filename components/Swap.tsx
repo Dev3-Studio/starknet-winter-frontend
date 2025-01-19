@@ -12,6 +12,7 @@ import { getAmountIn, getAmountOut, swap } from '@/lib/swap';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/shadcn/button';
+import { getVoiceAuthToken } from '@/actions/getVoiceAuthToken';
 import { ArrowDownUpIcon } from 'lucide-react';
 
 interface FlipTokensButtonProps {
