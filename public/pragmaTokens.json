@@ -108,6 +108,6 @@
     "Name": "USDC",
     "Ticker": "USDC/USD",
     "PairID": "6148332971638477636",
-    "Decimals": 8
+    "Decimals": 6
   }
 ]
