@@ -36,7 +36,7 @@ const TokenSelector: React.FC<TokenSelectorProps> = ({
     return (
         <div
             className={cn(
-                'shadow-md rounded-md p-2 flex flex-col justify-between space-y-1',
+                'shadow-md rounded-md p-2 flex flex-col justify-between space-y-1 w-full',
                 type === 'buy' ? 'bg-primary' : 'bg-secondary',
             )}
         >

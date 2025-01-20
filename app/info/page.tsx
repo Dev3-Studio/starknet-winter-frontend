@@ -6,12 +6,6 @@ export default function InfoPage() {
             <h1 className="text-2xl mt-1 text-center">FAQ</h1>
             
             <Faq
-                question="Why do I get an error telling me to initiate my account?"
-                answer={`This is due to an unimplemented function in the Argent Telegram Wallet. On new accounts,
-                you need to first perform a transaction to deploy your account before you can interact with our app.\n\n
-                You can do this easily by sending a small amount of STRK to yourself`}/>
-            
-            <Faq
                 question="How do I get started?" answer="Simple. Connect your wallet through the argent wallet and then
              head to the page corresponding to the action you would like to perform. If you prefer not to get technical
              just chat to our AI and it can perform your action for you!
@@ -35,7 +29,7 @@ export default function InfoPage() {
             
             <Faq
                 question="Which token are available to swap?" answer="Since this is a proof of concept running on
-            Sepolia, we only support swaps with USDC, ETH and STRK. This is due to the limited token liquidity avaliable
+            Sepolia Testnet, we only support swaps with USDC, ETH and STRK. This is due to the limited token liquidity avaliable
             on Sepolia and a mainnet deployment would support more tokens."/>
         </div>
     
