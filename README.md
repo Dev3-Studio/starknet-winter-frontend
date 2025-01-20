@@ -4,7 +4,7 @@
 
 ## Features
 
-- AI Agent chatbot to perform certain DeFi actions automatically.
+- Langchain AI Agent chatbot to perform DeFi actions automatically.
 - Secure and efficient asset swapping.
 - Fast native staking.
 - Integrated with Telegram's Mini App API.
