@@ -4,7 +4,6 @@ import { DropDownMenu } from './DropDownMenu';
 export default function Header() {
   return (
     <header className='flex flex-row justify-between items-center p-4 bg-background'>
-      {/* todo: update to use correct logo */}
       <Image
         src={'./teleswap-w.svg'}
         alt={'Teleswap'}
