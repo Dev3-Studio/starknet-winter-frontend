@@ -13,15 +13,13 @@ export function DropDownMenu() {
             <SheetContent className="flex flex-col justify-between">
                 <div className="grid grid-rows-[auto,1fr,auto] h-full">
                     <SheetHeader>
-                        <a href="https://dev3.studio">
-                            <Image
-                                src={'https://cdn.dev3.studio/logo.svg'}
-                                alt={'Dev3 Studio Logo'}
-                                className="h-4 w-auto"
-                                width={300}
-                                height={62}
-                            />
-                        </a>
+                        <Image
+                            src={'./teleswap-w.svg'}
+                            alt={'Teleswap'}
+                            className="h-4 w-auto"
+                            width={134}
+                            height={28}
+                        />
                         {/*<SheetTitle className="self-center">Menu</SheetTitle>*/}
                     </SheetHeader>
                     <WalletStats/>
