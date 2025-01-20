@@ -12,7 +12,6 @@ const inter = Inter({
     subsets: ['latin'],
 });
 
-// todo: update metadata
 export const metadata: Metadata = {
     title: 'TeleSwap',
     description: 'Starknet\'s first DEX on Telegram',
