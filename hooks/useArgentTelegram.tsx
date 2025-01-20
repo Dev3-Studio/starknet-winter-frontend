@@ -73,34 +73,41 @@ export const useArgentTelegram = () => {
                 validityDays: 90, // session validity (in days) - default: 90
             },
         });
-        const connectResponse = await argent.connect();
-        if (!connectResponse) {
-            // Not connected
-            setIsConnected(false);
-            return;
-        }
-        
-        const { account, callbackData } = connectResponse;
-        
-        if (account.getSessionStatus() !== 'VALID') {
-            // Session has expired or scope (allowed methods) has changed
-            // A new connection request should be triggered
-            
-            // The account object is still available to get access to user's address
-            // but transactions can't be executed
-            const { account } = connectResponse;
-            
-            setAccount(account);
-            setIsConnected(false);
-            return;
-        }
-        
-        // The session account is returned and can be used to submit transactions
-        setAccount(account);
-        setIsConnected(true);
         setArgent(argent);
         // Custom data passed to the requestConnection() method is available here
     }
+    
+    useEffect(() => {
+        if (!argent) return;
+        argent
+            .connect()
+            .then((res) => {
+                if (!res) {
+                    // Not connected
+                    setIsConnected(false);
+                    return;
+                }
+                
+                const { account } = res;
+                
+                if (account.getSessionStatus() !== 'VALID') {
+                    // Session has expired or scope (allowed methods) has changed
+                    // A new connection request should be triggered
+                    
+                    // The account object is still available to get access to user's address
+                    // but transactions can't be executed
+                    const { account } = res;
+                    
+                    setAccount(account);
+                    setIsConnected(false);
+                    return;
+                }
+                
+                // The session account is returned and can be used to submit transactions
+                setAccount(account);
+                setIsConnected(true);
+            });
+    }, [argent?.provider]);
     
     const disconnect = async () => {
         await argent?.clearSession();
