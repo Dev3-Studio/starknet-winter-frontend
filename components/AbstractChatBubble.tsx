@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/shadcn/avatar';
+import { Avatar, AvatarImage } from '@/components/shadcn/avatar';
 import { Bot } from 'lucide-react';
 
 export type Side = 'left' | 'right';
