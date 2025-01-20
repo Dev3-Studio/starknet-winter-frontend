@@ -1,24 +1,31 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { ArgentTMA, SessionAccountInterface } from '@argent/tma-wallet';
+import { useEffect, useState } from 'react';
+import { type ArgentTMA as ArgentTMAInterface, SessionAccountInterface } from '@argent/tma-wallet';
 import { RpcProvider } from 'starknet';
 import supportedTokens from '@/public/supportedTokens.json';
 
 export const useArgentTelegram = () => {
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [account, setAccount] = useState<SessionAccountInterface | null>(null);
+    const [argent, setArgent] = useState<ArgentTMAInterface>();
     
-    const appTelegramUrl = process.env.NEXT_PUBLIC_MINI_APP_LINK;
+    useEffect(() => {
+        void init();
+    }, []);
     
-    if (!appTelegramUrl) {
-        throw new Error(
-            'Missing required environment variable: NEXT_PUBLIC_MINI_APP_LINK',
-        );
-    }
-    
-    const argent = useMemo(() => {
-        return ArgentTMA.init({
+    async function init() {
+        const { ArgentTMA } = await import('@argent/tma-wallet');
+        
+        const appTelegramUrl = process.env.NEXT_PUBLIC_MINI_APP_LINK;
+        
+        if (!appTelegramUrl) {
+            throw new Error(
+                'Missing required environment variable: NEXT_PUBLIC_MINI_APP_LINK',
+            );
+        }
+        
+        const argent = ArgentTMA.init({
             environment: 'sepolia', // "sepolia" | "mainnet" (Whitelisting required)
             appName: 'TeleSwap',
             appTelegramUrl,
@@ -66,49 +73,42 @@ export const useArgentTelegram = () => {
                 validityDays: 90, // session validity (in days) - default: 90
             },
         });
-    }, []);
-    
-    useEffect(() => {
-        // Call connect() as soon as the app is loaded
-        argent
-            .connect()
-            .then((res) => {
-                if (!res) {
-                    // Not connected
-                    setIsConnected(false);
-                    return;
-                }
-                
-                const { account, callbackData } = res;
-                
-                if (account.getSessionStatus() !== 'VALID') {
-                    // Session has expired or scope (allowed methods) has changed
-                    // A new connection request should be triggered
-                    
-                    // The account object is still available to get access to user's address
-                    // but transactions can't be executed
-                    const { account } = res;
-                    
-                    setAccount(account);
-                    setIsConnected(false);
-                    return;
-                }
-                
-                // The session account is returned and can be used to submit transactions
-                setAccount(account);
-                setIsConnected(true);
-                // Custom data passed to the requestConnection() method is available here
-            })
-            .catch((err) => {
-                console.error('Failed to connect', err);
-            });
-    }, []);
+        const connectResponse = await argent.connect();
+        if (!connectResponse) {
+            // Not connected
+            setIsConnected(false);
+            return;
+        }
+        
+        const { account, callbackData } = connectResponse;
+        
+        if (account.getSessionStatus() !== 'VALID') {
+            // Session has expired or scope (allowed methods) has changed
+            // A new connection request should be triggered
+            
+            // The account object is still available to get access to user's address
+            // but transactions can't be executed
+            const { account } = connectResponse;
+            
+            setAccount(account);
+            setIsConnected(false);
+            return;
+        }
+        
+        // The session account is returned and can be used to submit transactions
+        setAccount(account);
+        setIsConnected(true);
+        setArgent(argent);
+        // Custom data passed to the requestConnection() method is available here
+    }
     
     const disconnect = async () => {
-        await argent.clearSession();
+        await argent?.clearSession();
         setAccount(null);
         setIsConnected(false);
     };
     
     return { argent, account, disconnect, isConnected };
 };
+
+

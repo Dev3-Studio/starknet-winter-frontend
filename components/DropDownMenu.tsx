@@ -1,4 +1,4 @@
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/shadcn/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTrigger } from '@/components/shadcn/sheet';
 import Image from 'next/image';
 import { ConnectWalletButton } from './ConnectWalletButton';
 import { Menu } from 'lucide-react';
